@@ -16,7 +16,6 @@ function App() {
 
   const updateNotes = () => {
     getNote(inputRef.current.value).then((response) => {
-      console.log(response);
       setNotes((prev) => prev + "\n" + response.data);
       inputRef.current.value = "";
     });
@@ -54,7 +53,7 @@ function App() {
           component="form"
           onSubmit={submitCommand}
           spacing={3}
-          minwidth={"25vw"}
+          sx={{ flexGrow: 1 }}
         >
           <Typography variant="h5">Enter your command</Typography>
           <TextField
@@ -87,6 +86,7 @@ function App() {
           <Button type="submit" sx={{ bgcolor: "#D3B014" }} variant="contained">
             Add to Notes
           </Button>
+          {notes && <Button onClick={() => setNotes("")}>Clear</Button>}
         </Stack>
         {notes && (
           <>
