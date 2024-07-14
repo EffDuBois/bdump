@@ -5,6 +5,7 @@ import App from "./App";
 import { createTheme, ThemeProvider } from "@mui/material";
 
 const theme = createTheme({
+  palette: { main: { text: "#ffffff" } },
   typography: {
     fontFamily: [
       "manrope",

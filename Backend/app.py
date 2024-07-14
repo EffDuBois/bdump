@@ -1,11 +1,15 @@
-from flask import Flask, request
+from flask import Flask, jsonify, request
 from googleChain import llmOutput
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, origins=["http://localhost:3000"])
 
-@app.route("/",methods=['GET'])
+@app.route("/",methods=['POST'])
 def home():
-    return llmOutput(request.json["content"])
+    res =llmOutput(request.json["content"])
+    print(res)
+    return jsonify(res)
     
 if __name__ == "__main__":
     app.run(debug=True)
