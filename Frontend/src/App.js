@@ -16,8 +16,10 @@ function App() {
 
   const updateNotes = () => {
     getNote(inputRef.current.value).then((response) => {
-      setNotes((prev) => prev + "\n" + response.data);
-      inputRef.current.value = "";
+      if (response?.data != "") {
+        setNotes((prev) => prev + " \\n " + response?.data);
+        inputRef.current.value = "";
+      }
     });
   };
 

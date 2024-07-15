@@ -3,7 +3,7 @@ from googleChain import llmOutput
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:3000"])
+CORS(app, origins=["http://localhost:3000","https://edamone.netlify.app/"])
 
 @app.route("/",methods=['POST'])
 def home():
