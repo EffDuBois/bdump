@@ -15,17 +15,23 @@ function App() {
   const inputRef = useRef(null);
 
   const updateNotes = () => {
-    getNote(inputRef.current.value).then((response) => {
-      if (response?.data != "") {
-        setNotes((prev) => {
-          {
-            if (prev == "") return response?.data;
-            else return prev + " \\n " + response?.data;
+    try {
+      getNote(inputRef.current.value).then((response) => {
+        if (response?.data) {
+          if (response.data != "") {
+            setNotes((prev) => {
+              {
+                if (prev == "") return response?.data;
+                else return prev + " \\n " + response?.data;
+              }
+            });
+            inputRef.current.value = "";
           }
-        });
-        inputRef.current.value = "";
-      }
-    });
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const submitCommand = (e) => {
