@@ -17,7 +17,7 @@ and much more`;
   return (
     <main className="flex min-h-screen flex-col justify-between items-center pt-12 pb-20 px-8">
       <h1 className={`${title.className} text-4xl`}>NotesApp</h1>
-      <div className="h-[50vh] sm:text-2xl text-xl w-full lg:w-2/5">
+      <div className="h-[50vh] text-xl w-full lg:w-2/5">
         <Markdown remarkPlugins={[remarkGfm]}>{mainText}</Markdown>
         <Markdown
           className={`${subtext.className} inline`}
@@ -30,7 +30,7 @@ and much more`;
       <button
         className={`p-4 self-center shadow-[0_0_4px_-0.8px_rgba(0,0,0,1)] dark:shadow-[0_0_4px_-0.8px_rgba(255,255,255,1)] no-dark:shadow-[inset_1.6px_1.6px_3px_-3px_rgba(256,256,256,1),1px_1px_0.2px_1px_rgba(0,0,0,1)] rounded-full`}
       >
-        <FaMicrophone className="size-12" size={"4rem"} />
+        <FaMicrophone className="size-12" size={"64px"} />
       </button>
     </main>
   );
