@@ -1,20 +1,12 @@
 "use client";
 import { createClient, ListenLiveClient } from "@deepgram/sdk";
-import {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useMemo, useState } from "react";
 const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY;
 
 function useTranscriber(placeholder: string) {
   const [transcript, setTranscript] = useState(placeholder);
   const [recording, setRecording] = useState(false);
   const [mic, setMic] = useState<MediaRecorder>();
-  const [connection, setConnection] = useState(false);
 
   const socket = useMemo(() => {
     const deepgram = createClient(DEEPGRAM_API_KEY);
@@ -30,7 +22,7 @@ function useTranscriber(placeholder: string) {
       console.log("KeepAlive sent.");
       socket.keepAlive();
     }, 5000);
-    
+
     socket.on("open", async () => {
       console.log("client: connected to deepgram socket");
       socket.on("Results", (data) => {
@@ -43,7 +35,6 @@ function useTranscriber(placeholder: string) {
       socket.on("Metadata", (e) => console.log(e));
       socket.on("close", (e) => {
         console.log(e);
-        setConnection(false);
       });
     });
     return socket;
