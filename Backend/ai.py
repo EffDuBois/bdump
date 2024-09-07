@@ -13,7 +13,7 @@ def generate_embedding(query):
         # return f"Error: {response.status_code} - {response.text}"
         return "[0, 6, 9, 0]"
 
-def generate_note():
-    return "#your mom"
+def generate_note(query):
+    return f"#your mom  {query}"
 
 
