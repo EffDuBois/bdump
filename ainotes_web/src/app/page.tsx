@@ -1,5 +1,6 @@
 "use client";
 
+import { postCreateNote } from "@/apis/postCreateNote";
 import { subtextFont } from "@/ui/fonts";
 import useTranscriber from "@/utils/transcriber";
 import { useState } from "react";
@@ -13,11 +14,15 @@ export default function Home() {
   const [mainText, setMainText] = useState(``);
   const subText = transcriber.transcript;
 
-  const toggleRecording = () => {
+  async function toggleRecording() {
     transcriber.toggleTranscription();
+    if (isRecording) {
+      const responseText = await postCreateNote(subText);
+      setMainText(responseText);
+    }
     setIsRecording((cur) => !cur);
-  };
-  
+  }
+
   return (
     <>
       <div className="h-[50vh] sm:text-2xl text-xl w-full lg:w-2/5">
