@@ -1,3 +1,3 @@
 headers = {
-    "Authorization": f"Bearer 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"
+    "Authorization": f"blank"
 }
