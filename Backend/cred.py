@@ -1,3 +1,0 @@
-headers = {
-    "Authorization": f"blank"
-}
