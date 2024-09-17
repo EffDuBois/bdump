@@ -27,21 +27,20 @@ class createPrompt(BaseModel):
 class askPrompt(BaseModel):
     query: str
     notes: list[str]
-    notesemb: list
+    notesemb: list[list[float]]
 
 @app.post("/notes/create")
 async def create_notes(prompt: createPrompt):       
     emb = generate_embedding(prompt.query)             # returns vector embedding for the prompt
     ans = generate_note(prompt.query)                  # returns markdown text for the prompt
-    return {"embedding" : emb, "body" : ans} 
+    return {"body" : ans, "embedding" : emb} 
  
 @app.post("/notes/ask")
 async def ask_notes(prompt: askPrompt):
     emb = generate_embedding(prompt.query)
     ans = ask_note(prompt.query, emb, prompt.notes, prompt.notesemb)
     return {"body" : ans}
-
-
+      
 
 
 

@@ -10,7 +10,7 @@ load_dotenv()
 
 def generate_embedding(query):
     if (query != ""):
-        embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=os.getenv("API_KEY"))
+        embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=os.getenv("GOOGLE_API_KEY"))
         vector = embeddings.embed_query(query)
         return vector
         #print(vector[:5])
@@ -21,7 +21,7 @@ def generate_embedding(query):
 def generate_note(query):
     if (query != ""):
         parser = StrOutputParser()
-        llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro", temperature=0.2, max_toxens=500, google_api_key=os.getenv("API_KEY"))
+        llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro", temperature=0.2, max_toxens=500)
         system_prompt = (
             "You are an AI assistant that parses the given text, "
             "converts transcript of spoken words to markdown code that can be stored in .md file"
@@ -45,12 +45,14 @@ def generate_note(query):
 
 
 def cosine_sim(queryemb, noteemb):
-    return cosine_similarity([queryemb], [noteemb])[0][0]
+    queryemb = np.array(queryemb).reshape(1, -1)
+    noteemb = np.array(noteemb).reshape(1, -1)
+    return cosine_similarity(queryemb, noteemb)[0][0]
 
 
 def ask_note(query, queryemb, notes, notesemb):
     if (query != ""):
-        similarities = [cosine_sim(queryemb, noteemb) for noteemb in notesemb]
+        similarities = [cosine_sim([queryemb], [noteemb]) for noteemb in notesemb]
         most_relevant_note_index = np.argmax(similarities)
         relevant_note = notes[most_relevant_note_index]
 
