@@ -69,8 +69,6 @@ function useTranscriber(placeholder: string) {
   return { toggleTranscription, transcript };
 }
 
-export default useTranscriber;
-
 const getMic = async () => {
   const userMedia = await navigator.mediaDevices.getUserMedia({
     audio: true,
@@ -95,3 +93,5 @@ const startMic = async (mic: MediaRecorder, socket: ListenLiveClient) => {
     socket.send(data);
   };
 };
+
+export default useTranscriber;

@@ -9,16 +9,16 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 export default function Home() {
-  const transcriber = useTranscriber(`~~Make your chicken noodles~~`);
+  // const transcriber = useTranscriber(`~~Make your chicken noodles~~`);
   const [isRecording, setIsRecording] = useState(false);
   const [mainText, setMainText] = useState(``);
-  const subText = transcriber.transcript;
+  // const subText = transcriber.transcript;
 
   async function toggleRecording() {
-    transcriber.toggleTranscription();
+    // transcriber.toggleTranscription();
     setIsRecording((cur) => !cur);
     if (!isRecording) {
-      postCreateNote(subText).then((res) => setMainText(res));
+      // postCreateNote(subText).then((res) => setMainText(res));
     }
   }
 
@@ -30,7 +30,7 @@ export default function Home() {
           className={`${subtextFont.className} inline`}
           remarkPlugins={[remarkGfm]}
         >
-          {subText}
+          {/* {subText} */}
         </Markdown>
       </div>
       <button
