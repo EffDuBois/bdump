@@ -31,7 +31,7 @@ export default function SideBar({ notesDb }: SideBarProps) {
     <ul>
       <button onClick={createNote}>Add Note +</button>
       {notes && !notesDb.storeTxnStatus ? (
-        notes.map((note) => <li key={note.id}>{note.path}</li>)
+        notes.map((note) => <li key={note.path}>{note.path}</li>)
       ) : (
         <Spinner />
       )}

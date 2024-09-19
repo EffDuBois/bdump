@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const version = 1;
 
@@ -20,7 +20,9 @@ export enum Stores {
 export interface NotesDbType {
   storeTxnStatus: boolean;
   fetchNotes: () => Promise<Note[]>;
-  storeNote: (data: Omit<Note, "id">) => void;
+  storeNote: (data: Omit<Note, "id">) => Promise<boolean>;
+  deleteNote: (id: string) => Promise<boolean>;
+  updateNote: (id: string, data: Omit<Note, "id">) => Promise<boolean>;
 }
 
 const useNotesDb = () => {
@@ -41,15 +43,14 @@ const useNotesDb = () => {
           resolve(res.result);
         };
         res.onerror = (event) => {
-          console.error("fetch txn error: ", event);
           setFetchStatus(false);
-          resolve([]);
+          reject("Transaction error:" + res.error);
         };
       });
     });
   };
 
-  const storeNote = (data: Omit<Note, "id">): Promise<boolean | string> => {
+  const storeNote = (data: Omit<Note, "id">): Promise<boolean> => {
     return new Promise((resolve, reject) => {
       if (storeTxnStatus) reject("Txn already in progress");
       setStoreTxnStatus(true);
@@ -64,12 +65,54 @@ const useNotesDb = () => {
           setStoreTxnStatus(false);
           if (res.error?.name == "ConstraintError")
             console.log("File already exists, please use a valid path");
-          else console.error("add txn error:", res.error);
+          reject("Transaction error:" + res.error);
         };
       });
     });
   };
-  return { storeTxnStatus, fetchNotes, storeNote };
+
+  const deleteNote = (id: string): Promise<boolean | string> => {
+    return new Promise((resolve, reject) => {
+      if (storeTxnStatus) reject("Txn already in progress");
+      setStoreTxnStatus(true);
+      initDb().then((db) => {
+        const tx = db.transaction(Stores.notes, "readwrite");
+        const res = tx.objectStore(Stores.notes).delete(id);
+        res.onsuccess = () => {
+          setStoreTxnStatus(false);
+          resolve(true);
+        };
+        res.onerror = () => {
+          setStoreTxnStatus(false);
+          reject("Transaction error:" + res.error);
+        };
+      });
+    });
+  };
+
+  const updateNote = (
+    id: string,
+    data: Omit<Note, "id">
+  ): Promise<boolean | string> => {
+    return new Promise((resolve, reject) => {
+      if (storeTxnStatus) reject("Txn already in progress");
+      setStoreTxnStatus(true);
+      initDb().then((db) => {
+        const tx = db.transaction(Stores.notes, "readwrite");
+        const store = tx.objectStore(Stores.notes);
+        const res = store.put(data, id);
+        res.onsuccess = () => {
+          setStoreTxnStatus(false);
+          resolve(true);
+        };
+        res.onerror = () => {
+          setStoreTxnStatus(false);
+          reject("Transaction error:" + res.error);
+        };
+      });
+    });
+  };
+  return { storeTxnStatus, fetchNotes, storeNote, deleteNote, updateNote };
 };
 
 const initDb = (): Promise<IDBDatabase> => {
