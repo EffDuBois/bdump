@@ -71,7 +71,7 @@ const useNotesDb = () => {
     });
   };
 
-  const deleteNote = (id: string): Promise<boolean | string> => {
+  const deleteNote = (id: string): Promise<boolean> => {
     return new Promise((resolve, reject) => {
       if (storeTxnStatus) reject("Txn already in progress");
       setStoreTxnStatus(true);
@@ -90,10 +90,7 @@ const useNotesDb = () => {
     });
   };
 
-  const updateNote = (
-    id: string,
-    data: Omit<Note, "id">
-  ): Promise<boolean | string> => {
+  const updateNote = (id: string, data: Omit<Note, "id">): Promise<boolean> => {
     return new Promise((resolve, reject) => {
       if (storeTxnStatus) reject("Txn already in progress");
       setStoreTxnStatus(true);
