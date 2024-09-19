@@ -1,7 +1,9 @@
 "use client";
 
 import { postCreateNote } from "@/apis/postCreateNote";
-import { subtextFont } from "@/ui/fonts";
+import useNotesDb from "@/lib/data";
+import { subtextFont, titleFont } from "@/ui/fonts";
+import SideBar from "@/ui/Sidebar";
 import useTranscriber from "@/utils/transcriber";
 import { useState } from "react";
 import { FaMicrophone, FaStop } from "react-icons/fa6";
@@ -9,28 +11,32 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 export default function Home() {
-  // const transcriber = useTranscriber(`~~Make your chicken noodles~~`);
+  // const {transcript,toggleTranscription} = useTranscriber(`~~Make your chicken noodles~~`);
+  const notesDB = useNotesDb();
+
   const [isRecording, setIsRecording] = useState(false);
-  const [mainText, setMainText] = useState(``);
-  // const subText = transcriber.transcript;
+
+  const [noteContent, setNoteContent] = useState(``);
 
   async function toggleRecording() {
-    // transcriber.toggleTranscription();
+    // toggleTranscription();
     setIsRecording((cur) => !cur);
     if (!isRecording) {
-      // postCreateNote(subText).then((res) => setMainText(res));
+      // postCreateNote(transcript).then((res) => setNoteContent(res));
     }
   }
 
   return (
     <>
+      <SideBar notesDb={notesDB} />
+      <h1 className={`${titleFont.className} text-4xl`}>NotesApp</h1>
       <div className="h-[50vh] sm:text-2xl text-xl w-full lg:w-2/5">
-        <Markdown remarkPlugins={[remarkGfm]}>{mainText}</Markdown>
+        <Markdown remarkPlugins={[remarkGfm]}>{noteContent}</Markdown>
         <Markdown
           className={`${subtextFont.className} inline`}
           remarkPlugins={[remarkGfm]}
         >
-          {/* {subText} */}
+          {/* {transcript} */}
         </Markdown>
       </div>
       <button

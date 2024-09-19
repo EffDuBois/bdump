@@ -2,39 +2,39 @@
 
 import { useEffect, useState } from "react";
 import Spinner from "./loaders/Spinner";
-import { fetchNotes, Note, storeNote, Stores } from "@/lib/data";
+import { Note, NotesDbType } from "@/lib/data";
 
-export default function SideBar() {
+interface SideBarProps {
+  notesDb: NotesDbType;
+}
+
+export default function SideBar({ notesDb }: SideBarProps) {
   const [notes, setNotes] = useState<Note[]>([]);
 
   const getNotes = async () => {
-    fetchNotes().then((notes) => setNotes(notes));
+    notesDb.fetchNotes().then((notes) => setNotes(notes));
   };
   const createNote = async () => {
-    storeNote({
-      path: "/test",
-      title: "NewNote",
+    notesDb.storeNote({
+      path: "/Untitled",
       content: "",
       vembed: [],
     });
-    getNotes();
   };
 
   useEffect(() => {
-    getNotes();
-  }, []);
+    if (!notesDb.storeTxnStatus) {
+      getNotes();
+    }
+  }, [notesDb.storeTxnStatus]);
   return (
-    <div>
-      {notes ? (
-        <ul>
-          <button onClick={createNote}>Add Note +</button>
-          {notes.map((note) => (
-            <li key={note.id}>{note.path}</li>
-          ))}
-        </ul>
+    <ul>
+      <button onClick={createNote}>Add Note +</button>
+      {notes && !notesDb.storeTxnStatus ? (
+        notes.map((note) => <li key={note.id}>{note.path}</li>)
       ) : (
         <Spinner />
       )}
-    </div>
+    </ul>
   );
 }
