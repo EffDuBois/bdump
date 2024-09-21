@@ -1,14 +1,17 @@
-import baseAPI from "./services";
+import { headers } from "next/headers";
+import baseAPI, { getDefaultHeaders } from "./services";
 
 export async function postCreateNote(query: string) {
   try {
-    const data = JSON.stringify({ query: query });
-    const response = await baseAPI.post("/notes/create", {
-      data: data,
-    });
+    const headers = getDefaultHeaders();
+    const response = await baseAPI.post(
+      "/notes/create",
+      { query },
+      { headers: { "Content-Type": "application/json" } }
+    );
     return response.data;
   } catch (error) {
-    console.log(error);
-    throw error;
+    console.error(error);
+    return Promise.reject;
   }
 }

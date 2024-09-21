@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Spinner from "./loaders/Spinner";
-import { Note, NotesDbType } from "@/lib/data";
+import { Note, NotesDbType } from "@/utils/data";
 
 interface SideBarProps {
   notesDb: NotesDbType;
@@ -12,7 +12,7 @@ export default function SideBar({ notesDb }: SideBarProps) {
   const [notes, setNotes] = useState<Note[]>([]);
 
   const getNotes = async () => {
-    notesDb.fetchNotes().then((notes) => setNotes(notes));
+    notesDb.fetchAllNotes().then((notes) => setNotes(notes));
   };
   const createNote = async () => {
     notesDb.storeNote({

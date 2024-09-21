@@ -1,10 +1,9 @@
 "use client";
 import { createClient, ListenLiveClient } from "@deepgram/sdk";
-import { useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY;
 
-function useTranscriber(placeholder: string) {
-  const [transcript, setTranscript] = useState(placeholder);
+function useTranscriber(setTranscript: Dispatch<SetStateAction<string>>) {
   const [recording, setRecording] = useState(false);
   const [mic, setMic] = useState<MediaRecorder>();
 
@@ -66,7 +65,8 @@ function useTranscriber(placeholder: string) {
       }
     }
   };
-  return { toggleTranscription, transcript };
+
+  return { toggleTranscription };
 }
 
 const getMic = async () => {

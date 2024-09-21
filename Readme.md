@@ -89,7 +89,7 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 4. Run the backend server:
 
     ```bash
-    python main.py
+    uvicorn main:app --reload
     ```
 
 ## Learn More

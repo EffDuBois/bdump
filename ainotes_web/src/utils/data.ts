@@ -19,8 +19,8 @@ export enum Stores {
 
 export interface NotesDbType {
   storeTxnStatus: boolean;
-  fetchNotes: () => Promise<Note[]>;
-  storeNote: (data: Omit<Note, "id">) => Promise<boolean>;
+  fetchAllNotes: () => Promise<Note[]>;
+  storeNote: (data: Omit<Note, "id">) => Promise<Note>;
   deleteNote: (id: string) => Promise<boolean>;
   updateNote: (id: string, data: Omit<Note, "id">) => Promise<boolean>;
 }
@@ -29,7 +29,7 @@ const useNotesDb = () => {
   const [storeTxnStatus, setStoreTxnStatus] = useState(false);
   const [fetchStatus, setFetchStatus] = useState(false);
 
-  const fetchNotes = (): Promise<Note[]> => {
+  const fetchAllNotes = (): Promise<Note[]> => {
     return new Promise((resolve, reject) => {
       if (storeTxnStatus) reject("Txn already in progress");
       setFetchStatus(true);
@@ -50,7 +50,28 @@ const useNotesDb = () => {
     });
   };
 
-  const storeNote = (data: Omit<Note, "id">): Promise<boolean> => {
+  const fetchNote = (id: string): Promise<Note[]> => {
+    return new Promise((resolve, reject) => {
+      if (storeTxnStatus) reject("Txn already in progress");
+      setFetchStatus(true);
+      initDb().then((db) => {
+        const tx = db.transaction(Stores.notes);
+
+        const res = tx.objectStore(Stores.notes).get(id);
+        res.onsuccess = () => {
+          console.log("fetch txn success");
+          setStoreTxnStatus(false);
+          resolve(res.result);
+        };
+        res.onerror = (event) => {
+          setFetchStatus(false);
+          reject("Transaction error:" + res.error);
+        };
+      });
+    });
+  };
+
+  const storeNote = (data: Omit<Note, "id">): Promise<Note> => {
     return new Promise((resolve, reject) => {
       if (storeTxnStatus) reject("Txn already in progress");
       setStoreTxnStatus(true);
@@ -59,7 +80,7 @@ const useNotesDb = () => {
         const res = tx.objectStore(Stores.notes).add(data);
         res.onsuccess = () => {
           setStoreTxnStatus(false);
-          resolve(true);
+          resolve({ ...data, id: String(res.result) });
         };
         res.onerror = () => {
           setStoreTxnStatus(false);
@@ -109,7 +130,7 @@ const useNotesDb = () => {
       });
     });
   };
-  return { storeTxnStatus, fetchNotes, storeNote, deleteNote, updateNote };
+  return { storeTxnStatus, fetchAllNotes, storeNote, deleteNote, updateNote };
 };
 
 const initDb = (): Promise<IDBDatabase> => {
