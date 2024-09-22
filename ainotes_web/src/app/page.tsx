@@ -16,7 +16,7 @@ export default function Home() {
 
   const [currentNote, setCurrentNote] = useState<Note>({
     id: "",
-    path: "/Untitled",
+    path: "",
     content: "",
     vembed: new Float32Array(),
   });
