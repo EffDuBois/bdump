@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Spinner from "./loaders/Spinner";
 import { Note, NotesDbType } from "@/utils/data";
+import Spinner from "./loaders/Spinner";
 
 interface SideBarProps {
   notesDb: NotesDbType;
 }
 
-export default function SideBar({ notesDb }: SideBarProps) {
+export default function FileDrawer({ notesDb }: SideBarProps) {
   const [notes, setNotes] = useState<Note[]>([]);
 
   const getNotes = async () => {

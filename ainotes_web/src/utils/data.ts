@@ -9,6 +9,14 @@ export interface Note {
   vembed: Float32Array | never[];
 }
 
+export interface Query {
+  query: string,
+  note:{
+    content: string,
+    embedding: Float32Array
+  }[]
+}
+
 export enum DBs {
   notes = "NotesDB",
 }
@@ -22,7 +30,7 @@ export interface NotesDbType {
   fetchAllNotes: () => Promise<Note[]>;
   storeNote: (data: Omit<Note, "id">) => Promise<Note>;
   deleteNote: (id: string) => Promise<boolean>;
-  updateNote: (id: string, data: Omit<Note, "id">) => Promise<boolean>;
+  updateNote: (id: string, data: Omit<Note, "id">) => Promise<Note>;
 }
 
 const useNotesDb = () => {
@@ -111,7 +119,7 @@ const useNotesDb = () => {
     });
   };
 
-  const updateNote = (id: string, data: Omit<Note, "id">): Promise<boolean> => {
+  const updateNote = (id: string, data: Omit<Note, "id">): Promise<Note> => {
     return new Promise((resolve, reject) => {
       if (storeTxnStatus) reject("Txn already in progress");
       setStoreTxnStatus(true);
@@ -121,7 +129,7 @@ const useNotesDb = () => {
         const res = store.put(data, id);
         res.onsuccess = () => {
           setStoreTxnStatus(false);
-          resolve(true);
+          resolve({ id, ...data });
         };
         res.onerror = () => {
           setStoreTxnStatus(false);
