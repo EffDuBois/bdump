@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from typing import List
 from pydantic import BaseModel
 from ai import generate_embedding, generate_note, ask_note
 
@@ -23,11 +24,14 @@ app.add_middleware(
 class createPrompt(BaseModel):
     query: str
 
+class NoteEmbedding(BaseModel):
+    note: str
+    embedding: List[float]
 
 class askPrompt(BaseModel):
     query: str
-    notes: list[str]
-    notesemb: list[list[float]]
+    data: List[NoteEmbedding]
+
 
 @app.post("/notes/create")
 async def create_notes(prompt: createPrompt):       
@@ -38,9 +42,10 @@ async def create_notes(prompt: createPrompt):
 @app.post("/notes/ask")
 async def ask_notes(prompt: askPrompt):
     emb = generate_embedding(prompt.query)
-    ans = ask_note(prompt.query, emb, prompt.notes, prompt.notesemb)
+    notes = [i.note for i in prompt.data]
+    notesemb = [i.embedding for i in prompt.data]
+    ans = ask_note(prompt.query, emb, notes, notesemb)
     return {"body" : ans}
       
-
 
 
