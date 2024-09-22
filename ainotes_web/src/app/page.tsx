@@ -3,39 +3,60 @@
 import { postCreateNote } from "@/apis/postCreateNote";
 import useNotesDb, { Note } from "@/utils/data";
 import useTranscriber from "@/utils/transcriber";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import NoteTextArea from "../components/NoteTextArea";
 import FileDrawer from "@/components/FileDrawer";
 import InputButtons from "@/components/InputButtons";
+import { postQueryNote } from "@/apis/postQueryNote";
 
 export default function Home() {
   const [transcript, setTranscript] = useState("");
   const [isRecording, setIsRecording] = useState(false);
+  const [notes, setNotes] = useState<Note[]>([]);
+
   const [currentNote, setCurrentNote] = useState<Note>({
     id: "",
-    path: "",
+    path: "/Untitled",
     content: "",
-    vembed: [],
+    vembed: new Float32Array(),
   });
 
   const transcriber = useTranscriber(setTranscript);
-  const notesDB = useNotesDb();
+  const notesDb = useNotesDb();
 
-  const toggleRecording = async () => {
+  const createEmptyNote = async () => {
+    notesDb.storeNote({
+      path: "/Untitled",
+      content: "",
+      vembed: new Float32Array(),
+    });
+  };
+
+  const getNotes = async () => {
+    notesDb.fetchAllNotes().then((notes) => setNotes(notes));
+  };
+
+  useEffect(() => {
+    if (!notesDb.storeTxnStatus) {
+      getNotes();
+    }
+  }, [notesDb.storeTxnStatus]);
+
+  const toggleNoteRecording = async () => {
     transcriber.toggleTranscription();
     setIsRecording((cur) => !cur);
 
     if (isRecording) {
       const processedData = await postCreateNote(transcript);
       if (currentNote.id) {
-        const updatedNote = await notesDB.updateNote(currentNote.id, {
+        const updatedNote = await notesDb.updateNote(currentNote.id, {
           path: currentNote.path,
           content: processedData,
           vembed: processedData.embedding,
         });
         setCurrentNote(updatedNote);
       } else {
-        const newNote = await notesDB.storeNote({
+        const newNote = await notesDb.storeNote({
           path: "/Untitled",
           content: processedData.body,
           vembed: processedData.embedding,
@@ -46,12 +67,39 @@ export default function Home() {
     }
   };
 
+  const toggleQueryRecording = async () => {
+    transcriber.toggleTranscription();
+    setIsRecording((cur) => !cur);
+
+    if (isRecording) {
+      const queryResponse = await postQueryNote({
+        query: transcript,
+        data: notes.map((note) => ({
+          note: note.content,
+          embedding: note.vembed,
+        })),
+      });
+      setTranscript("");
+      setCurrentNote({
+        id: "",
+        path: "/Query",
+        content: queryResponse.content,
+        vembed: new Float32Array(),
+      });
+    }
+  };
+
   return (
     <>
-      <FileDrawer notesDb={notesDB} />
+      <FileDrawer
+        notes={notes}
+        notesDb={notesDb}
+        createEmptyNote={createEmptyNote}
+      />
       <NoteTextArea currentNote={currentNote} transcript={transcript} />
       <InputButtons
-        toggleRecording={toggleRecording}
+        toggleNoteRecording={toggleNoteRecording}
+        toggleQueryRecording={toggleQueryRecording}
         isRecording={isRecording}
       />
     </>

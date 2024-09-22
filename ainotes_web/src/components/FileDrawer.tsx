@@ -5,31 +5,19 @@ import { Note, NotesDbType } from "@/utils/data";
 import Spinner from "./loaders/Spinner";
 
 interface SideBarProps {
+  notes: Note[];
   notesDb: NotesDbType;
+  createEmptyNote: () => {};
 }
 
-export default function FileDrawer({ notesDb }: SideBarProps) {
-  const [notes, setNotes] = useState<Note[]>([]);
-
-  const getNotes = async () => {
-    notesDb.fetchAllNotes().then((notes) => setNotes(notes));
-  };
-  const createNote = async () => {
-    notesDb.storeNote({
-      path: "/Untitled",
-      content: "",
-      vembed: [],
-    });
-  };
-
-  useEffect(() => {
-    if (!notesDb.storeTxnStatus) {
-      getNotes();
-    }
-  }, [notesDb.storeTxnStatus]);
+export default function FileDrawer({
+  notes,
+  notesDb,
+  createEmptyNote,
+}: SideBarProps) {
   return (
     <ul>
-      <button onClick={createNote}>Add Note +</button>
+      <button onClick={createEmptyNote}>Add Note +</button>
       {notes && !notesDb.storeTxnStatus ? (
         notes.map((note) => <li key={note.path}>{note.path}</li>)
       ) : (

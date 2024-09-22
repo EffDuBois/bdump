@@ -1,21 +1,34 @@
 import { useState } from "react";
 
-const version = 1;
+const VERSION = 1;
 
 export interface Note {
   id: string;
   path: string;
   content: string;
-  vembed: Float32Array | never[];
+  vembed: Float32Array;
 }
 
-export interface Query {
-  query: string,
-  note:{
-    content: string,
-    embedding: Float32Array
-  }[]
+export interface QueryRequest {
+  query: string;
+  data: {
+    note: string;
+    embedding: Float32Array;
+  }[];
 }
+const example = {
+  query: "Tell me the amount of salt in chicken recepie",
+  data: [
+    {
+      note: "This is my daily dairy",
+      embedding: [12312, 123123, 12312312, 12312312],
+    },
+    {
+      note: "5 tablespoon salt, a neem tree and 6 glasses of air for 1 cup chicken",
+      embedding: [696969696, 696969966, 69696969],
+    },
+  ],
+};
 
 export enum DBs {
   notes = "NotesDB",
@@ -144,7 +157,7 @@ const useNotesDb = () => {
 const initDb = (): Promise<IDBDatabase> => {
   return new Promise((resolve, reject) => {
     // open the connection
-    const request = indexedDB.open(DBs.notes, version);
+    const request = indexedDB.open(DBs.notes, VERSION);
 
     request.onupgradeneeded = () => {
       const db = request.result;
@@ -164,8 +177,7 @@ const initDb = (): Promise<IDBDatabase> => {
 
     request.onsuccess = () => {
       const db = request.result;
-      const version = db.version;
-      console.log("initDB success", version);
+      console.log("initDB success", VERSION);
       resolve(db);
     };
 
