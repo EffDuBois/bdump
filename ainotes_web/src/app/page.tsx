@@ -47,23 +47,27 @@ export default function Home() {
     setIsRecording((cur) => !cur);
 
     if (isRecording) {
-      const processedData = await postCreateNote(transcript);
-      if (currentNote.id) {
-        const updatedNote = await notesDb.updateNote(currentNote.id, {
-          path: currentNote.path,
-          content: processedData,
-          vembed: processedData.embedding,
-        });
-        setCurrentNote(updatedNote);
-      } else {
-        const newNote = await notesDb.storeNote({
-          path: "/Untitled",
-          content: processedData.body,
-          vembed: processedData.embedding,
-        });
-        setCurrentNote(newNote);
+      try {
+        const processedData = await postCreateNote(transcript);
+        if (currentNote.id) {
+          const updatedNote = await notesDb.updateNote(currentNote.id, {
+            path: currentNote.path,
+            content: processedData,
+            vembed: processedData.embedding,
+          });
+          setCurrentNote(updatedNote);
+        } else {
+          const newNote = await notesDb.storeNote({
+            path: "/Untitled",
+            content: processedData.body,
+            vembed: processedData.embedding,
+          });
+          setCurrentNote(newNote);
+          setTranscript("");
+        }
+      } catch (error) {
+        console.error(error);
       }
-      setTranscript("");
     }
   };
 
@@ -72,20 +76,24 @@ export default function Home() {
     setIsRecording((cur) => !cur);
 
     if (isRecording) {
-      const queryResponse = await postQueryNote({
-        query: transcript,
-        data: notes.map((note) => ({
-          note: note.content,
-          embedding: note.vembed,
-        })),
-      });
-      setTranscript("");
-      setCurrentNote({
-        id: "",
-        path: "/Query",
-        content: queryResponse.content,
-        vembed: new Float32Array(),
-      });
+      try {
+        const queryResponse = await postQueryNote({
+          query: transcript,
+          data: notes.map((note) => ({
+            note: note.content,
+            embedding: note.vembed,
+          })),
+        });
+        setTranscript("");
+        setCurrentNote({
+          id: "",
+          path: "/Query",
+          content: queryResponse.content,
+          vembed: new Float32Array(),
+        });
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 

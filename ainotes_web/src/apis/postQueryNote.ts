@@ -11,6 +11,6 @@ export async function postQueryNote(queryRequest: QueryRequest) {
     return response.data;
   } catch (error) {
     console.error(error);
-    return Promise.reject;
+    throw error;
   }
 }

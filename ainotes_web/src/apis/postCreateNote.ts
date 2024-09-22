@@ -9,7 +9,6 @@ export async function postCreateNote(query: string) {
     );
     return response.data;
   } catch (error) {
-    console.error(error);
-    return Promise.reject;
+    throw error;
   }
 }
