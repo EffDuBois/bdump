@@ -17,6 +17,25 @@ def generate_embedding(query):
     else:
         return ['empty query']
 
+def find_title(body):
+    if (body != ""):
+        parser = StrOutputParser()
+        llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro", temperature=0.2, max_toxens=500)
+        system_prompt = (
+            "the given markdown code represents a note made by user, you have to find a suitable title for the note"
+            "no other operation is supposed to be done"
+        )
+
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                ("system", system_prompt),
+                ("user", "{input}"),
+            ]
+        )
+
+        chain = prompt | llm | parser
+        return chain.invoke({"input": body})
+
 
 def generate_note(query):
     if (query != ""):
@@ -38,7 +57,9 @@ def generate_note(query):
         )
 
         chain = prompt | llm | parser
-        return chain.invoke({"input": query})
+        body = chain.invoke({"input": query})
+        title = find_title(body)
+        return [title, body]
     
     else:
         return "empty query"

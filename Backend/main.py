@@ -37,7 +37,7 @@ class askPrompt(BaseModel):
 async def create_notes(prompt: createPrompt):       
     emb = generate_embedding(prompt.query)             # returns vector embedding for the prompt
     ans = generate_note(prompt.query)                  # returns markdown text for the prompt
-    return {"body" : ans, "embedding" : emb} 
+    return {"title": ans[0], "body" : ans[1], "embedding" : emb} 
  
 @app.post("/notes/ask")
 async def ask_notes(prompt: askPrompt):
