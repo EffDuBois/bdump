@@ -11,8 +11,8 @@ origins = [
     "http://localhost",
     "http://localhost:8080",
     "http://localhost:3000"
-    "http://dev-ainotes.vercel.app",
-    "http://prod-ainotes.vercel.app"
+    "http://dev-ainotetaker.vercel.app",
+    "http://ainotetaker.vercel.app"
 ]
 
 app.add_middleware(
