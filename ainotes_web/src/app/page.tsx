@@ -111,7 +111,11 @@ export default function Home() {
         createEmptyNote={createEmptyNote}
       />
       <div className="flex flex-col w-full h-screen pt-12 pb-20">
-        <NoteTextArea currentNote={currentNote} transcript={transcript} />
+        <NoteTextArea
+          currentNote={currentNote}
+          transcript={transcript}
+          isRecording={isRecordingNote || isRecordingQuery}
+        />
         <InputButtons
           toggleNoteRecording={toggleNoteRecording}
           toggleQueryRecording={toggleQueryRecording}

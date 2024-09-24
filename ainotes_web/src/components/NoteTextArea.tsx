@@ -7,11 +7,13 @@ import remarkGfm from "remark-gfm";
 interface NoteTextAreaProps {
   currentNote: Note;
   transcript: string;
+  isRecording: boolean
 }
 
 export default function NoteTextArea({
   currentNote,
   transcript,
+  isRecording,
 }: NoteTextAreaProps) {
   return (
     <>
@@ -32,7 +34,7 @@ export default function NoteTextArea({
               {currentNote?.content}
             </Markdown>
             <Markdown
-              className={`${subtextFont.className} inline`}
+              className={`${subtextFont.className} ${!isRecording&&"animate-pulse"} inline`}
               remarkPlugins={[remarkGfm]}
             >
               {transcript}
