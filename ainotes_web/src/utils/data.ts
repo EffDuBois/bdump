@@ -3,7 +3,7 @@ import { useState } from "react";
 const VERSION = 1;
 
 export interface Note {
-  id: string;
+  id: number | undefined;
   path: string;
   content: string;
   vembed: Float32Array;
@@ -43,7 +43,7 @@ export interface NotesDbType {
   fetchAllNotes: () => Promise<Note[]>;
   storeNote: (data: Omit<Note, "id">) => Promise<Note>;
   deleteNote: (id: string) => Promise<boolean>;
-  updateNote: (data: Note) => Promise<Note>;
+  updateNote: (note: Omit<Note, "id"> & { id?: number }) => Promise<Note>;
 }
 
 const useNotesDb = () => {
@@ -101,7 +101,7 @@ const useNotesDb = () => {
         const res = tx.objectStore(Stores.notes).add(data);
         res.onsuccess = () => {
           setStoreTxnStatus(false);
-          resolve({ ...data, id: String(res.result) });
+          resolve({ ...data, id: Number(res.result) });
         };
         res.onerror = () => {
           setStoreTxnStatus(false);
@@ -132,7 +132,9 @@ const useNotesDb = () => {
     });
   };
 
-  const updateNote = (data: Note): Promise<Note> => {
+  const updateNote = (
+    data: Omit<Note, "id"> & { id?: number }
+  ): Promise<Note> => {
     return new Promise((resolve, reject) => {
       if (storeTxnStatus) reject("Txn already in progress");
       setStoreTxnStatus(true);
@@ -142,7 +144,7 @@ const useNotesDb = () => {
         const res = store.put(data);
         res.onsuccess = () => {
           setStoreTxnStatus(false);
-          resolve(data);
+          resolve({ ...data, id: Number(res.result) });
         };
         res.onerror = () => {
           setStoreTxnStatus(false);

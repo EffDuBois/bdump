@@ -4,19 +4,24 @@ import { postCreateNote } from "@/apis/postCreateNote";
 import useNotesDb, { Note } from "@/utils/data";
 import useTranscriber from "@/utils/transcriber";
 import { useEffect, useState } from "react";
-import NoteTextArea from "../components/NoteTextArea";
-import FileDrawer from "@/components/FileDrawer";
-import InputButtons from "@/components/InputButtons";
+import NoteTextArea from "../pageComponents/NoteTextArea";
+import FileDrawer from "@/pageComponents/FileDrawer";
+import InputButtons from "@/pageComponents/InputButtons";
 import { postQueryNote } from "@/apis/postQueryNote";
+import DrawerToggle from "@/pageComponents/drawerToggle";
+import NoteTitleArea from "@/pageComponents/NoteTitleArea";
+import { getTitleFromPath } from "@/utils/utils";
 
 export default function Home() {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   const [transcript, setTranscript] = useState("");
   const [isRecordingNote, setIsRecordingNote] = useState(false);
   const [isRecordingQuery, setIsRecordingQuery] = useState(false);
   const [notes, setNotes] = useState<Note[]>([]);
 
   const [currentNote, setCurrentNote] = useState<Note>({
-    id: "",
+    id: undefined,
     path: "",
     content: "",
     vembed: new Float32Array(),
@@ -26,11 +31,15 @@ export default function Home() {
   const notesDb = useNotesDb();
 
   const createEmptyNote = async () => {
-    notesDb.storeNote({
-      path: "/Untitled",
-      content: "",
-      vembed: new Float32Array(),
-    });
+    notesDb
+      .storeNote({
+        path: "/Untitled",
+        content: "",
+        vembed: new Float32Array(),
+      })
+      .then((newNote) => {
+        setCurrentNote(newNote);
+      });
   };
 
   const getNotes = async () => {
@@ -43,35 +52,46 @@ export default function Home() {
     }
   }, [notesDb.storeTxnStatus]);
 
+  const updateNSyncNote = async (note: Omit<Note, "id"> & { id?: number }) => {
+    notesDb.updateNote(note).then((updatedNote) => {
+      setCurrentNote(updatedNote);
+    });
+  };
+
+  const updateTitle = async (title: string, currentNote: Note) => {
+    const path = currentNote.path.replace(/[^\/]+$/, title);
+    updateNSyncNote({ ...currentNote, path });
+  };
+
   const toggleNoteRecording = async () => {
     transcriber.toggleTranscription();
     setIsRecordingNote((cur) => !cur);
 
     if (isRecordingNote) {
-      try {
-        const processedData = await postCreateNote(
-          currentNote.content + " " + transcript
-        );
-        if (currentNote.id) {
-          const updatedNote = await notesDb.updateNote({
-            id: currentNote.id,
-            path: currentNote.path,
-            content: processedData.body,
-            vembed: processedData.embedding,
-          });
-          setCurrentNote(updatedNote);
-          setTranscript("");
-        } else {
-          const newNote = await notesDb.storeNote({
-            path: `/${processedData.title}`,
-            content: processedData.body,
-            vembed: processedData.embedding,
-          });
-          setCurrentNote(newNote);
-          setTranscript("");
+      if (transcript) {
+        try {
+          const processedData = await postCreateNote(
+            currentNote.content + " " + transcript
+          );
+          if (currentNote.id) {
+            updateNSyncNote({
+              id: currentNote.id,
+              path: currentNote.path,
+              content: processedData.body,
+              vembed: processedData.embedding,
+            });
+            setTranscript("");
+          } else {
+            updateNSyncNote({
+              path: `/${processedData.title}`,
+              content: processedData.body,
+              vembed: processedData.embedding,
+            });
+            setTranscript("");
+          }
+        } catch (error) {
+          console.error(error);
         }
-      } catch (error) {
-        console.error(error);
       }
     }
   };
@@ -91,7 +111,7 @@ export default function Home() {
         });
         setTranscript("");
         setCurrentNote({
-          id: "",
+          id: undefined,
           path: "/Query",
           content: queryResponse.content,
           vembed: new Float32Array(),
@@ -104,18 +124,36 @@ export default function Home() {
 
   return (
     <main className="flex">
-      <FileDrawer
-        notes={notes}
-        storeTxnStatus={notesDb.storeTxnStatus}
-        setCurrentNote={setCurrentNote}
-        createEmptyNote={createEmptyNote}
-      />
-      <div className="flex flex-col w-full h-screen pt-12 pb-20">
+      {drawerOpen && (
+        <FileDrawer
+          notes={notes}
+          storeTxnStatus={notesDb.storeTxnStatus}
+          setCurrentNote={setCurrentNote}
+          createEmptyNote={createEmptyNote}
+        >
+          <DrawerToggle setDrawerOpen={setDrawerOpen} />
+        </FileDrawer>
+      )}
+      <div
+        className={`flex flex-col w-full h-screen pb-20 ${
+          drawerOpen && "max-md:hidden"
+        }`}
+      >
+        <DrawerToggle
+          disabled={drawerOpen}
+          className={`${drawerOpen && "opacity-0"}`}
+          setDrawerOpen={setDrawerOpen}
+        />
+        <NoteTitleArea
+          updateTitle={(newTitle) => updateTitle(newTitle, currentNote)}
+          noteTitle={getTitleFromPath(currentNote.path)}
+        />
         <NoteTextArea
           currentNote={currentNote}
           transcript={transcript}
           isRecording={isRecordingNote || isRecordingQuery}
         />
+
         <InputButtons
           toggleNoteRecording={toggleNoteRecording}
           toggleQueryRecording={toggleQueryRecording}
