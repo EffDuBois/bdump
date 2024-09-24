@@ -39,6 +39,8 @@ def find_title(body):
     if (body != ""):
         system_prompt = (
             "the given markdown code represents a note made by user, you have to find a suitable title for the note"
+            "i just need the title and not the markdown script for title."
+            "also, generate me only one title and not two or more"
             "no other operation is supposed to be done"
         )
         return llm(system_prompt, body)
@@ -58,6 +60,7 @@ def generate_note(query):
         )
         body = llm(system_prompt, query)
         title = find_title(body)
+        title = title.replace("\n", "")
         return [title, body]
     
     else:
