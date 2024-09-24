@@ -46,7 +46,7 @@ def find_title(body):
         return llm(system_prompt, body)
     
     else:
-        return "empty body"
+        return "title couldnt be fetched due to empty body"
 
 
 def generate_note(query):
@@ -59,6 +59,8 @@ def generate_note(query):
             "If you dont know the answer then reply with 'server down'"
         )
         body = llm(system_prompt, query)
+        if (body==""):
+            body = query
         title = find_title(body)
         title = title.replace("\n", "")
         return [title, body]
