@@ -1,28 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { Note, NotesDbType } from "@/utils/data";
 import Spinner from "./loaders/Spinner";
 
 interface SideBarProps {
   notes: Note[];
-  notesDb: NotesDbType;
+  storeTxnStatus: boolean;
+  setCurrentNote: React.Dispatch<SetStateAction<Note>>;
   createEmptyNote: () => {};
 }
 
 export default function FileDrawer({
   notes,
-  notesDb,
+  storeTxnStatus,
+  setCurrentNote,
   createEmptyNote,
 }: SideBarProps) {
   return (
-    <ul>
+    <div className="w-1/5 border-r-2 border-white p-6 resize-x">
       <button onClick={createEmptyNote}>Add Note +</button>
-      {notes && !notesDb.storeTxnStatus ? (
-        notes.map((note) => <li key={note.path}>{note.path}</li>)
+      {notes && !storeTxnStatus ? (
+        notes.map((note) => (
+          <button key={note.path} onClick={() => setCurrentNote(note)}>
+            {note.path}
+          </button>
+        ))
       ) : (
         <Spinner />
       )}
-    </ul>
+    </div>
   );
 }

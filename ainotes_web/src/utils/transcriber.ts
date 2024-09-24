@@ -2,7 +2,10 @@
 import { createClient, ListenLiveClient } from "@deepgram/sdk";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY;
-
+const DEEPGRAM_MODEL_CONFIG = {
+  model: "base",
+  smart_format: true,
+};
 function useTranscriber(setTranscript: Dispatch<SetStateAction<string>>) {
   const [recording, setRecording] = useState(false);
   const [mic, setMic] = useState<MediaRecorder>();
@@ -11,14 +14,11 @@ function useTranscriber(setTranscript: Dispatch<SetStateAction<string>>) {
     const deepgram = createClient(DEEPGRAM_API_KEY);
     let keepAlive;
 
-    const socket = deepgram.listen.live({
-      model: "nova",
-      smart_format: true,
-    });
+    const socket = deepgram.listen.live(DEEPGRAM_MODEL_CONFIG);
 
     if (keepAlive) clearInterval(keepAlive);
     keepAlive = setInterval(() => {
-      console.log("KeepAlive sent.");
+      // console.log("KeepAlive sent.");
       socket.keepAlive();
     }, 5000);
 
@@ -27,7 +27,7 @@ function useTranscriber(setTranscript: Dispatch<SetStateAction<string>>) {
       socket.on("Results", (data) => {
         console.log(data);
         const transcript = data.channel.alternatives[0].transcript;
-        if (transcript !== "") setTranscript((old) => old + transcript);
+        if (transcript !== "") setTranscript((old) => old + " " + transcript);
       });
       socket.on("error", (e) => console.error(e));
       socket.on("warning", (e) => console.warn(e));

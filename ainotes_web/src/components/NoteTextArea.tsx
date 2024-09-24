@@ -15,13 +15,17 @@ export default function NoteTextArea({
 }: NoteTextAreaProps) {
   return (
     <>
-      {currentNote.path ? (
-        <h1 className="text-4xl">{getTitle(currentNote)}</h1>
-      ) : (
-        <h1 className={`${titleFont.className} text-4xl`}>NotesAPP</h1>
-      )}
+      <h1 className="text-4xl my-8 text-center">
+        {currentNote.path ? (
+          getTitle(currentNote)
+        ) : (
+          <span className={`${titleFont.className}`}>
+            NotesAPP
+          </span>
+        )}
+      </h1>
 
-      <div className="h-[50vh] sm:text-2xl text-xl w-full lg:w-2/5">
+      <div className="sm:text-2xl h-full text-xl w-full overflow-y-auto px-[10%]">
         {currentNote.content || transcript ? (
           <>
             <Markdown remarkPlugins={[remarkGfm]}>

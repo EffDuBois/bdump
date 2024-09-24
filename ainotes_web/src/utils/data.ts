@@ -43,7 +43,7 @@ export interface NotesDbType {
   fetchAllNotes: () => Promise<Note[]>;
   storeNote: (data: Omit<Note, "id">) => Promise<Note>;
   deleteNote: (id: string) => Promise<boolean>;
-  updateNote: (id: string, data: Omit<Note, "id">) => Promise<Note>;
+  updateNote: (data: Note) => Promise<Note>;
 }
 
 const useNotesDb = () => {
@@ -132,17 +132,17 @@ const useNotesDb = () => {
     });
   };
 
-  const updateNote = (id: string, data: Omit<Note, "id">): Promise<Note> => {
+  const updateNote = (data: Note): Promise<Note> => {
     return new Promise((resolve, reject) => {
       if (storeTxnStatus) reject("Txn already in progress");
       setStoreTxnStatus(true);
       initDb().then((db) => {
         const tx = db.transaction(Stores.notes, "readwrite");
         const store = tx.objectStore(Stores.notes);
-        const res = store.put(data, id);
+        const res = store.put(data);
         res.onsuccess = () => {
           setStoreTxnStatus(false);
-          resolve({ id, ...data });
+          resolve(data);
         };
         res.onerror = () => {
           setStoreTxnStatus(false);

@@ -11,7 +11,8 @@ import { postQueryNote } from "@/apis/postQueryNote";
 
 export default function Home() {
   const [transcript, setTranscript] = useState("");
-  const [isRecording, setIsRecording] = useState(false);
+  const [isRecordingNote, setIsRecordingNote] = useState(false);
+  const [isRecordingQuery, setIsRecordingQuery] = useState(false);
   const [notes, setNotes] = useState<Note[]>([]);
 
   const [currentNote, setCurrentNote] = useState<Note>({
@@ -44,21 +45,25 @@ export default function Home() {
 
   const toggleNoteRecording = async () => {
     transcriber.toggleTranscription();
-    setIsRecording((cur) => !cur);
+    setIsRecordingNote((cur) => !cur);
 
-    if (isRecording) {
+    if (isRecordingNote) {
       try {
-        const processedData = await postCreateNote(transcript);
+        const processedData = await postCreateNote(
+          currentNote.content + " " + transcript
+        );
         if (currentNote.id) {
-          const updatedNote = await notesDb.updateNote(currentNote.id, {
+          const updatedNote = await notesDb.updateNote({
+            id: currentNote.id,
             path: currentNote.path,
-            content: processedData,
+            content: processedData.body,
             vembed: processedData.embedding,
           });
           setCurrentNote(updatedNote);
+          setTranscript("");
         } else {
           const newNote = await notesDb.storeNote({
-            path: "/Untitled",
+            path: `/${processedData.title}`,
             content: processedData.body,
             vembed: processedData.embedding,
           });
@@ -73,9 +78,9 @@ export default function Home() {
 
   const toggleQueryRecording = async () => {
     transcriber.toggleTranscription();
-    setIsRecording((cur) => !cur);
+    setIsRecordingQuery((cur) => !cur);
 
-    if (isRecording) {
+    if (isRecordingNote) {
       try {
         const queryResponse = await postQueryNote({
           query: transcript,
@@ -98,18 +103,22 @@ export default function Home() {
   };
 
   return (
-    <>
+    <main className="flex">
       <FileDrawer
         notes={notes}
-        notesDb={notesDb}
+        storeTxnStatus={notesDb.storeTxnStatus}
+        setCurrentNote={setCurrentNote}
         createEmptyNote={createEmptyNote}
       />
-      <NoteTextArea currentNote={currentNote} transcript={transcript} />
-      <InputButtons
-        toggleNoteRecording={toggleNoteRecording}
-        toggleQueryRecording={toggleQueryRecording}
-        isRecording={isRecording}
-      />
-    </>
+      <div className="flex flex-col w-full h-screen pt-12 pb-20">
+        <NoteTextArea currentNote={currentNote} transcript={transcript} />
+        <InputButtons
+          toggleNoteRecording={toggleNoteRecording}
+          toggleQueryRecording={toggleQueryRecording}
+          isRecordingNote={isRecordingNote}
+          isRecordingQuery={isRecordingQuery}
+        />
+      </div>
+    </main>
   );
 }

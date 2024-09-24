@@ -14,10 +14,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${maintextFont.className} min-h-screen`}>
-        <main className="flex min-h-screen flex-col justify-between items-center pt-12 pb-20 px-8">
+      <body className={`${maintextFont.className}`}>
           {children}
-        </main>
       </body>
     </html>
   );
