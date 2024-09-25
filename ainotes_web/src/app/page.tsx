@@ -8,7 +8,7 @@ import NoteTextArea from "../pageComponents/NoteTextArea";
 import FileDrawer from "@/pageComponents/FileDrawer";
 import InputButtons from "@/pageComponents/InputButtons";
 import { postQueryNote } from "@/apis/postQueryNote";
-import DrawerToggle from "@/pageComponents/drawerToggle";
+import DrawerToggle from "@/pageComponents/DrawerToggle";
 import NoteTitleArea from "@/pageComponents/NoteTitleArea";
 import { getTitleFromPath } from "@/utils/utils";
 
