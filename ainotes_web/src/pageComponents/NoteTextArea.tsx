@@ -5,24 +5,22 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 interface NoteTextAreaProps {
-  currentNote: Note;
+  noteContent?: string;
   transcript: string;
   isRecording: boolean;
 }
 
 export default function NoteTextArea({
-  currentNote,
+  noteContent,
   transcript,
   isRecording,
 }: NoteTextAreaProps) {
   return (
     <>
       <div className="sm:text-2xl h-full text-xl w-full overflow-y-auto px-[20%]">
-        {currentNote.content || currentNote.path || transcript ? (
+        {noteContent || transcript ? (
           <>
-            <Markdown remarkPlugins={[remarkGfm]}>
-              {currentNote?.content}
-            </Markdown>
+            <Markdown remarkPlugins={[remarkGfm]}>{noteContent}</Markdown>
             <Markdown
               className={`${subtextFont.className} ${
                 !isRecording && "animate-pulse"

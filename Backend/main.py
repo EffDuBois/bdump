@@ -27,12 +27,12 @@ class createPrompt(BaseModel):
     query: str
 
 class NoteEmbedding(BaseModel):
+    id: int
+    path: str
     note: str
     embedding: List[float]
 
 class askPrompt(BaseModel):
-    id: int
-    path: str
     query: str
     data: List[NoteEmbedding]
 

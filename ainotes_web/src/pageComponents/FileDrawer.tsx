@@ -6,12 +6,15 @@ import Spinner from "./loaders/Spinner";
 import { getTitleFromPath } from "@/utils/utils";
 import SlabButton from "@/components/buttons/SlabButton";
 import { interfaceFont } from "@/ui/fonts";
+import { PartialBy } from "@/utils/custom_types";
 
 interface SideBarProps {
   children?: ReactNode;
   notes: Note[];
   storeTxnStatus: boolean;
-  setCurrentNote: React.Dispatch<SetStateAction<Note>>;
+  setCurrentNote: React.Dispatch<
+    SetStateAction<PartialBy<Note, "id"> | undefined>
+  >;
   createEmptyNote: () => {};
 }
 

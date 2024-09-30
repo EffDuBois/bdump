@@ -12,9 +12,9 @@ export default function NoteTitleArea({
   updateTitle,
   noteTitle,
 }: NoteTitleAreaProps) {
-  const [title, setTitle] = useState(getTitleFromPath(noteTitle));
+  const [title, setTitle] = useState(noteTitle);
   useEffect(() => {
-    setTitle(getTitleFromPath(noteTitle));
+    setTitle(noteTitle);
   }, [noteTitle]);
   return (
     <>
