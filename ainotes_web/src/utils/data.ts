@@ -11,10 +11,7 @@ export interface Note {
 
 export interface QueryRequest {
   query: string;
-  data: {
-    note: string;
-    embedding: Float32Array;
-  }[];
+  data: Note[];
 }
 const example = {
   query: "Tell me the amount of salt in chicken recepie",

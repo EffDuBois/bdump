@@ -100,14 +100,11 @@ export default function Home() {
     transcriber.toggleTranscription();
     setIsRecordingQuery((cur) => !cur);
 
-    if (isRecordingNote) {
+    if (isRecordingQuery) {
       try {
         const queryResponse = await postQueryNote({
           query: transcript,
-          data: notes.map((note) => ({
-            note: note.content,
-            embedding: note.vembed,
-          })),
+          data: notes,
         });
         setTranscript("");
         setCurrentNote({
