@@ -1,8 +1,12 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 from pydantic import BaseModel
 from ai import generate_embedding, generate_note, ask_note
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 
@@ -11,8 +15,7 @@ origins = [
     "http://localhost",
     "http://localhost:8080",
     "http://localhost:3000",
-    "http://dev-ainotetaker.vercel.app",
-    "http://ainotetaker.vercel.app"
+    os.getenv("FRONTEND_URL")
 ]
 
 app.add_middleware(
