@@ -4,93 +4,128 @@ import { postCreateNote } from "@/apis/postCreateNote";
 import useNotesDb, { Note } from "@/utils/data";
 import useTranscriber from "@/utils/transcriber";
 import { useEffect, useState } from "react";
-import NoteTextArea from "../components/NoteTextArea";
-import FileDrawer from "@/components/FileDrawer";
-import InputButtons from "@/components/InputButtons";
-import { postQueryNote } from "@/apis/postQueryNote";
+import NoteTextArea from "../pageComponents/NoteTextArea";
+import FileDrawer from "@/pageComponents/FileDrawer";
+import InputButtons from "@/pageComponents/InputButtons";
+import DrawerToggle from "@/pageComponents/DrawerToggle";
+import NoteTitleArea from "@/pageComponents/NoteTitleArea";
+import { getTitleFromPath } from "@/utils/utils";
+import postQueryNote from "@/apis/postQueryNote";
+import { PartialBy } from "@/utils/custom_types";
 
 export default function Home() {
-  const [transcript, setTranscript] = useState("");
-  const [isRecording, setIsRecording] = useState(false);
+  const notesDb = useNotesDb();
   const [notes, setNotes] = useState<Note[]>([]);
 
-  const [currentNote, setCurrentNote] = useState<Note>({
-    id: "",
-    path: "",
-    content: "",
-    vembed: new Float32Array(),
-  });
+  const [currentNote, setCurrentNote] = useState<PartialBy<Note, "id">>();
 
+  const [transcript, setTranscript] = useState("");
   const transcriber = useTranscriber(setTranscript);
-  const notesDb = useNotesDb();
 
-  const createEmptyNote = async () => {
-    notesDb.storeNote({
-      path: "/Untitled",
-      content: "",
-      vembed: new Float32Array(),
-    });
-  };
+  const [isRecordingNote, setIsRecordingNote] = useState(false);
+  const [isRecordingQuery, setIsRecordingQuery] = useState(false);
+
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const getNotes = async () => {
     notesDb.fetchAllNotes().then((notes) => setNotes(notes));
   };
 
   useEffect(() => {
+    //Fetching notes
     if (!notesDb.storeTxnStatus) {
       getNotes();
     }
   }, [notesDb.storeTxnStatus]);
 
+  const createEmptyNote = async () => {
+    notesDb
+      .storeNote({
+        path: "/Untitled",
+        content: "",
+      })
+      .then((newNote) => {
+        setCurrentNote(newNote);
+      });
+  };
+
+  const updateNSyncNote = async (note: PartialBy<Note, "id">) => {
+    notesDb.putNote(note).then((updatedNote) => {
+      setCurrentNote(updatedNote);
+    });
+  };
+
+  const updateTitle = async (
+    title: string,
+    note: PartialBy<Note, "id"> | undefined
+  ) => {
+    if (note) {
+      const path = note.path.replace(/[^\/]+$/, title);
+      updateNSyncNote({ ...note, path });
+    } else {
+      //handle no note alert
+    }
+  };
+
   const toggleNoteRecording = async () => {
     transcriber.toggleTranscription();
-    setIsRecording((cur) => !cur);
+    setIsRecordingNote((cur) => !cur);
 
-    if (isRecording) {
-      try {
-        const processedData = await postCreateNote(transcript);
-        if (currentNote.id) {
-          const updatedNote = await notesDb.updateNote(currentNote.id, {
-            path: currentNote.path,
-            content: processedData,
-            vembed: processedData.embedding,
-          });
-          setCurrentNote(updatedNote);
-        } else {
-          const newNote = await notesDb.storeNote({
-            path: "/Untitled",
-            content: processedData.body,
-            vembed: processedData.embedding,
-          });
-          setCurrentNote(newNote);
-          setTranscript("");
+    if (isRecordingNote) {
+      if (transcript) {
+        try {
+          const processedData = await postCreateNote(
+            currentNote?.content + " " + transcript
+          );
+          //existing note
+          if (currentNote?.id && currentNote.path) {
+            updateNSyncNote({
+              id: currentNote.id,
+              path: currentNote.path,
+              content: processedData.body,
+              embedding: processedData.embedding,
+            });
+            setTranscript("");
+          }
+          //new note
+          else {
+            updateNSyncNote({
+              path: `/${processedData.title}`,
+              content: processedData.body,
+              embedding: processedData.embedding,
+            });
+            setTranscript("");
+          }
+        } catch (error) {
+          console.error(error);
         }
-      } catch (error) {
-        console.error(error);
       }
     }
   };
 
   const toggleQueryRecording = async () => {
     transcriber.toggleTranscription();
-    setIsRecording((cur) => !cur);
+    setIsRecordingQuery((cur) => !cur);
 
-    if (isRecording) {
+    if (isRecordingQuery) {
       try {
         const queryResponse = await postQueryNote({
           query: transcript,
-          data: notes.map((note) => ({
-            note: note.content,
-            embedding: note.vembed,
-          })),
+          data: notes
+            .filter((note) => note.embedding && note.id)
+            .map((note) => ({
+              id: note.id,
+              path: note.path,
+              note: note.content,
+              embedding: note.embedding as Float32Array,
+            })),
+        }).then((response) => {
+          setCurrentNote({
+            path: "/Response",
+            content: response.body,
+          });
         });
         setTranscript("");
-        setCurrentNote({
-          id: "",
-          path: "/Query",
-          content: queryResponse.content,
-          vembed: new Float32Array(),
-        });
       } catch (error) {
         console.error(error);
       }
@@ -98,18 +133,43 @@ export default function Home() {
   };
 
   return (
-    <>
-      <FileDrawer
-        notes={notes}
-        notesDb={notesDb}
-        createEmptyNote={createEmptyNote}
-      />
-      <NoteTextArea currentNote={currentNote} transcript={transcript} />
-      <InputButtons
-        toggleNoteRecording={toggleNoteRecording}
-        toggleQueryRecording={toggleQueryRecording}
-        isRecording={isRecording}
-      />
-    </>
+    <main className="flex">
+      {drawerOpen && (
+        <FileDrawer
+          notes={notes}
+          storeTxnStatus={notesDb.storeTxnStatus}
+          setCurrentNote={setCurrentNote}
+          createEmptyNote={createEmptyNote}
+        >
+          <DrawerToggle setDrawerOpen={setDrawerOpen} />
+        </FileDrawer>
+      )}
+      <div
+        className={`flex flex-col w-full h-screen pb-20 ${
+          drawerOpen && "max-md:hidden"
+        }`}
+      >
+        <DrawerToggle
+          className={`${drawerOpen && "hidden"}`}
+          setDrawerOpen={setDrawerOpen}
+        />
+        <NoteTitleArea
+          updateTitle={(newTitle) => updateTitle(newTitle, currentNote)}
+          noteTitle={getTitleFromPath(currentNote?.path ?? "/Untitled")}
+        />
+        <NoteTextArea
+          noteContent={currentNote?.content}
+          transcript={transcript}
+          isRecording={isRecordingNote || isRecordingQuery}
+        />
+
+        <InputButtons
+          toggleNoteRecording={toggleNoteRecording}
+          toggleQueryRecording={toggleQueryRecording}
+          isRecordingNote={isRecordingNote}
+          isRecordingQuery={isRecordingQuery}
+        />
+      </div>
+    </main>
   );
 }

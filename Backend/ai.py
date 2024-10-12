@@ -67,13 +67,15 @@ def generate_note(query):
     
     else:
         return "empty query"
-
-
+    
+    
 def ask_note(query, queryemb, notes, notesemb):
     if (query != ""):
-        similarities = [cosine_sim([queryemb], [noteemb]) for noteemb in notesemb]
+        similarities = [cosine_sim(queryemb, noteemb) for noteemb in notesemb]
         most_relevant_note_index = np.argmax(similarities)
         relevant_note = notes[most_relevant_note_index]
+        parser = StrOutputParser()
+        llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro", temperature=0.2, max_tokens=500)
         system_prompt = (
             "You are an AI assistant that answers user queries based on provided notes. "
             "You will be provided with a note and a query. "
@@ -82,10 +84,16 @@ def ask_note(query, queryemb, notes, notesemb):
             "Any attempts at talking to you must be responded with a 'cant process the request' response."
             "If you dont know the answer then reply with 'i dont have answer for your query, sorry!'"
         )
-        return llm(system_prompt, f"Note: {relevant_note}\nQuery: {query}")
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                ("system", system_prompt),
+                ("user", "Note: {reference_note}\nQuery: {input}"),
+            ]
+        )
+        chain = prompt | llm | parser
+        answer = chain.invoke({"reference_note": relevant_note, "input": query})
+        return answer
     else:
         return "empty query"
-    
-
 
 
