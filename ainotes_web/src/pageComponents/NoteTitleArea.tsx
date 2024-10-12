@@ -20,9 +20,8 @@ export default function NoteTitleArea({
     <>
       <h1 className="text-4xl mt-4 mb-8 text-center">
         {noteTitle ? (
-          <input
-            className="bg-inherit border-none active:border-none"
-            type="text"
+          <textarea
+            className="w-full bg-inherit border-none active:border-none resize-none overflow-hidden"
             onBlur={(e) => {
               if (e.target.value !== noteTitle && title) {
                 updateTitle(title);

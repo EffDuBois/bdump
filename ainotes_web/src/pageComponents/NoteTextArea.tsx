@@ -3,6 +3,7 @@ import { Note } from "@/utils/data";
 import { getTitleFromPath } from "@/utils/utils";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import PlaceHolderTextArea from "./PlaceHolderTextArea";
 
 interface NoteTextAreaProps {
   noteContent?: string;
@@ -17,10 +18,12 @@ export default function NoteTextArea({
 }: NoteTextAreaProps) {
   return (
     <>
-      <div className="sm:text-2xl h-full text-xl w-full overflow-y-auto px-[20%]">
+      <div className="w-full text-xl">
         {noteContent || transcript ? (
           <>
-            <Markdown remarkPlugins={[remarkGfm]}>{noteContent}</Markdown>
+            <Markdown className="text-wrap" remarkPlugins={[remarkGfm]}>
+              {noteContent}
+            </Markdown>
             <Markdown
               className={`${subtextFont.className} ${
                 !isRecording && "animate-pulse"
@@ -31,23 +34,7 @@ export default function NoteTextArea({
             </Markdown>
           </>
         ) : (
-          <div className={`${isRecording && "animate-pulse"}`}>
-            <p>
-              Hey I am your{" "}
-              <span className={titleFont.className}>NoteTaker</span> assistant,
-              I will help take your notes for you-
-              <br />I can-
-            </p>
-            <ol className="list-disc">
-              <li>Format your notes for you</li>
-              <li>Make summaries for you</li>
-              <li>Take down lists for you</li>
-              <li>Lookup things from your notes</li>
-              <li className={subtextFont.className}>
-                <s>Make Chicken Noodles for you</s>
-              </li>
-            </ol>
-          </div>
+          <PlaceHolderTextArea isRecording={isRecording} />
         )}
       </div>
     </>

@@ -16,7 +16,7 @@ export default function InputButtons({
   isRecordingQuery,
 }: InputButtonsProps) {
   return (
-    <div className="flex w-full justify-center gap-10">
+    <div className="w-full my-8 flex justify-center items-center gap-10">
       <CircleButton onClick={toggleNoteRecording} disabled={isRecordingQuery}>
         {isRecordingNote ? (
           <FaStop className="text-black" size={"38px"} />

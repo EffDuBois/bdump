@@ -140,12 +140,11 @@ export default function Home() {
           storeTxnStatus={notesDb.storeTxnStatus}
           setCurrentNote={setCurrentNote}
           createEmptyNote={createEmptyNote}
-        >
-          <DrawerToggle setDrawerOpen={setDrawerOpen} />
-        </FileDrawer>
+          setDrawerOpen={setDrawerOpen}
+        />
       )}
       <div
-        className={`flex flex-col w-full h-screen pb-20 ${
+        className={`flex flex-col justify-stretch w-full h-screen ${
           drawerOpen && "max-md:hidden"
         }`}
       >
@@ -153,17 +152,21 @@ export default function Home() {
           className={`${drawerOpen && "hidden"}`}
           setDrawerOpen={setDrawerOpen}
         />
-        <NoteTitleArea
-          updateTitle={(newTitle) => updateTitle(newTitle, currentNote)}
-          noteTitle={
-            currentNote?.path ? getTitleFromPath(currentNote?.path) : undefined
-          }
-        />
-        <NoteTextArea
-          noteContent={currentNote?.content}
-          transcript={transcript}
-          isRecording={isRecordingNote || isRecordingQuery}
-        />
+        <div className="grow sm:text-2xl sm:px-[20%] px-8 overflow-y-auto">
+          <NoteTitleArea
+            updateTitle={(newTitle) => updateTitle(newTitle, currentNote)}
+            noteTitle={
+              currentNote?.path
+                ? getTitleFromPath(currentNote?.path)
+                : undefined
+            }
+          />
+          <NoteTextArea
+            noteContent={currentNote?.content}
+            transcript={transcript}
+            isRecording={isRecordingNote || isRecordingQuery}
+          />
+        </div>
 
         <InputButtons
           toggleNoteRecording={toggleNoteRecording}
