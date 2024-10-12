@@ -7,6 +7,7 @@ from ai import generate_embedding, generate_note, ask_note
 from dotenv import load_dotenv
 
 load_dotenv()
+externalCors =  os.getenv("FRONTEND_URL")
 
 app = FastAPI()
 
@@ -15,7 +16,7 @@ origins = [
     "http://localhost",
     "http://localhost:8080",
     "http://localhost:3000",
-    os.getenv("FRONTEND_URL")
+    externalCors
 ]
 
 app.add_middleware(
