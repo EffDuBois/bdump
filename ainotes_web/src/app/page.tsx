@@ -155,7 +155,9 @@ export default function Home() {
         />
         <NoteTitleArea
           updateTitle={(newTitle) => updateTitle(newTitle, currentNote)}
-          noteTitle={getTitleFromPath(currentNote?.path ?? "/Untitled")}
+          noteTitle={
+            currentNote?.path ? getTitleFromPath(currentNote?.path) : undefined
+          }
         />
         <NoteTextArea
           noteContent={currentNote?.content}

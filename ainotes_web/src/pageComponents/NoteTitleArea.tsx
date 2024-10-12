@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 interface NoteTitleAreaProps {
   updateTitle: (newTitle: string) => void;
-  noteTitle: string;
+  noteTitle: string | undefined;
 }
 
 export default function NoteTitleArea({
@@ -24,7 +24,7 @@ export default function NoteTitleArea({
             className="bg-inherit border-none active:border-none"
             type="text"
             onBlur={(e) => {
-              if (e.target.value !== noteTitle) {
+              if (e.target.value !== noteTitle && title) {
                 updateTitle(title);
               }
             }}
