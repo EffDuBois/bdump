@@ -1,13 +1,14 @@
 "use client";
 
 import { SetStateAction } from "react";
-import { Note } from "@/utils/data";
+import { Note, NotesDbType } from "@/utils/data";
 import Spinner from "./loaders/Spinner";
 import { getTitleFromPath } from "@/utils/utils";
 import SlabButton from "@/components/buttons/SlabButton";
 import { interfaceFont } from "@/ui/fonts";
 import { PartialBy } from "@/utils/custom_types";
 import DrawerToggle from "./DrawerToggle";
+import SlabButtonWDelete from "@/components/buttons/SlabButtonDelete";
 
 interface SideBarProps {
   notes: Note[];
@@ -17,6 +18,7 @@ interface SideBarProps {
   >;
   createEmptyNote: () => {};
   setDrawerOpen: React.Dispatch<SetStateAction<boolean>>;
+  deleteNote: NotesDbType["deleteNote"];
 }
 
 export default function FileDrawer({
@@ -25,6 +27,7 @@ export default function FileDrawer({
   setCurrentNote,
   createEmptyNote,
   setDrawerOpen,
+  deleteNote,
 }: SideBarProps) {
   return (
     <div
@@ -40,15 +43,16 @@ export default function FileDrawer({
         </SlabButton>
         {notes && !storeTxnStatus ? (
           notes.map((note) => (
-            <SlabButton
+            <SlabButtonWDelete
               key={note.id}
               onClick={() => {
                 setCurrentNote(note);
                 setDrawerOpen(false);
               }}
+              onDeleteClick={() => deleteNote(note.id)}
             >
               {getTitleFromPath(note.path)}
-            </SlabButton>
+            </SlabButtonWDelete>
           ))
         ) : (
           <Spinner />

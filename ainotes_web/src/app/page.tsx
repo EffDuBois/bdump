@@ -141,6 +141,7 @@ export default function Home() {
           setCurrentNote={setCurrentNote}
           createEmptyNote={createEmptyNote}
           setDrawerOpen={setDrawerOpen}
+          deleteNote={notesDb.deleteNote}
         />
       )}
       <div

@@ -18,16 +18,14 @@ export enum Stores {
 }
 
 export interface NotesDbType {
-  (): {
-    storeTxnStatus: boolean;
-    fetchAllNotes: () => Promise<Note[]>;
-    storeNote: (data: Omit<Note, "id">) => Promise<Note>;
-    deleteNote: (id: string) => Promise<boolean>;
-    putNote: (note: Omit<Note, "id"> & { id?: number }) => Promise<Note>;
-  };
+  storeTxnStatus: boolean;
+  fetchAllNotes: () => Promise<Note[]>;
+  storeNote: (data: Omit<Note, "id">) => Promise<Note>;
+  deleteNote: (id: number) => Promise<boolean>;
+  putNote: (note: Omit<Note, "id"> & { id?: number }) => Promise<Note>;
 }
 
-const useNotesDb: NotesDbType = () => {
+const useNotesDb = (): NotesDbType => {
   const [storeTxnStatus, setStoreTxnStatus] = useState(false);
   const [fetchStatus, setFetchStatus] = useState(false);
 
@@ -94,7 +92,7 @@ const useNotesDb: NotesDbType = () => {
     });
   };
 
-  const deleteNote = (id: string): Promise<boolean> => {
+  const deleteNote = (id: number): Promise<boolean> => {
     return new Promise((resolve, reject) => {
       if (storeTxnStatus) reject("Txn already in progress");
       setStoreTxnStatus(true);
@@ -113,9 +111,7 @@ const useNotesDb: NotesDbType = () => {
     });
   };
 
-  const putNote = (
-    data: Omit<Note, "id"> & { id?: number }
-  ): Promise<Note> => {
+  const putNote = (data: Omit<Note, "id"> & { id?: number }): Promise<Note> => {
     return new Promise((resolve, reject) => {
       if (storeTxnStatus) reject("Txn already in progress");
       setStoreTxnStatus(true);

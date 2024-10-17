@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-interface SlabButtonProps {
+export interface SlabButtonProps {
   className?: string;
   onClick?: (event: any) => any;
   children?: ReactNode;
