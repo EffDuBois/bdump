@@ -31,7 +31,7 @@ export default function NoteTitleArea({
             value={title}
           />
         ) : (
-          <span className={`${titleFont.className}`}>NotesAPP</span>
+          <span className={`${titleFont.className}`}>BrainDump</span>
         )}
       </h1>
     </>
