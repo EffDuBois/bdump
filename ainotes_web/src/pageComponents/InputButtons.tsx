@@ -17,14 +17,20 @@ export default function InputButtons({
 }: InputButtonsProps) {
   return (
     <div className="w-full my-8 flex justify-center items-center gap-10">
-      <CircleButton onClick={toggleNoteRecording} disabled={isRecordingQuery}>
+      <CircleButton
+        onClick={toggleNoteRecording}
+        className={isRecordingQuery ? "hidden" : ""}
+      >
         {isRecordingNote ? (
           <FaStop className="text-black" size={"38px"} />
         ) : (
           <FaMicrophone className="size-12" size={"64px"} />
         )}
       </CircleButton>
-      <CircleButton onClick={toggleQueryRecording} disabled={isRecordingNote}>
+      <CircleButton
+        onClick={toggleQueryRecording}
+        className={isRecordingNote ? "hidden" : ""}
+      >
         {isRecordingQuery ? (
           <FaStop className="text-black" size={"38px"} />
         ) : (

@@ -1,24 +1,17 @@
-import { ReactNode } from "react";
+import { ButtonHTMLAttributes, DetailedHTMLProps, ReactNode } from "react";
 
-interface SlabButtonProps {
-  children?: ReactNode;
-  className?: string;
-  onClick?: (event: any) => any;
-  key?: any;
-  disabled: boolean;
-}
 export default function CircleButton({
   children,
   className,
-  onClick,
-  key,
-  disabled,
-}: SlabButtonProps) {
+  ...others
+}: DetailedHTMLProps<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  HTMLButtonElement
+>) {
   return (
     <button
-      onClick={onClick}
       className={`p-4 border-2 border-gray-400 rounded-full ${className}`}
-      disabled={disabled}
+      {...others}
     >
       {children}
     </button>

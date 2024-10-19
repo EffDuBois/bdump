@@ -31,7 +31,7 @@ export default function FileDrawer({
 }: SideBarProps) {
   return (
     <div
-      className={`w-full sm:w-1/3 h-screen bg-neutral-900 border-r-[1px] border-gray-400 ${interfaceFont.className}`}
+      className={`w-full sm:w-1/3 h-screen dark:bg-neutral-900 border-r-[1px] border-gray-400 ${interfaceFont.className}`}
     >
       <DrawerToggle setDrawerOpen={setDrawerOpen} />
       <div className="flex flex-col p-6 gap-2">
