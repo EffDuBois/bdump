@@ -7,11 +7,12 @@ import { useEffect, useState } from "react";
 import NoteTextArea from "../pageComponents/NoteTextArea";
 import FileDrawer from "@/pageComponents/FileDrawer";
 import InputButtons from "@/pageComponents/InputButtons";
-import DrawerToggle from "@/pageComponents/DrawerToggle";
 import NoteTitleArea from "@/pageComponents/NoteTitleArea";
 import { getTitleFromPath } from "@/utils/utils";
 import postQueryNote from "@/apis/postQueryNote";
 import { PartialBy } from "@/utils/custom_types";
+import SlabButtonOutline from "@/components/buttons/SlabButtonOutline";
+import { FaFolderClosed } from "react-icons/fa6";
 
 export default function Home() {
   const notesDb = useNotesDb();
@@ -107,7 +108,9 @@ export default function Home() {
     transcriber.toggleTranscription();
     setIsRecordingQuery((cur) => !cur);
 
-    if (isRecordingQuery) {
+    if (!isRecordingQuery) {
+      setCurrentNote({ path: "/Ask", content: "" });
+    } else {
       try {
         const queryResponse = await postQueryNote({
           query: transcript,
@@ -119,11 +122,10 @@ export default function Home() {
               note: note.content,
               embedding: note.embedding as Float32Array,
             })),
-        }).then((response) => {
-          setCurrentNote({
-            path: "/Response",
-            content: response.body,
-          });
+        });
+        setCurrentNote({
+          path: "/Response",
+          content: queryResponse.body,
         });
         setTranscript("");
       } catch (error) {
@@ -149,10 +151,12 @@ export default function Home() {
           drawerOpen && "max-md:hidden"
         }`}
       >
-        <DrawerToggle
-          className={`${drawerOpen && "hidden"}`}
-          setDrawerOpen={setDrawerOpen}
-        />
+        <SlabButtonOutline
+          className={`self-start ${drawerOpen && "hidden"}`}
+          onClick={() => setDrawerOpen((cur) => !cur)}
+        >
+          <FaFolderClosed />
+        </SlabButtonOutline>
         <div className="grow sm:text-2xl sm:px-[20%] px-8 overflow-y-auto">
           <NoteTitleArea
             updateTitle={(newTitle) => updateTitle(newTitle, currentNote)}

@@ -7,8 +7,9 @@ import { getTitleFromPath } from "@/utils/utils";
 import SlabButton from "@/components/buttons/SlabButton";
 import { interfaceFont } from "@/ui/fonts";
 import { PartialBy } from "@/utils/custom_types";
-import DrawerToggle from "./DrawerToggle";
 import SlabButtonWDelete from "@/components/buttons/SlabButtonDelete";
+import SlabButtonOutline from "../components/buttons/SlabButtonOutline";
+import { FaFolderClosed } from "react-icons/fa6";
 
 interface SideBarProps {
   notes: Note[];
@@ -33,14 +34,16 @@ export default function FileDrawer({
     <div
       className={`w-full sm:w-1/3 h-screen dark:bg-neutral-900 border-r-[1px] border-gray-400 ${interfaceFont.className}`}
     >
-      <DrawerToggle setDrawerOpen={setDrawerOpen} />
+      <SlabButtonOutline onClick={() => setDrawerOpen((cur) => !cur)}>
+        <FaFolderClosed />
+      </SlabButtonOutline>
       <div className="flex flex-col p-6 gap-2">
-        <SlabButton
-          className="text-center border-2 border-gray-400 mb-4"
+        <SlabButtonOutline
+          className="text-center mb-4"
           onClick={createEmptyNote}
         >
           Add Note
-        </SlabButton>
+        </SlabButtonOutline>
         {notes && !storeTxnStatus ? (
           notes.map((note) => (
             <SlabButtonWDelete

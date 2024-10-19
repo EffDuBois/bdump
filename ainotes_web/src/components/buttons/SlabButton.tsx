@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ButtonHTMLAttributes, DetailedHTMLProps, ReactNode } from "react";
 
 export interface SlabButtonProps {
   className?: string;
@@ -8,17 +8,15 @@ export interface SlabButtonProps {
 }
 export default function SlabButton({
   className,
-  onClick,
-  children,
-  disabled,
-}: SlabButtonProps) {
+  ...others
+}: DetailedHTMLProps<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  HTMLButtonElement
+>) {
   return (
     <button
       className={`hover:bg-gray-600/25 py-2 px-4 rounded-lg text-left ${className}`}
-      onClick={onClick}
-      disabled={disabled}
-    >
-      {children}
-    </button>
+      {...others}
+    />
   );
 }
