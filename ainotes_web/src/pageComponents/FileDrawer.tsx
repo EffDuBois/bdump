@@ -31,7 +31,7 @@ export default function FileDrawer({
 }: SideBarProps) {
   return (
     <div
-      className={`w-full sm:w-1/3 h-screen dark:bg-neutral-900 border-r-[1px] border-gray-400 ${interfaceFont.className}`}
+      className={`w-full sm:w-1/3 h-screen dark:bg-neutral-900 border-r-[1px] border-neutral-400 ${interfaceFont.className}`}
     >
       <FileDrawerButton drawerOpen={() => setDrawerOpen((cur) => !cur)} />
       <div className="flex flex-col p-6 gap-2">
@@ -51,7 +51,7 @@ export default function FileDrawer({
               }}
               onClickDelete={() => deleteNote(note.id)}
             >
-              {getTitleFromPath(note.path)}
+              {note.path ? getTitleFromPath(note.path) : "New Note"}
             </SlabButtonWDelete>
           ))
         ) : (

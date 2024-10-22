@@ -9,7 +9,7 @@ export default function SlabButtonOutline({
 }: SlabButtonOutlineProps) {
   return (
     <SlabButton
-      className={`border-[1px] border-black dark:border-gray-400 m-2 ${className}`}
+      className={`border-[1px] border-black dark:border-neutral-400 ${className}`}
       {...others}
     />
   );

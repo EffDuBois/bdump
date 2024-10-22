@@ -9,7 +9,7 @@ export default function CircleButton({
 >) {
   return (
     <button
-      className={`size-20 border-2 border-black *:m-auto dark:border-gray-400 rounded-full ${className} disabled:dark:border-gray-700 disabled:border-gray-400`}
+      className={`size-20 border-2 border-black *:m-auto dark:border-neutral-400 rounded-full ${className} disabled:dark:border-neutral-700 disabled:border-neutral-400`}
       {...others}
     />
   );

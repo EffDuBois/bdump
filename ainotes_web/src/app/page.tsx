@@ -12,6 +12,9 @@ import { getTitleFromPath } from "@/utils/utils";
 import postQueryNote from "@/apis/postQueryNote";
 import { PartialBy } from "@/utils/custom_types";
 import FileDrawerButton from "@/pageComponents/buttons/FileDrawerButton";
+import Spinner from "@/components/loaders/Spinner";
+import { interfaceFont } from "@/ui/fonts";
+import { FaCircle } from "react-icons/fa6";
 
 export default function Home() {
   const notesDb = useNotesDb();
@@ -150,10 +153,11 @@ export default function Home() {
           drawerOpen && "max-md:hidden"
         }`}
       >
-        <FileDrawerButton
-          hidden={drawerOpen}
-          drawerOpen={() => setDrawerOpen((cur) => !cur)}
-        />
+          <FileDrawerButton
+            hidden={drawerOpen}
+            drawerOpen={() => setDrawerOpen((cur) => !cur)}
+          />
+
 
         <div className="grow sm:text-2xl sm:px-[20%] px-8 overflow-y-auto">
           <NoteTitleArea
@@ -178,6 +182,26 @@ export default function Home() {
           isRecordingQuery={isRecordingQuery}
           connected={transcriber.connected}
         />
+        <div className={`text-end text-neutral-400 ${interfaceFont.className}`}>
+          {transcriber.connected ? (
+            (isRecordingNote || isRecordingQuery) && !transcriber.isOnline ? (
+              <>
+                <FaCircle className="inline text-yellow-300" size={"10px"} />{" "}
+                Connecting
+              </>
+            ) : (
+              <>
+                <FaCircle className="inline text-green-300" size={"10px"} />{" "}
+                Connected
+              </>
+            )
+          ) : (
+            <>
+              <FaCircle className="inline text-red-400" size={"10px"} /> No
+              Connection
+            </>
+          )}
+        </div>
       </div>
     </main>
   );
