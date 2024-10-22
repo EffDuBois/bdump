@@ -1,13 +1,7 @@
-import SlabButton from "@/components/buttons/SlabButton";
+import SlabButton, { SlabButtonProps } from "@/components/buttons/SlabButton";
 import { ButtonHTMLAttributes, DetailedHTMLProps, SetStateAction } from "react";
-import { FaFolderClosed } from "react-icons/fa6";
 
-interface SlabButtonOutlineProps
-  extends DetailedHTMLProps<
-    ButtonHTMLAttributes<HTMLButtonElement>,
-    HTMLButtonElement
-  > {
-}
+export type SlabButtonOutlineProps = SlabButtonProps;
 
 export default function SlabButtonOutline({
   className,

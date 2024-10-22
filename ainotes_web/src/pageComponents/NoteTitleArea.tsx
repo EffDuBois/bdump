@@ -18,7 +18,7 @@ export default function NoteTitleArea({
   }, [noteTitle]);
   return (
     <>
-      <h1 className="text-4xl mt-4 mb-8 text-center">
+      <h1 className="text-4xl mb-8 text-center">
         {noteTitle ? (
           <textarea
             className="w-full bg-inherit border-none active:border-none resize-none overflow-hidden"

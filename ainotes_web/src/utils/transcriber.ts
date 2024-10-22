@@ -6,9 +6,11 @@ const DEEPGRAM_MODEL_CONFIG = {
   model: "base",
   smart_format: true,
 };
+
 function useTranscriber(setTranscript: Dispatch<SetStateAction<string>>) {
   const [recording, setRecording] = useState(false);
   const [mic, setMic] = useState<MediaRecorder>();
+  const [connected, setConnected] = useState(false);
 
   const socket = useMemo(() => {
     const deepgram = createClient(DEEPGRAM_API_KEY);
@@ -24,15 +26,20 @@ function useTranscriber(setTranscript: Dispatch<SetStateAction<string>>) {
 
     socket.on("open", async () => {
       console.log("client: connected to deepgram socket");
+      setConnected(true);
       socket.on("Results", (data) => {
         console.log(data);
         const transcript = data.channel.alternatives[0].transcript;
         if (transcript !== "") setTranscript((old) => old + " " + transcript);
       });
-      socket.on("error", (e) => console.error(e));
+      socket.on("error", (e) => {
+        console.error(e);
+        setConnected(false);
+      });
       socket.on("warning", (e) => console.warn(e));
       socket.on("Metadata", (e) => console.log(e));
       socket.on("close", (e) => {
+        setConnected(false);
         console.log(e);
       });
     });
@@ -66,7 +73,7 @@ function useTranscriber(setTranscript: Dispatch<SetStateAction<string>>) {
     }
   };
 
-  return { toggleTranscription };
+  return { toggleTranscription, connected };
 }
 
 const getMic = async () => {
