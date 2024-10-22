@@ -155,7 +155,7 @@ export default function Home() {
           className={`self-start ${drawerOpen && "hidden"}`}
           onClick={() => setDrawerOpen((cur) => !cur)}
         >
-          <FaFolderClosed />
+          <FaFolderClosed/>
         </SlabButtonOutline>
         <div className="grow sm:text-2xl sm:px-[20%] px-8 overflow-y-auto">
           <NoteTitleArea

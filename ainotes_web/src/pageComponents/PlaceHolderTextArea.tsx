@@ -26,11 +26,11 @@ const PlaceHolderTextArea: React.FC<PlaceHolderTextAreaProps> = ({
         </li>
       </ol>
       <br />
-      Press the <FaMicrophone className="size-4" size={"64px"} />
+      Press the {" "}<FaMicrophone className="size-4 inline" size={"64px"} />{" "}
       button to start recording
       <br />
       Ask anything from your notes using the{" "}
-      <IoSparklesSharp className="size-4" size={"64px"} />
+      <IoSparklesSharp className="size-4 inline" size={"64px"} />{" "}
     </div>
   );
 };
