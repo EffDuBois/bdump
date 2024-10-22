@@ -15,7 +15,7 @@ const FileDrawerButton: FC<FileDrawerButtonProps> = ({
   ...others
 }) => {
   return (
-    <div className="h-[8vh] px-2 flex  justify-start items-center">
+    <div className="h-[8vh] pt-2 pl-2 w-auto">
       <SlabButtonOutline
         className={"size-12 *:m-auto" + className}
         onClick={drawerOpen}
