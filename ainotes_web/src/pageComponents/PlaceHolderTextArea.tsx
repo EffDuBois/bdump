@@ -1,7 +1,6 @@
-import CircleButton from "@/components/buttons/CircleButton";
-import { subtextFont, titleFont } from "@/ui/fonts";
+import { subtextFont } from "@/ui/fonts";
 import React from "react";
-import { FaMicrophone, FaStop } from "react-icons/fa6";
+import { FaMicrophone } from "react-icons/fa6";
 import { IoSparklesSharp } from "react-icons/io5";
 
 interface PlaceHolderTextAreaProps {
@@ -27,16 +26,11 @@ const PlaceHolderTextArea: React.FC<PlaceHolderTextAreaProps> = ({
         </li>
       </ol>
       <br />
-      Press the{" "}
-      <CircleButton className="border-[1px] p-1" disabled>
-        <FaMicrophone className="size-4" size={"64px"} />
-      </CircleButton>{" "}
+      Press the <FaMicrophone className="size-4" size={"64px"} />
       button to start recording
       <br />
-      Ask anything from your notes using the {" "}
-      <CircleButton className="border-[1px] p-1" disabled>
-        <IoSparklesSharp className="size-4" size={"64px"} />
-      </CircleButton>{" "} button
+      Ask anything from your notes using the{" "}
+      <IoSparklesSharp className="size-4" size={"64px"} />
     </div>
   );
 };
