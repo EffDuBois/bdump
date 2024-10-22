@@ -4,10 +4,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 from pydantic import BaseModel
 from ai import generate_embedding, generate_note, ask_note
-from dotenv import load_dotenv
+from dotenv import dotenv_values
 
-load_dotenv()
-externalCors =  os.getenv("FRONTEND_URL")
+#environment oriented keys
+keys = dotenv_values(".env")
+externalCors =  keys["FRONTEND_URL"]
 
 app = FastAPI()
 

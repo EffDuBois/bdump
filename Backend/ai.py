@@ -4,13 +4,14 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGener
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from aimath import cosinesim
-from dotenv import load_dotenv
+from dotenv import dotenv_values
 
-load_dotenv()
+#environment oriented keys
+keys = dotenv_values(".env")
 
 def generate_embedding(query):
     if (query != ""):
-        embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=os.getenv("GOOGLE_API_KEY"))
+        embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=keys["GOOGLE_API_KEY"])
         vector = embeddings.embed_query(query)
         return vector
     else:
