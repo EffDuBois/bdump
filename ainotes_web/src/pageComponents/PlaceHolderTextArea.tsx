@@ -30,7 +30,7 @@ const PlaceHolderTextArea: React.FC<PlaceHolderTextAreaProps> = ({
       button to start recording
       <br />
       Ask anything from your notes using the{" "}
-      <IoSparklesSharp className="size-4 inline" size={"64px"} />{" "}
+      <IoSparklesSharp className="size-4 inline" size={"64px"} />{" "}Button
     </div>
   );
 };
