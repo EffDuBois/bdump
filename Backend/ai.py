@@ -3,7 +3,7 @@ import numpy as np
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from sklearn.metrics.pairwise import cosine_similarity
+from aimath import cosinesim
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -16,12 +16,6 @@ def generate_embedding(query):
     else:
         return ['empty query']
     
-
-def cosine_sim(queryemb, noteemb):
-    queryemb = np.array(queryemb).reshape(1, -1)
-    noteemb = np.array(noteemb).reshape(1, -1)
-    return cosine_similarity(queryemb, noteemb)[0][0]
-
 
 def llm(system_prompt, user_input):
     parser = StrOutputParser()
@@ -71,7 +65,7 @@ def generate_note(query):
     
 def ask_note(query, queryemb, notes, notesemb):
     if (query != ""):
-        similarities = [cosine_sim(queryemb, noteemb) for noteemb in notesemb]
+        similarities = [cosinesim(queryemb, noteemb) for noteemb in notesemb]
         most_relevant_note_index = np.argmax(similarities)
         relevant_note = notes[most_relevant_note_index]
         parser = StrOutputParser()
