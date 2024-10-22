@@ -2,14 +2,13 @@
 
 import { SetStateAction } from "react";
 import { Note, NotesDbType } from "@/utils/data";
-import Spinner from "./loaders/Spinner";
+import Spinner from "../components/loaders/Spinner";
 import { getTitleFromPath } from "@/utils/utils";
-import SlabButton from "@/components/buttons/SlabButton";
 import { interfaceFont } from "@/ui/fonts";
 import { PartialBy } from "@/utils/custom_types";
 import SlabButtonWDelete from "@/components/buttons/SlabButtonDelete";
 import SlabButtonOutline from "../components/buttons/SlabButtonOutline";
-import { FaFolderClosed } from "react-icons/fa6";
+import FileDrawerButton from "./buttons/FileDrawerButton";
 
 interface SideBarProps {
   notes: Note[];
@@ -32,11 +31,9 @@ export default function FileDrawer({
 }: SideBarProps) {
   return (
     <div
-      className={`w-full sm:w-1/3 h-screen dark:bg-neutral-900 border-r-[1px] border-gray-400 ${interfaceFont.className}`}
+      className={`w-full sm:w-1/3 h-screen dark:bg-neutral-900 border-r-[1px] border-neutral-400 ${interfaceFont.className}`}
     >
-      <SlabButtonOutline onClick={() => setDrawerOpen((cur) => !cur)}>
-        <FaFolderClosed />
-      </SlabButtonOutline>
+      <FileDrawerButton drawerOpen={() => setDrawerOpen((cur) => !cur)} />
       <div className="flex flex-col p-6 gap-2">
         <SlabButtonOutline
           className="text-center mb-4"
@@ -52,9 +49,9 @@ export default function FileDrawer({
                 setCurrentNote(note);
                 setDrawerOpen(false);
               }}
-              onDeleteClick={() => deleteNote(note.id)}
+              onClickDelete={() => deleteNote(note.id)}
             >
-              {getTitleFromPath(note.path)}
+              {note.path ? getTitleFromPath(note.path) : "New Note"}
             </SlabButtonWDelete>
           ))
         ) : (

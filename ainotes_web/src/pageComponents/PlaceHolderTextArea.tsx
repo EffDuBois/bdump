@@ -12,25 +12,14 @@ const PlaceHolderTextArea: React.FC<PlaceHolderTextAreaProps> = ({
 }) => {
   return (
     <div className={`${isRecording && "animate-pulse"}`}>
-      <p>
-        Dump all your notes & thoughts just using voice here
-        <br />
-        This can-
-      </p>
-      <ol className="list-disc">
-        <li>Format notes</li>
-        <li>Make summaries</li>
-        <li>Take down ToDo lists</li>
-        <li className={subtextFont.className}>
-          <s>Make Chicken Noodles</s>
-        </li>
-      </ol>
+      Dump all your notes & thoughts just using voice here
       <br />
-      Press the {" "}<FaMicrophone className="size-4 inline" size={"64px"} />{" "}
-      button to start recording
+      <br />
+      Press the <FaMicrophone className="size-6 inline" size={"64px"} /> button
+      to start recording
       <br />
       Ask anything from your notes using the{" "}
-      <IoSparklesSharp className="size-4 inline" size={"64px"} />{" "}Button
+      <IoSparklesSharp className="size-6 inline" size={"64px"} /> Button
     </div>
   );
 };
