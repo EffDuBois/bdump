@@ -15,11 +15,11 @@ const PlaceHolderTextArea: React.FC<PlaceHolderTextAreaProps> = ({
       Dump all your notes & thoughts just using voice here
       <br />
       <br />
-      Press the <FaMicrophone className="size-4 inline" size={"64px"} /> button
+      Press the <FaMicrophone className="size-6 inline" size={"64px"} /> button
       to start recording
       <br />
       Ask anything from your notes using the{" "}
-      <IoSparklesSharp className="size-4 inline" size={"64px"} /> Button
+      <IoSparklesSharp className="size-6 inline" size={"64px"} /> Button
     </div>
   );
 };
