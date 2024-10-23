@@ -12,7 +12,6 @@ import { getTitleFromPath } from "@/utils/utils";
 import postQueryNote from "@/apis/postQueryNote";
 import { PartialBy } from "@/utils/custom_types";
 import FileDrawerButton from "@/pageComponents/buttons/FileDrawerButton";
-import Spinner from "@/components/loaders/Spinner";
 import { interfaceFont } from "@/ui/fonts";
 import { FaCircle } from "react-icons/fa6";
 
@@ -36,10 +35,10 @@ export default function Home() {
 
   useEffect(() => {
     //Fetching notes
-    if (!notesDb.storeTxnStatus) {
+    if (notesDb.storeStatus && !notesDb.storeTxnStatus) {
       getNotes();
     }
-  }, [notesDb.storeTxnStatus]);
+  }, [notesDb.storeStatus, notesDb.storeTxnStatus]);
 
   const createEmptyNote = async () => {
     notesDb
@@ -153,11 +152,10 @@ export default function Home() {
           drawerOpen && "max-md:hidden"
         }`}
       >
-          <FileDrawerButton
-            hidden={drawerOpen}
-            drawerOpen={() => setDrawerOpen((cur) => !cur)}
-          />
-
+        <FileDrawerButton
+          hidden={drawerOpen}
+          drawerOpen={() => setDrawerOpen((cur) => !cur)}
+        />
 
         <div className="grow sm:text-2xl sm:px-[20%] px-8 overflow-y-auto">
           <NoteTitleArea

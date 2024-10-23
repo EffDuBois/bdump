@@ -25,7 +25,7 @@ export default function InputButtons({
         className={isRecordingQuery ? "hidden" : ""}
       >
         {isRecordingNote ? (
-          <FaStop className="text-red" size={"38px"} />
+          <FaStop className="text-red-500" size={"38px"} />
         ) : (
           <FaMicrophone size={"38px"} />
         )}
@@ -36,7 +36,7 @@ export default function InputButtons({
         className={isRecordingNote ? "hidden" : ""}
       >
         {isRecordingQuery ? (
-          <FaStop className="text-red" size={"38px"} />
+          <FaStop className="text-red-500" size={"38px"} />
         ) : (
           <IoSparklesSharp size={"38px"} />
         )}
