@@ -13,7 +13,7 @@ import postQueryNote from "@/apis/postQueryNote";
 import { PartialBy } from "@/utils/custom_types";
 import FileDrawerButton from "@/pageComponents/buttons/FileDrawerButton";
 import { interfaceFont } from "@/ui/fonts";
-import { FaCircle } from "react-icons/fa6";
+import { ConnectionStatusMap } from "@/pageComponents/mappings/ConnectionStatus";
 
 export default function Home() {
   const notesDb = useNotesDb();
@@ -178,27 +178,9 @@ export default function Home() {
           toggleQueryRecording={toggleQueryRecording}
           isRecordingNote={isRecordingNote}
           isRecordingQuery={isRecordingQuery}
-          connected={transcriber.connected}
         />
         <div className={`text-end text-neutral-400 ${interfaceFont.className}`}>
-          {transcriber.connected ? (
-            (isRecordingNote || isRecordingQuery) && !transcriber.isOnline ? (
-              <>
-                <FaCircle className="inline text-yellow-300" size={"10px"} />{" "}
-                Connecting
-              </>
-            ) : (
-              <>
-                <FaCircle className="inline text-green-300" size={"10px"} />{" "}
-                Connected
-              </>
-            )
-          ) : (
-            <>
-              <FaCircle className="inline text-red-400" size={"10px"} /> No
-              Connection
-            </>
-          )}
+          {ConnectionStatusMap[transcriber.connectionStatus]}
         </div>
       </div>
     </main>

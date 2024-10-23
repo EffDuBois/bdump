@@ -1,6 +1,6 @@
 "use client";
 import { createClient, ListenLiveClient } from "@deepgram/sdk";
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY;
 const DEEPGRAM_MODEL_CONFIG = {
   model: "base",
@@ -8,47 +8,51 @@ const DEEPGRAM_MODEL_CONFIG = {
 };
 
 function useTranscriber(setTranscript: Dispatch<SetStateAction<string>>) {
-  const [recording, setRecording] = useState(false);
   const [mic, setMic] = useState<MediaRecorder>();
-  const [connected, setConnected] = useState(false);
-  const [isOnline, setIsOnline] = useState(false);
+  const [socket, setSocket] = useState<ListenLiveClient>();
 
-  const socket = useMemo(() => {
-    const deepgram = createClient(DEEPGRAM_API_KEY);
-    let keepAlive;
+  const [connectionStatus, setConnectionStatus] = useState<
+    "disconnected" | "connected" | "transmitting" | "noResponse"
+  >("disconnected");
+  const [recording, setRecording] = useState(false);
 
-    const socket = deepgram.listen.live(DEEPGRAM_MODEL_CONFIG);
+  useEffect(() => {
+    if (!socket) {
+      const deepgram = createClient(DEEPGRAM_API_KEY);
+      let keepAlive;
 
-    if (keepAlive) clearInterval(keepAlive);
-    keepAlive = setInterval(() => {
-      // console.log("KeepAlive sent.");
-      socket.keepAlive();
-    }, 5000);
+      const newSocket = deepgram.listen.live(DEEPGRAM_MODEL_CONFIG);
 
-    socket.on("open", async () => {
-      console.log("client: connected to deepgram socket");
-      setConnected(true);
-      socket.on("Results", (data) => {
-        console.log(data);
-        setIsOnline(true);
-        const transcript = data.channel.alternatives[0].transcript;
-        if (transcript !== "") setTranscript((old) => old + " " + transcript);
+      if (keepAlive) clearInterval(keepAlive);
+      keepAlive = setInterval(() => {
+        // console.log("KeepAlive sent.");
+        newSocket.keepAlive();
+      }, 5000);
+
+      newSocket.on("open", async () => {
+        console.log("client: connected to deepgram newSocket");
+        setConnectionStatus("connected");
+        newSocket.on("Results", (data) => {
+          console.log(data);
+          setConnectionStatus("transmitting");
+          const transcript = data.channel.alternatives[0].transcript;
+          if (transcript !== "") setTranscript((old) => old + " " + transcript);
+        });
+        newSocket.on("error", (e) => {
+          console.error(e);
+          setConnectionStatus("disconnected");
+        });
+        newSocket.on("warning", (e) => console.warn(e));
+        newSocket.on("Metadata", (e) => console.log(e));
+        newSocket.on("close", (e) => {
+          setConnectionStatus("disconnected");
+          setSocket(undefined);
+          console.log(e);
+        });
       });
-      socket.on("error", (e) => {
-        console.error(e);
-        setIsOnline(false);
-        setConnected(false);
-      });
-      socket.on("warning", (e) => console.warn(e));
-      socket.on("Metadata", (e) => console.log(e));
-      socket.on("close", (e) => {
-        setIsOnline(false);
-        setConnected(false);
-        console.log(e);
-      });
-    });
-    return socket;
-  }, []);
+      setSocket(newSocket);
+    }
+  }, [socket, recording]);
 
   const toggleTranscription = async () => {
     if (!recording) {
@@ -63,13 +67,13 @@ function useTranscriber(setTranscript: Dispatch<SetStateAction<string>>) {
       if (newMic && socket) {
         startMic(newMic, socket);
         setRecording(true);
+        setConnectionStatus("noResponse");
       } else {
         console.log("mic not initialised");
       }
     } else {
       if (mic) {
         console.log("Stop Recording");
-        setIsOnline(false);
         setRecording(false);
         mic.stop();
       } else {
@@ -78,7 +82,7 @@ function useTranscriber(setTranscript: Dispatch<SetStateAction<string>>) {
     }
   };
 
-  return { toggleTranscription, connected, isOnline };
+  return { toggleTranscription, connectionStatus };
 }
 
 const getMic = async () => {
@@ -89,7 +93,7 @@ const getMic = async () => {
   return new MediaRecorder(userMedia);
 };
 
-const startMic = async (mic: MediaRecorder, socket: ListenLiveClient) => {
+const startMic = async (mic: MediaRecorder, newSocket: ListenLiveClient) => {
   mic.start(250);
   mic.onstart = () => {
     console.log("client: microphone opened");
@@ -101,8 +105,8 @@ const startMic = async (mic: MediaRecorder, socket: ListenLiveClient) => {
 
   mic.ondataavailable = (e) => {
     const data = e.data;
-    console.log("client: sent data to websocket");
-    socket.send(data);
+    console.log("client: sent data to webnewSocket");
+    newSocket.send(data);
   };
 };
 

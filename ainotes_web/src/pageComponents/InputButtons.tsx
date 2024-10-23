@@ -7,7 +7,6 @@ interface InputButtonsProps {
   toggleQueryRecording: () => {};
   isRecordingNote: boolean;
   isRecordingQuery: boolean;
-  connected: boolean;
 }
 
 export default function InputButtons({
@@ -15,13 +14,11 @@ export default function InputButtons({
   toggleQueryRecording,
   isRecordingNote,
   isRecordingQuery,
-  connected,
 }: InputButtonsProps) {
   return (
     <div className="w-full mb-24 mt-4 sm:mb-8 sm:mt-8 flex justify-center items-center gap-10">
       <CircleButton
         onClick={toggleNoteRecording}
-        disabled={!connected}
         className={isRecordingQuery ? "hidden" : ""}
       >
         {isRecordingNote ? (
@@ -32,7 +29,6 @@ export default function InputButtons({
       </CircleButton>
       <CircleButton
         onClick={toggleQueryRecording}
-        disabled={!connected}
         className={isRecordingNote ? "hidden" : ""}
       >
         {isRecordingQuery ? (
