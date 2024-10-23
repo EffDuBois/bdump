@@ -15,17 +15,18 @@ import FileDrawerButton from "@/pageComponents/buttons/FileDrawerButton";
 import { interfaceFont } from "@/ui/fonts";
 import { ConnectionStatusMap } from "@/pageComponents/mappings/ConnectionStatus";
 
+export type recordingType = "note" | "query";
+
 export default function Home() {
   const notesDb = useNotesDb();
   const [notes, setNotes] = useState<Note[]>([]);
-
   const [currentNote, setCurrentNote] = useState<PartialBy<Note, "id">>();
 
   const [transcript, setTranscript] = useState("");
+
   const transcriber = useTranscriber(setTranscript);
 
-  const [isRecordingNote, setIsRecordingNote] = useState(false);
-  const [isRecordingQuery, setIsRecordingQuery] = useState(false);
+  const [isRecording, setIsRecording] = useState<recordingType>();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -69,49 +70,40 @@ export default function Home() {
     }
   };
 
-  const toggleNoteRecording = async () => {
+  const toggleRecording = async (type?: recordingType) => {
     transcriber.toggleTranscription();
-    setIsRecordingNote((cur) => !cur);
-
-    if (isRecordingNote) {
-      if (transcript) {
-        try {
-          const processedData = await postCreateNote(
-            currentNote?.content + " " + transcript
-          );
-          //existing note
-          if (currentNote?.id && currentNote.path) {
-            updateNSyncNote({
-              id: currentNote.id,
-              path: currentNote.path,
-              content: processedData.body,
-              embedding: processedData.embedding,
-            });
-            setTranscript("");
-          }
-          //new note
-          else {
-            updateNSyncNote({
-              path: `/${processedData.title}`,
-              content: processedData.body,
-              embedding: processedData.embedding,
-            });
-            setTranscript("");
-          }
-        } catch (error) {
-          console.error(error);
+    if (transcript && isRecording === "note") {
+      try {
+        const processedData = await postCreateNote(
+          currentNote?.content + " " + transcript
+        );
+        //existing note
+        if (currentNote?.id && currentNote.path) {
+          updateNSyncNote({
+            id: currentNote.id,
+            path: currentNote.path,
+            content: processedData.body,
+            embedding: processedData.embedding,
+          });
+          setTranscript("");
         }
+        //new note
+        else {
+          updateNSyncNote({
+            path: `/${processedData.title}`,
+            content: processedData.body,
+            embedding: processedData.embedding,
+          });
+          setTranscript("");
+        }
+      } catch (error) {
+        console.error(error);
       }
     }
-  };
 
-  const toggleQueryRecording = async () => {
-    transcriber.toggleTranscription();
-    setIsRecordingQuery((cur) => !cur);
-
-    if (!isRecordingQuery) {
+    if (type === "query") {
       setCurrentNote({ path: "/Ask", content: "" });
-    } else {
+    } else if (isRecording === "query") {
       try {
         const queryResponse = await postQueryNote({
           query: transcript,
@@ -133,6 +125,8 @@ export default function Home() {
         console.error(error);
       }
     }
+
+    setIsRecording((cur) => (cur ? undefined : type));
   };
 
   return (
@@ -169,15 +163,13 @@ export default function Home() {
           <NoteTextArea
             noteContent={currentNote?.content}
             transcript={transcript}
-            isRecording={isRecordingNote || isRecordingQuery}
+            isRecording={isRecording}
           />
         </div>
 
         <InputButtons
-          toggleNoteRecording={toggleNoteRecording}
-          toggleQueryRecording={toggleQueryRecording}
-          isRecordingNote={isRecordingNote}
-          isRecordingQuery={isRecordingQuery}
+          toggleRecording={toggleRecording}
+          isRecording={isRecording}
         />
         <div className={`text-end text-neutral-400 ${interfaceFont.className}`}>
           {ConnectionStatusMap[transcriber.connectionStatus]}

@@ -1,17 +1,18 @@
+import { recordingType } from "@/app/page";
 import { subtextFont } from "@/ui/fonts";
 import React from "react";
 import { FaMicrophone } from "react-icons/fa6";
 import { IoSparklesSharp } from "react-icons/io5";
 
 interface PlaceHolderTextAreaProps {
-  isRecording: boolean;
+  isRecording?: recordingType;
 }
 
 const PlaceHolderTextArea: React.FC<PlaceHolderTextAreaProps> = ({
   isRecording,
 }) => {
   return (
-    <div className={`${isRecording && "animate-pulse"}`}>
+    <div className={`${isRecording ? "animate-pulse" : ""}`}>
       Dump all your notes & thoughts just using voice here
       <br />
       <br />

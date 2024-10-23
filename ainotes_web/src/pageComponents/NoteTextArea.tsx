@@ -4,11 +4,12 @@ import { getTitleFromPath } from "@/utils/utils";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import PlaceHolderTextArea from "./PlaceHolderTextArea";
+import { recordingType } from "@/app/page";
 
 interface NoteTextAreaProps {
   noteContent?: string;
   transcript: string;
-  isRecording: boolean;
+  isRecording?: recordingType;
 }
 
 export default function NoteTextArea({
