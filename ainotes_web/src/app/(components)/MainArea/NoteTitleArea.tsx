@@ -1,6 +1,4 @@
 import { titleFont } from "@/ui/fonts";
-import { Note } from "@/utils/data";
-import { getTitleFromPath } from "@/utils/utils";
 import { useEffect, useState } from "react";
 
 interface NoteTitleAreaProps {

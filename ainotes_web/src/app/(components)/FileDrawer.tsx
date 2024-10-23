@@ -2,12 +2,15 @@
 
 import { SetStateAction } from "react";
 import { Note, NotesDbType } from "@/utils/data";
-import Spinner from "../components/loaders/Spinner";
+
+import Spinner from "../../components/loaders/Spinner";
+
 import { getTitleFromPath } from "@/utils/utils";
 import { interfaceFont } from "@/ui/fonts";
 import { PartialBy } from "@/utils/custom_types";
+
 import SlabButtonWDelete from "@/components/buttons/SlabButtonDelete";
-import SlabButtonOutline from "../components/buttons/SlabButtonOutline";
+import SlabButtonOutline from "../../components/buttons/SlabButtonOutline";
 import FileDrawerButton from "./buttons/FileDrawerButton";
 
 interface SideBarProps {

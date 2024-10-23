@@ -1,19 +1,24 @@
 "use client";
+import { useEffect, useState } from "react";
 
-import { postCreateNote } from "@/apis/postCreateNote";
 import useNotesDb, { Note } from "@/utils/data";
 import useTranscriber from "@/utils/transcriber";
-import { useEffect, useState } from "react";
-import NoteTextArea from "../pageComponents/NoteTextArea";
-import FileDrawer from "@/pageComponents/FileDrawer";
-import InputButtons from "@/pageComponents/InputButtons";
-import NoteTitleArea from "@/pageComponents/NoteTitleArea";
-import { getTitleFromPath } from "@/utils/utils";
+
+import { postCreateNote } from "@/apis/postCreateNote";
 import postQueryNote from "@/apis/postQueryNote";
-import { PartialBy } from "@/utils/custom_types";
-import FileDrawerButton from "@/pageComponents/buttons/FileDrawerButton";
+
 import { interfaceFont } from "@/ui/fonts";
-import { ConnectionStatusMap } from "@/pageComponents/mappings/ConnectionStatus";
+
+import FileDrawer from "./(components)/FileDrawer";
+import InputButtons from "./(components)/MainArea/InputButtons";
+import NoteTitleArea from "./(components)/MainArea/NoteTitleArea";
+import NoteTextArea from "./(components)/MainArea/NoteTextArea";
+
+import FileDrawerButton from "./(components)/buttons/FileDrawerButton";
+
+import { getTitleFromPath } from "@/utils/utils";
+import { PartialBy } from "@/utils/custom_types";
+import { ConnectionStatusMap } from "./(components)/mappings/ConnectionStatus";
 
 export type recordingType = "note" | "query";
 

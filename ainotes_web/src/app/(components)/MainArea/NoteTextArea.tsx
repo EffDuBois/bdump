@@ -1,9 +1,10 @@
-import { subtextFont, titleFont } from "@/ui/fonts";
-import { Note } from "@/utils/data";
-import { getTitleFromPath } from "@/utils/utils";
+import { subtextFont } from "@/ui/fonts";
+
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+
 import PlaceHolderTextArea from "./PlaceHolderTextArea";
+
 import { recordingType } from "@/app/page";
 
 interface NoteTextAreaProps {

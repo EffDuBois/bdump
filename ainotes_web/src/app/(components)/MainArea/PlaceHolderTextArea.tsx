@@ -1,6 +1,4 @@
 import { recordingType } from "@/app/page";
-import { subtextFont } from "@/ui/fonts";
-import React from "react";
 import { FaMicrophone } from "react-icons/fa6";
 import { IoSparklesSharp } from "react-icons/io5";
 
