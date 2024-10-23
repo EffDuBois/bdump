@@ -77,7 +77,10 @@ export default function Home() {
 
   const toggleRecording = async (type?: recordingType) => {
     transcriber.toggleTranscription();
-    if (transcript && isRecording === "note") {
+    const currentRecording = isRecording;
+    setIsRecording((cur) => (cur ? undefined : type));
+
+    if (transcript && currentRecording === "note") {
       try {
         const processedData = await postCreateNote(
           currentNote?.content + " " + transcript
@@ -104,11 +107,9 @@ export default function Home() {
       } catch (error) {
         console.error(error);
       }
-    }
-
-    if (type === "query") {
+    } else if (type === "query") {
       setCurrentNote({ path: "/Ask", content: "" });
-    } else if (isRecording === "query") {
+    } else if (currentRecording === "query") {
       try {
         const queryResponse = await postQueryNote({
           query: transcript,
@@ -131,7 +132,6 @@ export default function Home() {
       }
     }
 
-    setIsRecording((cur) => (cur ? undefined : type));
   };
 
   return (
