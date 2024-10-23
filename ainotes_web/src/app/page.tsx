@@ -10,9 +10,9 @@ import postQueryNote from "@/apis/postQueryNote";
 import { interfaceFont } from "@/ui/fonts";
 
 import FileDrawer from "./(components)/FileDrawer";
-import InputButtons from "./(components)/mainarea2/InputButtons";
-import NoteTitleArea from "./(components)/mainarea2/NoteTitleArea";
-import NoteTextArea from "./(components)/mainarea2/NoteTextArea";
+import InputButtons from "./(components)/mainarea/InputButtons";
+import NoteTitleArea from "./(components)/mainarea/NoteTitleArea";
+import NoteTextArea from "./(components)/mainarea/NoteTextArea";
 
 import FileDrawerButton from "./(components)/buttons/FileDrawerButton";
 
