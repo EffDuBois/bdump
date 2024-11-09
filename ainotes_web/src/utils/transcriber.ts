@@ -1,10 +1,9 @@
 "use client";
 import { createClient, ListenLiveClient } from "@deepgram/sdk";
-import { resolve } from "path";
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY;
 const DEEPGRAM_MODEL_CONFIG = {
-  model: "base",
+  model: "nova-2-general",
   smart_format: true,
 };
 
@@ -62,37 +61,41 @@ function useTranscriber(setTranscript: Dispatch<SetStateAction<string>>) {
   }, [recording]);
 
   const toggleTranscription = async () => {
-    if (!recording) {
-      console.log("trying to start recording");
-      let currentMic = mic;
-      if (!currentMic) {
-        currentMic = await getMic();
-        setMic(currentMic);
-      }
-      if (currentMic) {
-        let currentSocket = socket;
-        if (!currentSocket?.isConnected()) {
-          currentSocket = await createSocket();
-          setSocket(currentSocket);
+    try {
+      if (!recording) {
+        console.log("trying to start recording");
+        let currentMic = mic;
+        if (!currentMic) {
+          currentMic = await getMic();
+          setMic(currentMic);
         }
-        if (currentSocket) {
-          startMic(currentMic, currentSocket);
-          setRecording(true);
-          setConnectionStatus("noResponse");
+        if (currentMic) {
+          let currentSocket = socket;
+          if (!currentSocket?.isConnected()) {
+            currentSocket = await createSocket();
+            setSocket(currentSocket);
+          }
+          if (currentSocket) {
+            startMic(currentMic, currentSocket);
+            setRecording(true);
+            setConnectionStatus("noResponse");
+          } else {
+            setConnectionStatus("disconnected");
+          }
         } else {
-          setConnectionStatus("disconnected");
+          console.log("can't initialise mic");
         }
       } else {
-        console.log("can't initialise mic");
+        if (mic) {
+          console.log("Stop Recording");
+          setRecording(false);
+          mic.stop();
+        } else {
+          console.error("Microphone not initialized");
+        }
       }
-    } else {
-      if (mic) {
-        console.log("Stop Recording");
-        setRecording(false);
-        mic.stop();
-      } else {
-        console.error("Microphone not initialized");
-      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
