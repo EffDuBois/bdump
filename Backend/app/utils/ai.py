@@ -3,7 +3,7 @@ import numpy as np
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from aimath import cosinesim
+from Backend.app.utils.aimath import cosinesim
 from dotenv import load_dotenv
 
 load_dotenv()
