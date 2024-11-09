@@ -40,6 +40,9 @@ class askPrompt(BaseModel):
     query: str
     data: List[NoteEmbedding]
 
+@app.get("/")
+async def home():
+    return {"title": "Bdump backend", "body":"This is backend of Bdum" }
 
 @app.post("/notes/create")
 async def create_notes(prompt: createPrompt):       
