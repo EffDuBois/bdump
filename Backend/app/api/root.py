@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import List
 from pydantic import BaseModel
-from Backend.app.utils.ai import generate_embedding, generate_note, ask_note
+from app.utils.ai import generate_embedding, generate_note, ask_note
 
 router = APIRouter()
 
