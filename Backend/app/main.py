@@ -14,7 +14,8 @@ origins = [
     "http://localhost",
     "http://localhost:8080",
     "http://localhost:3000",
-    externalCors
+    "https://bdump.vercel.app",
+    f"{externalCors}"
 ]
 
 app.add_middleware(
