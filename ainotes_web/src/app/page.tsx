@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 
-import useNotesDb, { Note } from "@/utils/data";
-import useTranscriber from "@/utils/transcriber";
+import useNotesDb, { Note } from "@/services/data";
+import useTranscriber from "@/services/transcriber";
 
 import { postCreateNote } from "@/apis/postCreateNote";
 import postQueryNote from "@/apis/postQueryNote";
@@ -16,8 +16,8 @@ import NoteTextArea from "./(components)/mainarea/NoteTextArea";
 
 import FileDrawerButton from "./(components)/buttons/FileDrawerButton";
 
-import { getTitleFromPath } from "@/utils/utils";
-import { PartialBy } from "@/utils/custom_types";
+import { getTitleFromPath } from "@/services/utils";
+import { PartialBy } from "@/services/custom_types";
 import { ConnectionStatusMap } from "./(components)/mappings/ConnectionStatus";
 
 export type recordingType = "note" | "query";
@@ -131,7 +131,6 @@ export default function Home() {
         console.error(error);
       }
     }
-
   };
 
   return (
