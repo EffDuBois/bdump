@@ -6,7 +6,7 @@ import CircleButton from "@/components/buttons/CircleButton";
 import { BsGoogle } from "react-icons/bs";
 import { titleFont } from "@/ui/fonts";
 
-export function Login() {
+export default function Login() {
   const handleSignIn = async () => {
     const userUid = await signInWithGoogle();
     if (userUid) {
@@ -27,5 +27,3 @@ export function Login() {
     </div>
   );
 }
-
-export default Login;
