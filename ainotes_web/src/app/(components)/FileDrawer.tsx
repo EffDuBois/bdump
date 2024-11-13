@@ -1,13 +1,13 @@
 "use client";
 
 import { SetStateAction } from "react";
-import { Note, NotesDbType } from "@/utils/data";
+import { Note, NotesDbType } from "@/services/data";
 
 import Spinner from "../../components/loaders/Spinner";
 
-import { getTitleFromPath } from "@/utils/utils";
+import { getTitleFromPath } from "@/services/utils";
 import { interfaceFont } from "@/ui/fonts";
-import { PartialBy } from "@/utils/custom_types";
+import { PartialBy } from "@/services/custom_types";
 
 import SlabButtonWDelete from "@/components/buttons/SlabButtonDelete";
 import SlabButtonOutline from "../../components/buttons/SlabButtonOutline";
