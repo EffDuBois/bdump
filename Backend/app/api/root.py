@@ -53,6 +53,9 @@ class askNote(BaseModel):
     authid: str | None = "1234"
     query: str
     
+@router.get("/")
+async def read_root():
+    return {"title": "Bdump", "body": "this is the backend endpoint for brain dump"}
 
 @router.post("/notes/create")
 async def create_note(prompt: createNote):
