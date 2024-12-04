@@ -28,14 +28,14 @@ class askPrompt(BaseModel):
     data: List[NoteEmbedding]
 
 
-@router.post("/notes/create")
+@router.post("/api/notes/create")
 async def create_notes(prompt: createPrompt):       
     emb = generate_embedding(prompt.query)             # returns vector embedding for the prompt
     ans = generate_note(prompt.query)                  # returns markdown text for the prompt
     return {"title": ans[0], "body" : ans[1], "embedding" : emb} 
 
 
-@router.post("/notes/ask")
+@router.post("/api/notes/ask")
 async def ask_notes(prompt: askPrompt):
     emb = generate_embedding(prompt.query)
     notes_text = [i.note for i in prompt.data]
@@ -53,11 +53,11 @@ class askNote(BaseModel):
     authid: str | None = "1234"
     query: str
     
-@router.get("/")
+@router.get("/api/")
 async def read_root():
     return {"title": "Bdump", "body": "this is the backend endpoint for brain dump"}
 
-@router.post("/notes/create")
+@router.post("/api/notes/create")
 async def create_note(prompt: createNote):
     emb = generate_embedding(prompt.query)
     ans = generate_note(prompt.query)
@@ -76,7 +76,7 @@ async def create_note(prompt: createNote):
     return {"title": ans[0], "body": ans[1]}
 
 
-@router.post("/notes/ask")
+@router.post("/api/notes/ask")
 async def ask_notes(prompt: askNote):
     emb = generate_embedding(prompt.query)
     users = list_serial(collection_name.find())
