@@ -3,9 +3,6 @@ from pydantic import BaseModel
 from typing import List
 from pydantic import BaseModel
 from app.utils.ai import generate_embedding, generate_note, ask_note
-from app.db.config import collection_name
-from app.db.models import User
-from app.db.schemas import list_serial
 from bson import ObjectId
 from dotenv import load_dotenv
 
