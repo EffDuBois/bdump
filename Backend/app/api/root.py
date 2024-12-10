@@ -13,7 +13,6 @@ load_dotenv()
  
 router = APIRouter()
 
-"""
 class createPrompt(BaseModel):
     query: str
 
@@ -42,9 +41,8 @@ async def ask_notes(prompt: askPrompt):
     notesemb = [i.embedding for i in prompt.data]
     ans = ask_note(prompt.query, emb, notes_text, notesemb)
     return {"body" : ans}
+
 """
-
-
 class createNote(BaseModel):
     authid: str | None = "1234"
     query: str
@@ -84,9 +82,4 @@ async def ask_notes(prompt: askNote):
     notesemb = [i.embedding for i in prompt.data]
     ans = ask_note(prompt.query, emb, notes_text, notesemb)
     return {"body" : ans}
-
-
-
-
-
-
+"""
