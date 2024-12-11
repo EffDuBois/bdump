@@ -5,7 +5,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from app.utils.aimath import cosinesim
 from app.utils.prompts import title_prompt, generate_note_prompt, ask_note_prompt
-from logger import setup_logger
+from app.logger import setup_logger
 from dotenv import load_dotenv
 
 load_dotenv()
