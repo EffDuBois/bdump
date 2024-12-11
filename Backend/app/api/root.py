@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from Backend.app.utils.geminifunctions import generate_embedding, generate_note, ask_note
+from app.utils.geminifunctions import generate_embedding, generate_note, ask_note
 from app.utils.datavalidation import askPrompt, createPrompt
 from logger import setup_logger
 from dotenv import load_dotenv
