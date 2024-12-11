@@ -5,9 +5,12 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from app.utils.aimath import cosinesim
 from app.utils.prompts import title_prompt, generate_note_prompt, ask_note_prompt
+from logger import setup_logger
 from dotenv import load_dotenv
 
 load_dotenv()
+
+logger = setup_logger()
 
 def generate_embedding(query):
     if (query != ""):
@@ -36,7 +39,7 @@ def llm(system_prompt, user_input):
         except Exception as e:
             attempt += 1
             if attempt == MAX_RETRY:
-                print("maximum retries reached for llm")
+                logger.error("maximum retries reached for llm")
                 return "max retries attempted, couldnt fetch response from llm"
 
 
@@ -87,5 +90,5 @@ def ask_note(query, queryemb, notes, notesemb):
         except Exception as e:
             attempt += 1
             if attempt == MAX_RETRY:
-                print("maximum retries reached for llm")
+                logger.error("maximum retries reached for llm")
                 return "max retries attempted, couldnt fetch response from llm"
