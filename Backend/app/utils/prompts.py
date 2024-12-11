@@ -1,5 +1,5 @@
 title_prompt = """
-the given markdown code represents a note made by user, you have to find a suitable title for the note
+the given markdown code represents a note made by user, you have to find a suitable title for the note. the title should not be more than 3-4 words.
 i just need the title and not the markdown script for title.
 also, generate me only one title and not two or more
 no other operation is supposed to be done
