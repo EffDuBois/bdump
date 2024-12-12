@@ -3,7 +3,7 @@ import baseAPI from "./services";
 export async function postCreateNote(query: string) {
   try {
     const response = await baseAPI.post(
-      "/notes/create",
+      "/api/notes/create",
       { query },
       { headers: { "Content-Type": "application/json" } }
     );

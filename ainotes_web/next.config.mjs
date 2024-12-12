@@ -7,6 +7,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const nextConfig = {
   env: {
     DEEPGRAM_API_KEY: process.env.DEEPGRAM_API_KEY,
+    NEXT_PUBLIC_BACKEND_BASE_URL: process.env.NEXT_PUBLIC_BACKEND_BASE_URL,
   },
   webpack: (config) => {
     config.resolve.alias["@"] = join(__dirname, "src");
@@ -16,7 +17,7 @@ const nextConfig = {
     return [
       {
         source: "/api/:slug*",
-        destination: process.env.NEXT_PUBLIC_BACKEND_BASE_URL,
+        destination: `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/:slug*`,
       },
     ];
   },

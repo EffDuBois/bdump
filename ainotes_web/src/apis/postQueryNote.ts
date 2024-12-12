@@ -13,7 +13,7 @@ export interface QueryRequest {
 export default async function postQueryNote(queryRequest: QueryRequest) {
   const payload = JSON.stringify(queryRequest);
   try {
-    const response = await baseAPI.post("/notes/ask", queryRequest, {
+    const response = await baseAPI.post("/api/notes/ask", queryRequest, {
       headers: { "Content-Type": "application/json" },
     });
     return response.data;
