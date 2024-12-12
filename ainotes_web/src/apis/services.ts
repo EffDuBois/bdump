@@ -1,8 +1,6 @@
 import { config } from "@/config";
 import axios from "axios";
 
-const baseAPI = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BACKEND_BASE_URL,
-});
+const baseAPI = axios.create({});
 
 export default baseAPI;
