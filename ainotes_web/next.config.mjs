@@ -14,6 +14,7 @@ const nextConfig = {
     return config;
   },
   rewrites: () => {
+    console.log("current backend:" + process.env.NEXT_PUBLIC_BACKEND_BASE_URL);
     return [
       {
         source: "/api/:slug*",

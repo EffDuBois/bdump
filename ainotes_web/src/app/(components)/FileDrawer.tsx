@@ -5,9 +5,9 @@ import { Note, NotesDbType } from "@/services/data";
 
 import Spinner from "../../components/loaders/Spinner";
 
-import { getTitleFromPath } from "@/services/utils";
+import { getTitleFromPath } from "@/utils/utils";
 import { interfaceFont } from "@/ui/fonts";
-import { PartialBy } from "@/services/custom_types";
+import { PartialBy } from "@/utils/custom_types";
 
 import SlabButtonWDelete from "@/components/buttons/SlabButtonDelete";
 import SlabButtonOutline from "../../components/buttons/SlabButtonOutline";

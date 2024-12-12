@@ -14,10 +14,8 @@ import InputButtons from "./(components)/mainarea/InputButtons";
 import NoteTitleArea from "./(components)/mainarea/NoteTitleArea";
 import NoteTextArea from "./(components)/mainarea/NoteTextArea";
 
-import FileDrawerButton from "./(components)/buttons/FileDrawerButton";
-
-import { getTitleFromPath } from "@/services/utils";
-import { PartialBy } from "@/services/custom_types";
+import { getTitleFromPath } from "@/utils/utils";
+import { PartialBy } from "@/utils/custom_types";
 import { ConnectionStatusMap } from "./(components)/mappings/ConnectionStatus";
 
 export type recordingType = "note" | "query";
@@ -26,7 +24,6 @@ export default function Home() {
   const notesDb = useNotesDb();
   const [notes, setNotes] = useState<Note[]>([]);
   const [currentNote, setCurrentNote] = useState<PartialBy<Note, "id">>();
-
   const [transcript, setTranscript] = useState("");
 
   const transcriber = useTranscriber(setTranscript);
