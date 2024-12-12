@@ -11,7 +11,7 @@ const PlaceHolderTextArea: React.FC<PlaceHolderTextAreaProps> = ({
 }) => {
   return (
     <div className={`${isRecording ? "animate-pulse" : ""}`}>
-      Dump all your notes & thoughts just using voice here
+      Dump all your notes & thoughts just using voice
       <br />
       <br />
       Press the <FaMicrophone className="size-6 inline" size={"64px"} /> button

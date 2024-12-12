@@ -135,27 +135,20 @@ export default function Home() {
 
   return (
     <main className="flex">
-      {drawerOpen && (
-        <FileDrawer
-          notes={notes}
-          storeTxnStatus={notesDb.storeTxnStatus}
-          setCurrentNote={setCurrentNote}
-          createEmptyNote={createEmptyNote}
-          setDrawerOpen={setDrawerOpen}
-          deleteNote={notesDb.deleteNote}
-        />
-      )}
+      <FileDrawer
+        notes={notes}
+        storeTxnStatus={notesDb.storeTxnStatus}
+        setCurrentNote={setCurrentNote}
+        createEmptyNote={createEmptyNote}
+        deleteNote={notesDb.deleteNote}
+        drawerUseState={{ state: drawerOpen, setState: setDrawerOpen }}
+      />
       <div
-        className={`flex flex-col justify-stretch w-full h-screen ${
+        className={`flex flex-col justify-between items-center content-center w-full h-screen pt-20 px-20${
           drawerOpen && "max-md:hidden"
         }`}
       >
-        <FileDrawerButton
-          hidden={drawerOpen}
-          drawerOpen={() => setDrawerOpen((cur) => !cur)}
-        />
-
-        <div className="grow sm:text-2xl sm:px-[20%] px-8 overflow-y-auto">
+        <div className="h-[75vh] w-[75vw] overflow-auto px-20">
           <NoteTitleArea
             updateTitle={(newTitle) => updateTitle(newTitle, currentNote)}
             noteTitle={
@@ -175,7 +168,8 @@ export default function Home() {
           toggleRecording={toggleRecording}
           isRecording={isRecording}
         />
-        <div className={`text-end text-neutral-400 ${interfaceFont.className}`}>
+
+        <div className={`self-end text-neutral-400 ${interfaceFont.className}`}>
           {ConnectionStatusMap[transcriber.connectionStatus]}
         </div>
       </div>

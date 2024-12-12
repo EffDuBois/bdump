@@ -1,6 +1,6 @@
 import baseAPI from "./services";
 
-export interface QueryRequest {
+export interface query {
   query: string;
   data: {
     id: number;
@@ -10,10 +10,10 @@ export interface QueryRequest {
   }[];
 }
 
-export default async function postQueryNote(queryRequest: QueryRequest) {
-  const payload = JSON.stringify(queryRequest);
+export default async function postQueryNote(query: query) {
+  const payload = JSON.stringify(query);
   try {
-    const response = await baseAPI.post("/api/notes/ask", queryRequest, {
+    const response = await baseAPI.post("/api/notes/ask", payload, {
       headers: { "Content-Type": "application/json" },
     });
     return response.data;

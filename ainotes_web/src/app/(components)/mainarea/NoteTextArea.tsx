@@ -6,6 +6,7 @@ import remarkGfm from "remark-gfm";
 import PlaceHolderTextArea from "./PlaceHolderTextArea";
 
 import { recordingType } from "@/app/page";
+import CustomMarkdown from "../CustomMarkdown";
 
 interface NoteTextAreaProps {
   noteContent?: string;
@@ -19,26 +20,21 @@ export default function NoteTextArea({
   isRecording,
 }: NoteTextAreaProps) {
   return (
-    <>
-      <div className="w-full text-xl">
-        {noteContent || transcript ? (
-          <>
-            <Markdown className="text-wrap" remarkPlugins={[remarkGfm]}>
-              {noteContent}
-            </Markdown>
-            <Markdown
-              className={`${subtextFont.className} ${
-                !isRecording && "animate-pulse"
-              } inline`}
-              remarkPlugins={[remarkGfm]}
-            >
-              {transcript}
-            </Markdown>
-          </>
-        ) : (
-          <PlaceHolderTextArea isRecording={isRecording} />
-        )}
-      </div>
-    </>
+    <div className="text-l">
+      {noteContent || transcript ? (
+        <>
+          <CustomMarkdown>{noteContent}</CustomMarkdown>
+          <CustomMarkdown
+            className={`${subtextFont.className} ${
+              !isRecording && "animate-pulse"
+            } inline`}
+          >
+            {transcript}
+          </CustomMarkdown>
+        </>
+      ) : (
+        <PlaceHolderTextArea isRecording={isRecording} />
+      )}
+    </div>
   );
 }

@@ -13,7 +13,7 @@ export default function InputButtons({
   isRecording,
 }: InputButtonsProps) {
   return (
-    <div className="w-full mb-24 mt-4 sm:mb-8 sm:mt-8 flex justify-center items-center gap-10">
+    <div className="mb-24 mt-4 sm:mb-2 sm:mt-2 flex justify-center items-center gap-10">
       <CircleButton
         onClick={() => toggleRecording("note")}
         className={isRecording ? "hidden" : ""}

@@ -20,7 +20,10 @@ interface SideBarProps {
     SetStateAction<PartialBy<Note, "id"> | undefined>
   >;
   createEmptyNote: () => {};
-  setDrawerOpen: React.Dispatch<SetStateAction<boolean>>;
+  drawerUseState: {
+    state: boolean;
+    setState: React.Dispatch<SetStateAction<boolean>>;
+  };
   deleteNote: NotesDbType["deleteNote"];
 }
 
@@ -29,38 +32,46 @@ export default function FileDrawer({
   storeTxnStatus,
   setCurrentNote,
   createEmptyNote,
-  setDrawerOpen,
+  drawerUseState,
   deleteNote,
 }: SideBarProps) {
   return (
     <div
-      className={`w-full sm:w-1/3 h-screen dark:bg-neutral-900 border-r-[1px] border-neutral-400 ${interfaceFont.className}`}
+      className={
+        drawerUseState.state
+          ? `w-full sm:w-1/3 h-screen dark:bg-neutral-900 border-r-[1px] border-neutral-400 ${interfaceFont.className}`
+          : undefined
+      }
     >
-      <FileDrawerButton drawerOpen={() => setDrawerOpen((cur) => !cur)} />
-      <div className="flex flex-col p-6 gap-2">
-        <SlabButtonOutline
-          className="text-center mb-4"
-          onClick={createEmptyNote}
-        >
-          Add Note
-        </SlabButtonOutline>
-        {notes && !storeTxnStatus ? (
-          notes.map((note) => (
-            <SlabButtonWDelete
-              key={note.id}
-              onClick={() => {
-                setCurrentNote(note);
-                setDrawerOpen(false);
-              }}
-              onClickDelete={() => deleteNote(note.id)}
-            >
-              {note.path ? getTitleFromPath(note.path) : "New Note"}
-            </SlabButtonWDelete>
-          ))
-        ) : (
-          <Spinner />
-        )}
-      </div>
+      <FileDrawerButton
+        drawerOpen={() => drawerUseState.setState((cur) => !cur)}
+      />
+      {drawerUseState.state && (
+        <div className="flex flex-col p-6 gap-2">
+          <SlabButtonOutline
+            className="text-center mb-4"
+            onClick={createEmptyNote}
+          >
+            Add Note
+          </SlabButtonOutline>
+          {notes && !storeTxnStatus ? (
+            notes.map((note) => (
+              <SlabButtonWDelete
+                key={note.id}
+                onClick={() => {
+                  setCurrentNote(note);
+                  drawerUseState.setState(false);
+                }}
+                onClickDelete={() => deleteNote(note.id)}
+              >
+                {note.path ? getTitleFromPath(note.path) : "New Note"}
+              </SlabButtonWDelete>
+            ))
+          ) : (
+            <Spinner />
+          )}
+        </div>
+      )}
     </div>
   );
 }
