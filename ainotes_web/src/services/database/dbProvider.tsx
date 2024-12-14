@@ -18,6 +18,7 @@ export interface DbContextType {
   dbReadStatus: boolean;
   fetchAllNotes: () => Promise<Note[]>;
   fetchNote: (id: string) => Promise<Note>;
+  fetchNoteByPath: (file_name: string, file_path: string) => Promise<Note>;
   storeNote: (note: PartialBy<Note, "id">) => Promise<Note>;
   deleteNote: (id: number) => Promise<void>;
   putNote: (note: PartialBy<Note, "id">) => Promise<Note>;
@@ -71,6 +72,28 @@ const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       return note;
     } catch (error) {
       console.error("Error in fetchNote with id:", id, error);
+      throw error;
+    }
+  };
+  const fetchNoteByPath = async (file_name: string, file_path: string) => {
+    try {
+      if (dbWriteStatus) throw transactionInProgressError;
+      setdbReadStatus(true);
+
+      if (!db) {
+        throw dbInitError;
+      }
+      const note = await dbService.fetchNoteByPath(db, file_name, file_path);
+      setdbReadStatus(false);
+      return note;
+    } catch (error) {
+      console.error(
+        "Error in fetchNoteByPath with file_name:",
+        file_name,
+        "and file_path:",
+        file_path,
+        error
+      );
       throw error;
     }
   };
@@ -133,6 +156,7 @@ const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         dbReadStatus,
         fetchAllNotes,
         fetchNote,
+        fetchNoteByPath,
         storeNote,
         deleteNote,
         putNote,

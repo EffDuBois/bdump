@@ -8,6 +8,8 @@ import { PartialBy } from "@/utils/custom_types";
 interface storeContextType {
   notes: Note[];
   notesFetchStatus: boolean;
+  fetchNote: (id: string) => Promise<Note>;
+  fetchNoteByPath: (file_name: string, file_path: string) => Promise<Note>;
   createNote: (query: string, currentNote?: Partial<Note>) => Promise<Note>;
   storeNote: (note: PartialBy<Note, "id">) => Promise<Note>;
   putNote: (note: Partial<Note>) => Promise<Note>;
@@ -23,7 +25,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const notesDb = useDb();
-  const { storeNote, deleteNote } = notesDb;
+  const { fetchNote, storeNote, deleteNote, fetchNoteByPath } = notesDb;
   const storeActions = storeService();
 
   const [notes, setNotes] = useState<Note[]>([]);
@@ -44,17 +46,17 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     }
     return newNote;
   };
-  
-  const putNote = async (note: Partial<Note>) =>{
+
+  const putNote = async (note: Partial<Note>) => {
     const newNote = await notesDb.putNote({
       id: note.id ?? 0,
       file_name: note.file_name ?? "",
       content: note.content ?? "",
-      path: note.path ?? "",
-      transcript: note.transcript ?? ""
+      file_path: note.file_path ?? "",
+      transcript: note.transcript ?? "",
     });
     return newNote;
-  }
+  };
   const queryNotes = async (query: string) => {
     const queryResponse = await storeActions.queryNotes(notes, query);
     return queryResponse;
@@ -65,6 +67,8 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       value={{
         notes,
         notesFetchStatus,
+        fetchNote,
+        fetchNoteByPath,
         createNote,
         storeNote,
         putNote,

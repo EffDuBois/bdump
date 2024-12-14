@@ -3,7 +3,7 @@ import { PartialBy } from "@/utils/custom_types";
 export interface Note {
   id: number;
   file_name: string;
-  path: string;
+  file_path: string;
   transcript: string;
   content: string;
   embedding?: Float32Array;

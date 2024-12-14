@@ -28,9 +28,20 @@ export default function FileDrawer({
   setCurrentNote,
   drawerStateObject,
 }: SideBarProps) {
-  const { notes, notesFetchStatus, storeNote, deleteNote } = useStore();
+  const { notes, notesFetchStatus, storeNote, deleteNote, fetchNoteByPath } =
+    useStore();
   const createEmptyNote = async () => {
-    storeNote({ content: "", file_name: "", path: "", transcript: "" });
+    const emptyNote = await fetchNoteByPath("", "");
+    setCurrentNote(
+      emptyNote
+        ? emptyNote
+        : await storeNote({
+            content: "",
+            file_name: "",
+            file_path: "",
+            transcript: "",
+          })
+    );
   };
   return (
     <div
@@ -61,7 +72,7 @@ export default function FileDrawer({
                 }}
                 onClickDelete={() => deleteNote(note.id)}
               >
-                {note.path ? getTitleFromPath(note.path) : "New Note"}
+                {note.file_name ? note.file_name : "New Note"}
               </SlabButtonWDelete>
             ))
           ) : (
