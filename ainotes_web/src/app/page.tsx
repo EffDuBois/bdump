@@ -48,9 +48,10 @@ export default function Home() {
     setIsRecording((cur) => (cur ? undefined : type));
 
     if (currentNote.transcript && currentRecording === "note") {
+      const tempNote=await store.putNote(currentNote);
       const newNote = await store.createNote(
-        currentNote?.content + " " + currentNote.transcript,
-        currentNote
+        tempNote?.content + " " + tempNote.transcript,
+        tempNote
       );
       setCurrentNote(newNote);
       setTranscript("");

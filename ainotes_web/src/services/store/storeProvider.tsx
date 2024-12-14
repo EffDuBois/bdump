@@ -44,6 +44,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     }
     return newNote;
   };
+  
   const putNote = async (note: Partial<Note>) =>{
     const newNote = await notesDb.putNote({
       id: note.id ?? 0,
