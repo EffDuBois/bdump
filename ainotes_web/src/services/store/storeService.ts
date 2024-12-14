@@ -33,7 +33,7 @@ const storeService = () => {
       const queryResponse = await postQueryNote({
         query,
         data: notes.filter(
-          (note): note is Note & { embedding: Float32Array<ArrayBufferLike> } =>
+          (note): note is Note & { embedding: Float32Array } =>
             note.embedding !== undefined
         ),
       });
