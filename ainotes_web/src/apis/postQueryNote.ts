@@ -1,13 +1,10 @@
+import { Note } from "@/services/database/dataModels";
 import baseAPI from "./services";
+import { Full } from "@/utils/custom_types";
 
 export interface query {
   query: string;
-  data: {
-    id: number;
-    path: string;
-    note: string;
-    embedding: Float32Array;
-  }[];
+  data: Full<Note>[];
 }
 
 export default async function postQueryNote(query: query) {

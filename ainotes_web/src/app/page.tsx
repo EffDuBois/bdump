@@ -1,30 +1,40 @@
 "use client";
-import { useEffect, useState } from "react";
-
-import useNotesDb, { Note } from "@/services/data";
-import useTranscriber from "@/services/transcriber";
-
-import { postCreateNote } from "@/apis/postCreateNote";
-import postQueryNote from "@/apis/postQueryNote";
+import { useState } from "react";
 
 import { interfaceFont } from "@/ui/fonts";
+
+import { useStore } from "@/services/store/storeProvider";
+import useTranscriber from "@/services/transcriber";
+
+import { Note } from "@/services/database/dataModels";
 
 import FileDrawer from "./(components)/FileDrawer";
 import InputButtons from "./(components)/mainarea/InputButtons";
 import NoteTitleArea from "./(components)/mainarea/NoteTitleArea";
 import NoteTextArea from "./(components)/mainarea/NoteTextArea";
 
-import { getTitleFromPath } from "@/utils/utils";
-import { PartialBy } from "@/utils/custom_types";
 import { ConnectionStatusMap } from "./(components)/mappings/ConnectionStatus";
+import { PartialExcept } from "@/utils/custom_types";
 
 export type recordingType = "note" | "query";
 
 export default function Home() {
-  const notesDb = useNotesDb();
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [currentNote, setCurrentNote] = useState<PartialBy<Note, "id">>();
-  const [transcript, setTranscript] = useState("");
+  const store = useStore();
+  const [currentNote, setCurrentNote] = useState<
+    PartialExcept<Note, "transcript">
+  >({
+    transcript: "",
+  });
+  const setTranscript = (
+    updateMethod: string | ((oldvalue: string) => string)
+  ) => {
+    if (typeof updateMethod === "string")
+      setCurrentNote({ ...currentNote, transcript: updateMethod });
+    else
+      setCurrentNote((oldNote) => {
+        return { ...oldNote, transcript: updateMethod(oldNote.transcript) };
+      });
+  };
 
   const transcriber = useTranscriber(setTranscript);
 
@@ -32,127 +42,53 @@ export default function Home() {
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const getNotes = async () => {
-    notesDb.fetchAllNotes().then((notes) => setNotes(notes));
-  };
-
-  useEffect(() => {
-    //Fetching notes
-    if (notesDb.storeStatus && !notesDb.storeTxnStatus) {
-      getNotes();
-    }
-  }, [notesDb.storeStatus, notesDb.storeTxnStatus]);
-
-  const createEmptyNote = async () => {
-    notesDb
-      .storeNote({
-        path: "",
-        content: "",
-      })
-      .then((newNote) => {
-        setCurrentNote(newNote);
-      });
-  };
-
-  const updateNSyncNote = async (note: PartialBy<Note, "id">) => {
-    notesDb.putNote(note).then((updatedNote) => {
-      setCurrentNote(updatedNote);
-    });
-  };
-
-  const updateTitle = async (
-    title: string,
-    note: PartialBy<Note, "id"> | undefined
-  ) => {
-    if (note) {
-      const path = note.path.replace(/[^\/]+$/, title);
-      updateNSyncNote({ ...note, path });
-    } else {
-      //handle no note alert
-    }
-  };
-
   const toggleRecording = async (type?: recordingType) => {
     transcriber.toggleTranscription();
     const currentRecording = isRecording;
     setIsRecording((cur) => (cur ? undefined : type));
 
-    if (transcript && currentRecording === "note") {
-      try {
-        const processedData = await postCreateNote(
-          currentNote?.content + " " + transcript
-        );
-        //existing note
-        if (currentNote?.id && currentNote.path) {
-          updateNSyncNote({
-            id: currentNote.id,
-            path: currentNote.path,
-            content: processedData.body,
-            embedding: processedData.embedding,
-          });
-          setTranscript("");
-        }
-        //new note
-        else {
-          updateNSyncNote({
-            path: `/${processedData.title}`,
-            content: processedData.body,
-            embedding: processedData.embedding,
-          });
-          setTranscript("");
-        }
-      } catch (error) {
-        console.error(error);
-      }
+    if (currentNote.transcript && currentRecording === "note") {
+      const tempNote=await store.putNote(currentNote);
+      const newNote = await store.createNote(
+        tempNote?.content + " " + tempNote.transcript,
+        tempNote
+      );
+      setCurrentNote(newNote);
+      setTranscript("");
     } else if (type === "query") {
-      setCurrentNote({ path: "/Ask", content: "" });
+      setCurrentNote({
+        content: "",
+        file_name: "Ask",
+        transcript: "",
+      });
     } else if (currentRecording === "query") {
-      try {
-        const queryResponse = await postQueryNote({
-          query: transcript,
-          data: notes
-            .filter((note) => note.embedding && note.id)
-            .map((note) => ({
-              id: note.id,
-              path: note.path,
-              note: note.content,
-              embedding: note.embedding as Float32Array,
-            })),
-        });
-        setCurrentNote({
-          path: "/Response",
-          content: queryResponse.body,
-        });
-        setTranscript("");
-      } catch (error) {
-        console.error(error);
-      }
+      const queryResponse = await store.queryNotes(currentNote.transcript);
+      setCurrentNote({
+        content: (currentNote.transcript
+          ? "\n\n" + queryResponse.body
+          : "") as string,
+        file_name: currentNote.file_name,
+        transcript: currentNote.transcript,
+      });
+      setTranscript("");
     }
   };
 
   return (
     <main className="flex flex-col md:flex-row h-screen w-screen">
       <FileDrawer
-        notes={notes}
-        storeTxnStatus={notesDb.storeTxnStatus}
         setCurrentNote={setCurrentNote}
-        createEmptyNote={createEmptyNote}
-        deleteNote={notesDb.deleteNote}
-        drawerUseState={{ state: drawerOpen, setState: setDrawerOpen }}
+        drawerStateObject={{ state: drawerOpen, setState: setDrawerOpen }}
       />
       <div className="flex flex-col justify-between items-center content-center w-full h-full pt-20 px-20">
         <div className=" h-full w-full overflow-auto">
           <NoteTitleArea
-            updateTitle={(newTitle) => updateTitle(newTitle, currentNote)}
-            noteTitle={
-              currentNote?.path
-                ? getTitleFromPath(currentNote?.path)
-                : undefined
-            }
+            currentNote={currentNote}
+            setCurrentNote={setCurrentNote}
           />
           <NoteTextArea
             noteContent={currentNote?.content}
-            transcript={transcript}
+            transcript={currentNote.transcript}
             isRecording={isRecording}
           />
         </div>
