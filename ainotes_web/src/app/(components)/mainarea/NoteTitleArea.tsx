@@ -1,6 +1,6 @@
 "use client";
 import { Note } from "@/services/database/dataModels";
-import { useStore } from "@/services/store/provider";
+import { useStore } from "@/services/store/storeProvider";
 import { titleFont } from "@/ui/fonts";
 import { ChangeEvent, SetStateAction } from "react";
 

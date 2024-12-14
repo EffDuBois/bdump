@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Note, Stores, DBs } from "./dataModels";
 import { PartialBy } from "@/utils/custom_types";
 
-const VERSION = 1;
+const VERSION = 3;
 
 const idbService = () => {
   const initDb = (): Promise<IDBDatabase> => {

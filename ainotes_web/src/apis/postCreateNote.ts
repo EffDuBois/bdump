@@ -1,3 +1,4 @@
+import { Note } from "@/services/database/dataModels";
 import baseAPI from "./services";
 
 export async function postCreateNote(query: string) {

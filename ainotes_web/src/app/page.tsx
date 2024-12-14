@@ -1,25 +1,19 @@
 "use client";
-import { useContext, useEffect, useState } from "react";
-
-import useNotesDb from "@/services/database/idbService";
-import useTranscriber from "@/services/transcriber";
-
-import { postCreateNote } from "@/apis/postCreateNote";
-import postQueryNote from "@/apis/postQueryNote";
+import { useState } from "react";
 
 import { interfaceFont } from "@/ui/fonts";
+
+import { useStore } from "@/services/store/storeProvider";
+import useTranscriber from "@/services/transcriber";
+
+import { Note } from "@/services/database/dataModels";
 
 import FileDrawer from "./(components)/FileDrawer";
 import InputButtons from "./(components)/mainarea/InputButtons";
 import NoteTitleArea from "./(components)/mainarea/NoteTitleArea";
 import NoteTextArea from "./(components)/mainarea/NoteTextArea";
 
-import { getTitleFromPath } from "@/utils/utils";
-import { PartialBy } from "@/utils/custom_types";
 import { ConnectionStatusMap } from "./(components)/mappings/ConnectionStatus";
-import { Store, useStore } from "@/services/store/provider";
-import { Note } from "@/services/database/dataModels";
-import storeActions from "@/services/store/actions";
 
 export type recordingType = "note" | "query";
 
@@ -58,41 +52,37 @@ export default function Home() {
   };
 
   return (
-    <Store.Provider value={storeActions()}>
-      <main className="flex">
-        <FileDrawer
-          setCurrentNote={setCurrentNote}
-          drawerStateObject={{ state: drawerOpen, setState: setDrawerOpen }}
-        />
-        <div
-          className={`flex flex-col justify-between items-center content-center w-full h-screen pt-20 px-20${
-            drawerOpen && "max-md:hidden"
-          }`}
-        >
-          <div className="h-[75vh] w-[75vw] overflow-auto px-20">
-            <NoteTitleArea
-              currentNote={currentNote}
-              setCurrentNote={setCurrentNote}
-            />
-            <NoteTextArea
-              noteContent={currentNote?.content}
-              transcript={transcript}
-              isRecording={isRecording}
-            />
-          </div>
-
-          <InputButtons
-            toggleRecording={toggleRecording}
+    <main className="flex">
+      <FileDrawer
+        setCurrentNote={setCurrentNote}
+        drawerStateObject={{ state: drawerOpen, setState: setDrawerOpen }}
+      />
+      <div
+        className={`flex flex-col justify-between items-center content-center w-full h-screen pt-20 px-20${
+          drawerOpen && "max-md:hidden"
+        }`}
+      >
+        <div className="h-[75vh] w-[75vw] overflow-auto px-20">
+          <NoteTitleArea
+            currentNote={currentNote}
+            setCurrentNote={setCurrentNote}
+          />
+          <NoteTextArea
+            noteContent={currentNote?.content}
+            transcript={transcript}
             isRecording={isRecording}
           />
-
-          <div
-            className={`self-end text-neutral-400 ${interfaceFont.className}`}
-          >
-            {ConnectionStatusMap[transcriber.connectionStatus]}
-          </div>
         </div>
-      </main>
-    </Store.Provider>
+
+        <InputButtons
+          toggleRecording={toggleRecording}
+          isRecording={isRecording}
+        />
+
+        <div className={`self-end text-neutral-400 ${interfaceFont.className}`}>
+          {ConnectionStatusMap[transcriber.connectionStatus]}
+        </div>
+      </div>
+    </main>
   );
 }

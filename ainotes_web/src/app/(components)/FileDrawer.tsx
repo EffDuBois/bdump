@@ -10,7 +10,7 @@ import { interfaceFont } from "@/ui/fonts";
 import SlabButtonWDelete from "@/components/buttons/SlabButtonDelete";
 import SlabButtonOutline from "../../components/buttons/SlabButtonOutline";
 import FileDrawerButton from "./buttons/FileDrawerButton";
-import { useStore } from "@/services/store/provider";
+import { useStore } from "@/services/store/storeProvider";
 import { Note } from "@/services/database/dataModels";
 
 interface SideBarProps {

@@ -1,4 +1,10 @@
-import { createContext, ReactNode, useEffect, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { Note } from "./dataModels";
 import { PartialBy } from "@/utils/custom_types";
 import idbService from "./idbService";
@@ -6,7 +12,7 @@ import idbService from "./idbService";
 const transactionInProgressError = new Error("Txn already in progress");
 const dbInitError = new Error("Db not initialised");
 
-interface DbContextType {
+export interface DbContextType {
   dbStatus: boolean;
   dbWriteStatus: boolean;
   dbReadStatus: boolean;
@@ -14,7 +20,7 @@ interface DbContextType {
   fetchNote: (id: string) => Promise<Note>;
   storeNote: (note: PartialBy<Note, "id">) => Promise<Note>;
   deleteNote: (id: number) => Promise<void>;
-  putNote: (note: Note) => Promise<Note>;
+  putNote: (note: PartialBy<Note, "id">) => Promise<Note>;
 }
 
 export const DbContext = createContext<DbContextType | undefined>(undefined);
@@ -81,7 +87,7 @@ const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     setDbWriteStatus(false);
   };
 
-  const putNote = async (note: Note) => {
+  const putNote = async (note: PartialBy<Note, "id">) => {
     if (dbReadStatus) throw transactionInProgressError;
     setDbWriteStatus(true);
 
@@ -105,8 +111,17 @@ const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         deleteNote,
         putNote,
       }}
-    >{children}</DbContext.Provider>
+    >
+      {children}
+    </DbContext.Provider>
   );
 };
 
 export default DbProvider;
+
+export const useDb = () => {
+  const db = useContext(DbContext);
+
+  if (!db) throw new Error("Critical error: db context missing");
+  return db;
+};

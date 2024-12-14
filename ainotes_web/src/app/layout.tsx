@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { maintextFont } from "@/ui/fonts";
+import Providers from "./providers";
 
 export const metadata: Metadata = {
   title: "AI notes webapp",
@@ -14,7 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${maintextFont.className}`}>{children}</body>
+      <body className={`${maintextFont.className}`}>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
