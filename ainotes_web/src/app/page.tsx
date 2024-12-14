@@ -131,7 +131,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex">
+    <main className="flex flex-col md:flex-row h-screen w-screen">
       <FileDrawer
         notes={notes}
         storeTxnStatus={notesDb.storeTxnStatus}
@@ -140,12 +140,8 @@ export default function Home() {
         deleteNote={notesDb.deleteNote}
         drawerUseState={{ state: drawerOpen, setState: setDrawerOpen }}
       />
-      <div
-        className={`flex flex-col justify-between items-center content-center w-full h-screen pt-20 px-20${
-          drawerOpen && "max-md:hidden"
-        }`}
-      >
-        <div className="h-[75vh] w-[75vw] overflow-auto px-20">
+      <div className="flex flex-col justify-between items-center content-center w-full h-full pt-20 px-20">
+        <div className=" h-full w-full overflow-auto">
           <NoteTitleArea
             updateTitle={(newTitle) => updateTitle(newTitle, currentNote)}
             noteTitle={

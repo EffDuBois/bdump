@@ -39,7 +39,7 @@ export default function FileDrawer({
     <div
       className={
         drawerUseState.state
-          ? `w-full sm:w-1/3 h-screen dark:bg-neutral-900 border-r-[1px] border-neutral-400 ${interfaceFont.className}`
+          ? `w-full md:w-1/3 h-screen absolute md:relative dark:bg-neutral-900 border-r-[1px] border-neutral-400 ${interfaceFont.className}`
           : undefined
       }
     >
