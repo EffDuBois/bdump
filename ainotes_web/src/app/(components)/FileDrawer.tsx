@@ -12,9 +12,12 @@ import SlabButtonOutline from "../../components/buttons/SlabButtonOutline";
 import FileDrawerButton from "./buttons/FileDrawerButton";
 import { useStore } from "@/services/store/storeProvider";
 import { Note } from "@/services/database/dataModels";
+import { PartialExcept } from "@/utils/custom_types";
 
 interface SideBarProps {
-  setCurrentNote: React.Dispatch<SetStateAction<Partial<Note> | undefined>>;
+  setCurrentNote: React.Dispatch<
+    SetStateAction<PartialExcept<Note, "transcript">>
+  >;
   drawerStateObject: {
     state: boolean;
     setState: React.Dispatch<SetStateAction<boolean>>;
@@ -27,7 +30,7 @@ export default function FileDrawer({
 }: SideBarProps) {
   const { notes, notesFetchStatus, storeNote, deleteNote } = useStore();
   const createEmptyNote = async () => {
-    storeNote({ content: "", file_name: "", path: "" });
+    storeNote({ content: "", file_name: "", path: "", transcript: "" });
   };
   return (
     <div

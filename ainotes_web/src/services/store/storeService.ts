@@ -16,10 +16,11 @@ const storeService = () => {
         id: currentNote?.id,
         file_name: currentNote?.file_name || createResponse.title,
         path: createResponse.path || currentNote?.path,
+        transcript: currentNote?.transcript || "",
         content: createResponse.body,
         embedding: createResponse.embedding,
-      }
-      const newNote =await db.putNote(dbInput);
+      };
+      const newNote = await db.putNote(dbInput);
       return newNote;
     } catch (error) {
       //#todo add a pop up
@@ -28,14 +29,18 @@ const storeService = () => {
   };
 
   const queryNotes = async (notes: Note[], query: string) => {
-    const queryResponse = await postQueryNote({
-      query,
-      data: notes.filter(
-        (note): note is Note & { embedding: Float32Array<ArrayBufferLike> } =>
-          note.embedding !== undefined
-      ),
-    });
-    return queryResponse;
+    try {
+      const queryResponse = await postQueryNote({
+        query,
+        data: notes.filter(
+          (note): note is Note & { embedding: Float32Array<ArrayBufferLike> } =>
+            note.embedding !== undefined
+        ),
+      });
+      return queryResponse;
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return {

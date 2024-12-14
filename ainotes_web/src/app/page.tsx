@@ -14,13 +14,27 @@ import NoteTitleArea from "./(components)/mainarea/NoteTitleArea";
 import NoteTextArea from "./(components)/mainarea/NoteTextArea";
 
 import { ConnectionStatusMap } from "./(components)/mappings/ConnectionStatus";
+import { PartialExcept } from "@/utils/custom_types";
 
 export type recordingType = "note" | "query";
 
 export default function Home() {
   const store = useStore();
-  const [currentNote, setCurrentNote] = useState<Partial<Note>>();
-  const [transcript, setTranscript] = useState("");
+  const [currentNote, setCurrentNote] = useState<
+    PartialExcept<Note, "transcript">
+  >({
+    transcript: "",
+  });
+  const setTranscript = (
+    updateMethod: string | ((oldvalue: string) => string)
+  ) => {
+    if (typeof updateMethod === "string")
+      setCurrentNote({ ...currentNote, transcript: updateMethod });
+    else
+      setCurrentNote((oldNote) => {
+        return { ...oldNote, transcript: updateMethod(oldNote.transcript) };
+      });
+  };
 
   const transcriber = useTranscriber(setTranscript);
 
@@ -33,19 +47,27 @@ export default function Home() {
     const currentRecording = isRecording;
     setIsRecording((cur) => (cur ? undefined : type));
 
-    if (transcript && currentRecording === "note") {
+    if (currentNote.transcript && currentRecording === "note") {
       const newNote = await store.createNote(
-        currentNote?.content + " " + transcript,
+        currentNote?.content + " " + currentNote.transcript,
         currentNote
       );
       setCurrentNote(newNote);
       setTranscript("");
     } else if (type === "query") {
-      setCurrentNote({ path: "/Ask", content: "" });
-    } else if (currentRecording === "query") {
-      const queryResponse = await store.queryNotes(transcript);
       setCurrentNote({
-        content: transcript + "\n\n" + queryResponse.body,
+        content: "",
+        file_name: "Ask",
+        transcript: "",
+      });
+    } else if (currentRecording === "query") {
+      const queryResponse = await store.queryNotes(currentNote.transcript);
+      setCurrentNote({
+        content: (currentNote.transcript
+          ? "\n\n" + queryResponse.body
+          : "") as string,
+        file_name: currentNote.file_name,
+        transcript: currentNote.transcript,
       });
       setTranscript("");
     }
@@ -69,7 +91,7 @@ export default function Home() {
           />
           <NoteTextArea
             noteContent={currentNote?.content}
-            transcript={transcript}
+            transcript={currentNote.transcript}
             isRecording={isRecording}
           />
         </div>

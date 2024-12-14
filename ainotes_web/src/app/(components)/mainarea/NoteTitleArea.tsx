@@ -2,11 +2,14 @@
 import { Note } from "@/services/database/dataModels";
 import { useStore } from "@/services/store/storeProvider";
 import { titleFont } from "@/ui/fonts";
+import { PartialExcept } from "@/utils/custom_types";
 import { ChangeEvent, SetStateAction } from "react";
 
 interface NoteTitleAreaProps {
-  currentNote: Partial<Note> | undefined;
-  setCurrentNote: React.Dispatch<SetStateAction<Partial<Note | undefined>>>;
+  currentNote: PartialExcept<Note, "transcript">;
+  setCurrentNote: React.Dispatch<
+    SetStateAction<PartialExcept<Note, "transcript">>
+  >;
 }
 
 export default function NoteTitleArea({
@@ -20,16 +23,14 @@ export default function NoteTitleArea({
     });
   };
   const saveTitle = async (e: ChangeEvent<HTMLTextAreaElement>) => {
-    if (currentNote?.file_name) {
-      const newNote = await putNote({
-        ...currentNote,
-        file_name: currentNote.file_name,
-        path: currentNote.path || "",
-        content: currentNote.content || "",
-      });
-      setCurrentNote(newNote);
-    }
-  };
+      if (currentNote?.file_name) {
+        const newNote = await putNote({
+          ...currentNote,
+          file_name: currentNote.file_name,
+        });
+        setCurrentNote(newNote);
+      }
+    };
   return (
     <h1 className="text-4xl mb-8 text-center">
       {currentNote?.file_name ? (
