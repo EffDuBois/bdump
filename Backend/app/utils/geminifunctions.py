@@ -37,6 +37,11 @@ def llm(system_prompt, user_input):
             chain = prompt | llm | parser
             return chain.invoke({"input": user_input})
         except Exception as e:
+            if "Resource has been exhausted" in str(e):  
+                raise HTTPException(
+                    status_code=429, 
+                    detail="Gemini API rate limit exceeded. Please try again later."
+                )
             attempt += 1
             if attempt == MAX_RETRY:
                 logger.error("maximum retries reached for llm")
@@ -88,6 +93,11 @@ def ask_note(query, queryemb, notes, notesemb):
             else:
                 return "empty query"
         except Exception as e:
+            if "Resource has been exhausted" in str(e):  
+                raise HTTPException(
+                    status_code=429, 
+                    detail="Gemini API rate limit exceeded. Please try again later."
+                )
             attempt += 1
             if attempt == MAX_RETRY:
                 logger.error("maximum retries reached for llm")
