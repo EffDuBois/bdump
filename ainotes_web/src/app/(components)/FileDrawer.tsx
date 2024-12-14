@@ -1,52 +1,46 @@
 "use client";
 
 import { SetStateAction } from "react";
-import { Note, NotesDbType } from "@/services/data";
 
 import Spinner from "../../components/loaders/Spinner";
 
 import { getTitleFromPath } from "@/utils/utils";
 import { interfaceFont } from "@/ui/fonts";
-import { PartialBy } from "@/utils/custom_types";
 
 import SlabButtonWDelete from "@/components/buttons/SlabButtonDelete";
 import SlabButtonOutline from "../../components/buttons/SlabButtonOutline";
 import FileDrawerButton from "./buttons/FileDrawerButton";
+import { useStore } from "@/services/store/provider";
+import { Note } from "@/services/database/dataModels";
 
 interface SideBarProps {
-  notes: Note[];
-  storeTxnStatus: boolean;
-  setCurrentNote: React.Dispatch<
-    SetStateAction<PartialBy<Note, "id"> | undefined>
-  >;
-  createEmptyNote: () => {};
-  drawerUseState: {
+  setCurrentNote: React.Dispatch<SetStateAction<Partial<Note> | undefined>>;
+  drawerStateObject: {
     state: boolean;
     setState: React.Dispatch<SetStateAction<boolean>>;
   };
-  deleteNote: NotesDbType["deleteNote"];
 }
 
 export default function FileDrawer({
-  notes,
-  storeTxnStatus,
   setCurrentNote,
-  createEmptyNote,
-  drawerUseState,
-  deleteNote,
+  drawerStateObject,
 }: SideBarProps) {
+  const { notes, notesFetchStatus, storeNote, deleteNote } = useStore();
+  const createEmptyNote = async () => {
+    storeNote({ content: "", file_name: "", path: "" });
+  };
   return (
     <div
       className={
-        drawerUseState.state
+        drawerStateObject.state
           ? `w-full sm:w-1/3 h-screen dark:bg-neutral-900 border-r-[1px] border-neutral-400 ${interfaceFont.className}`
           : undefined
       }
     >
       <FileDrawerButton
-        drawerOpen={() => drawerUseState.setState((cur) => !cur)}
+        drawerOpen={() => drawerStateObject.setState((cur) => !cur)}
       />
-      {drawerUseState.state && (
+      {drawerStateObject.state && (
         <div className="flex flex-col p-6 gap-2">
           <SlabButtonOutline
             className="text-center mb-4"
@@ -54,13 +48,13 @@ export default function FileDrawer({
           >
             Add Note
           </SlabButtonOutline>
-          {notes && !storeTxnStatus ? (
+          {notes && !notesFetchStatus ? (
             notes.map((note) => (
               <SlabButtonWDelete
                 key={note.id}
                 onClick={() => {
                   setCurrentNote(note);
-                  drawerUseState.setState(false);
+                  drawerStateObject.setState(false);
                 }}
                 onClickDelete={() => deleteNote(note.id)}
               >

@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { maintextFont, titleFont } from "@/ui/fonts";
-import { cookies } from "next/headers";
-import { SESSION_COOKIE_NAME } from "@/constants";
-import Header from "@/components/header";
+import { maintextFont } from "@/ui/fonts";
 
 export const metadata: Metadata = {
   title: "AI notes webapp",
