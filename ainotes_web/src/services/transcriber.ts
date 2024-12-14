@@ -7,7 +7,9 @@ const DEEPGRAM_MODEL_CONFIG = {
   smart_format: true,
 };
 
-function useTranscriber(setTranscript: Dispatch<SetStateAction<string>>) {
+function useTranscriber(
+  setTranscript: (updateMethod: string | ((oldvalue: string) => string)) => void
+) {
   const [mic, setMic] = useState<MediaRecorder>();
   const [socket, setSocket] = useState<ListenLiveClient>();
 
@@ -37,7 +39,8 @@ function useTranscriber(setTranscript: Dispatch<SetStateAction<string>>) {
           console.log(data);
           setConnectionStatus("transmitting");
           const transcript = data.channel.alternatives[0].transcript;
-          if (transcript !== "") setTranscript((old) => old + " " + transcript);
+          if (transcript !== "")
+            setTranscript((old) => old + " " + transcript);
         });
         newSocket.on("error", (e) => {
           console.error(e);
