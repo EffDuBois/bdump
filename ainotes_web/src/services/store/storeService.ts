@@ -15,7 +15,7 @@ const storeService = () => {
       const dbInput = {
         id: currentNote?.id,
         file_name: currentNote?.file_name || createResponse.title,
-        path: createResponse.path || currentNote?.path,
+        file_path: currentNote?.file_path || "",
         transcript: currentNote?.transcript || "",
         content: createResponse.body,
         embedding: createResponse.embedding,
