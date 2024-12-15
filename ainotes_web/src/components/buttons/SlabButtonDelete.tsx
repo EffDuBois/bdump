@@ -11,10 +11,10 @@ export default function SlabButtonWDelete({
   ...others
 }: SlabButtonWDeleteProps) {
   return (
-    <div className="flex">
+    <div className="flex rounded-lg hover:bg-neutral-500">
       <SlabButton className={`grow rounded-r-none ${className}`} {...others} />
       <SlabButton
-        className={`rounded-l-none ${className}`}
+        className={`rounded-l-none hover:bg-neutral-50/25 ${className}`}
         onClick={onClickDelete}
       >
         <IoCloseOutline />

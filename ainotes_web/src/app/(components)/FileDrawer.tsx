@@ -65,8 +65,10 @@ export default function FileDrawer({
                 className={note.id == currentNote.id ? "bg-neutral-700" : ""}
                 key={note.id}
                 onClick={() => {
-                  setCurrentNote(note);
-                  drawerStateObject.setState(false);
+                  if (currentNote.id !== note.id) {
+                    setCurrentNote(note);
+                    drawerStateObject.setState(false);
+                  }
                 }}
                 onClickDelete={() => deleteNote(note.id)}
               >
