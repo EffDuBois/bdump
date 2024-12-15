@@ -2,14 +2,15 @@ import { Note } from "../database/dataModels";
 
 import { postCreateNote } from "@/apis/postCreateNote";
 import postQueryNote from "@/apis/postQueryNote";
-import { DbContextType } from "../database/dbProvider";
+import idbService from "../database/idbService";
+import { useStore } from "./storeProvider";
+import { useDb } from "../database/dbProvider";
 
-const storeService = () => {
-  const createNote = async (
-    db: DbContextType,
-    query: string,
-    currentNote?: Partial<Note>
-  ) => {
+const useStoreActions = () => {
+  const db = useDb();
+  const { notes } = useStore();
+
+  const createNote = async (query: string, currentNote?: Partial<Note>) => {
     try {
       const createResponse = await postCreateNote(query);
       const dbInput = {
@@ -28,7 +29,7 @@ const storeService = () => {
     }
   };
 
-  const queryNotes = async (notes: Note[], query: string) => {
+  const queryNotes = async (query: string) => {
     try {
       const queryResponse = await postQueryNote({
         query,
@@ -43,9 +44,28 @@ const storeService = () => {
     }
   };
 
+  const getEmptyNote = async () => {
+    try {
+      let emptyNote = await db.fetchNoteByPath("", "");
+      if (!emptyNote) {
+        emptyNote = await db.storeNote({
+          content: "",
+          file_name: "",
+          file_path: "",
+          transcript: "",
+        });
+      }
+      return emptyNote;
+    } catch (error) {
+      console.error("Failed to get empty note:", error);
+      throw error;
+    }
+  };
+
   return {
     createNote,
     queryNotes,
+    getEmptyNote,
   };
 };
-export default storeService;
+export default useStoreActions;

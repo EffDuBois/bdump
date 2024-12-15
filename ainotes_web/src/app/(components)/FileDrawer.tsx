@@ -4,7 +4,6 @@ import { SetStateAction } from "react";
 
 import Spinner from "../../components/loaders/Spinner";
 
-import { getTitleFromPath } from "@/utils/utils";
 import { interfaceFont } from "@/ui/fonts";
 
 import SlabButtonWDelete from "@/components/buttons/SlabButtonDelete";
@@ -13,8 +12,11 @@ import FileDrawerButton from "./buttons/FileDrawerButton";
 import { useStore } from "@/services/store/storeProvider";
 import { Note } from "@/services/database/dataModels";
 import { PartialExcept } from "@/utils/custom_types";
+import useStoreActions from "@/services/store/useStoreActions";
+import { useDb } from "@/services/database/dbProvider";
 
 interface SideBarProps {
+  currentNote: PartialExcept<Note, "transcript">;
   setCurrentNote: React.Dispatch<
     SetStateAction<PartialExcept<Note, "transcript">>
   >;
@@ -25,23 +27,16 @@ interface SideBarProps {
 }
 
 export default function FileDrawer({
+  currentNote,
   setCurrentNote,
   drawerStateObject,
 }: SideBarProps) {
-  const { notes, notesFetchStatus, storeNote, deleteNote, fetchNoteByPath } =
-    useStore();
-  const createEmptyNote = async () => {
-    const emptyNote = await fetchNoteByPath("", "");
-    setCurrentNote(
-      emptyNote
-        ? emptyNote
-        : await storeNote({
-            content: "",
-            file_name: "",
-            file_path: "",
-            transcript: "",
-          })
-    );
+  const { notes, notesFetchStatus } = useStore();
+  const { getEmptyNote } = useStoreActions();
+  const { deleteNote } = useDb();
+
+  const addEmptyNote = async () => {
+    getEmptyNote().then((note) => setCurrentNote(note));
   };
   return (
     <div
@@ -58,13 +53,14 @@ export default function FileDrawer({
         <div className="flex flex-col p-6 gap-2">
           <SlabButtonOutline
             className="text-center mb-4"
-            onClick={createEmptyNote}
+            onClick={addEmptyNote}
           >
             Add Note
           </SlabButtonOutline>
           {notes && !notesFetchStatus ? (
             notes.map((note) => (
               <SlabButtonWDelete
+                className={note.id == currentNote.id ? "bg-neutral-500" : ""}
                 key={note.id}
                 onClick={() => {
                   setCurrentNote(note);

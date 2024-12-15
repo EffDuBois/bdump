@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-
 import { Note, Stores, DBs } from "./dataModels";
 import { PartialBy } from "@/utils/custom_types";
 
@@ -100,101 +98,113 @@ const idbService = () => {
     });
   };
 
-  const fetchAllNotes = (db: IDBDatabase): Promise<Note[]> => {
+  const fetchAllNotes = (): Promise<Note[]> => {
     return new Promise((resolve, reject) => {
-      const tx = db.transaction(Stores.notes);
+      initDb().then((db) => {
+        const tx = db.transaction(Stores.notes);
 
-      const res = tx.objectStore(Stores.notes).getAll();
-      res.onsuccess = () => {
-        console.log("fetch txn success");
-        resolve(res.result);
-      };
-      res.onerror = () => {
-        reject("Transaction error:" + res.error);
-      };
+        const res = tx.objectStore(Stores.notes).getAll();
+        res.onsuccess = () => {
+          console.log("fetch txn success");
+          resolve(res.result);
+        };
+        res.onerror = () => {
+          reject("Transaction error:" + res.error);
+        };
+      });
     });
   };
 
-  const fetchNote = (db: IDBDatabase, id: string): Promise<Note> => {
+  const fetchNote = (id: string): Promise<Note> => {
     return new Promise((resolve, reject) => {
-      const tx = db.transaction(Stores.notes);
+      initDb().then((db) => {
+        const tx = db.transaction(Stores.notes);
 
-      const res = tx.objectStore(Stores.notes).get(id);
-      res.onsuccess = () => {
-        console.log("fetch txn success");
-        resolve(res.result[0]);
-      };
-      res.onerror = (event) => {
-        reject("Transaction error:" + res.error);
-      };
+        const res = tx.objectStore(Stores.notes).get(id);
+        res.onsuccess = () => {
+          console.log("fetch txn success");
+          resolve(res.result[0]);
+        };
+        res.onerror = (event) => {
+          reject("Transaction error:" + res.error);
+        };
+      });
     });
   };
 
   const fetchNoteByPath = (
-    db: IDBDatabase,
     file_name: string,
     file_path: string
   ): Promise<Note> => {
     return new Promise((resolve, reject) => {
-      const tx = db.transaction(Stores.notes);
+      initDb().then((db) => {
+        const tx = db.transaction(Stores.notes);
 
-      const index = tx.objectStore(Stores.notes).index("path");
-      const res = index.get([file_path, file_name]);
-      res.onsuccess = () => {
-        console.log("fetch txn success");
-        resolve(res.result[0]);
-      };
-      res.onerror = (event) => {
-        reject("Transaction error:" + res.error);
-      };
+        const index = tx.objectStore(Stores.notes).index("path");
+        const res = index.get(["", ""]);
+
+        res.onsuccess = () => {
+          console.log("fetchByPath txn success");
+          console.log(res.result);
+
+          if (res.result) {
+            resolve(res.result);
+          } else {
+            reject("Note not found");
+          }
+        };
+        res.onerror = () => {
+          reject("Transaction error:" + res.error);
+        };
+      });
     });
   };
 
-  const storeNote = (
-    db: IDBDatabase,
-    data: Omit<Note, "id">
-  ): Promise<Note> => {
+  const storeNote = (data: Omit<Note, "id">): Promise<Note> => {
     return new Promise((resolve, reject) => {
-      const tx = db.transaction(Stores.notes, "readwrite");
-      const res = tx.objectStore(Stores.notes).add(data);
-      res.onsuccess = () => {
-        resolve({ ...data, id: Number(res.result) });
-      };
-      res.onerror = () => {
-        if (res.error?.name == "ConstraintError")
-          console.log("File already exists, please use a valid path");
-        reject("Transaction error:" + res.error);
-      };
+      initDb().then((db) => {
+        const tx = db.transaction(Stores.notes, "readwrite");
+        const res = tx.objectStore(Stores.notes).add(data);
+        res.onsuccess = () => {
+          resolve({ ...data, id: Number(res.result) });
+        };
+        res.onerror = () => {
+          if (res.error?.name == "ConstraintError")
+            reject("Transaction error:" + res.error);
+        };
+      });
     });
   };
 
-  const deleteNote = (db: IDBDatabase, id: number): Promise<boolean> => {
+  const deleteNote = (id: number): Promise<boolean> => {
     return new Promise((resolve, reject) => {
-      const tx = db.transaction(Stores.notes, "readwrite");
-      const res = tx.objectStore(Stores.notes).delete(id);
-      res.onsuccess = () => {
-        resolve(true);
-      };
-      res.onerror = () => {
-        reject("Transaction error:" + res.error);
-      };
+      initDb().then((db) => {
+        const tx = db.transaction(Stores.notes, "readwrite");
+        const res = tx.objectStore(Stores.notes).delete(id);
+        res.onsuccess = () => {
+          resolve(true);
+        };
+        res.onerror = () => {
+          reject("Transaction error:" + res.error);
+        };
+      });
     });
   };
 
-  const putNote = (
-    db: IDBDatabase,
-    data: PartialBy<Note, "id">
-  ): Promise<Note> => {
+  const putNote = (data: PartialBy<Note, "id">): Promise<Note> => {
     return new Promise((resolve, reject) => {
-      const tx = db.transaction(Stores.notes, "readwrite");
-      const store = tx.objectStore(Stores.notes);
-      const res = store.put(data);
-      res.onsuccess = () => {
-        resolve({ ...data, id: Number(res.result) });
-      };
-      res.onerror = () => {
-        reject("Transaction error:" + res.error);
-      };
+      initDb().then((db) => {
+        const tx = db.transaction(Stores.notes, "readwrite");
+        const store = tx.objectStore(Stores.notes);
+        const res = store.put(data);
+        res.onsuccess = () => {
+          resolve({ ...data, id: Number(res.result) });
+        };
+        res.onerror = () => {
+          if (res.error?.name == "ConstraintError")
+            reject("Transaction error:" + res.error);
+        };
+      });
     });
   };
 

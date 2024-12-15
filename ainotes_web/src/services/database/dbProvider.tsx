@@ -1,150 +1,100 @@
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import { Note } from "./dataModels";
-import { PartialBy } from "@/utils/custom_types";
+import { createContext, useContext, useState } from "react";
 import idbService from "./idbService";
+import { PartialBy } from "@/utils/custom_types";
+import { Note } from "./dataModels";
 
-const transactionInProgressError = new Error("Txn already in progress");
-const dbInitError = new Error("Db not initialised");
-
-export interface DbContextType {
+type DbContextType = {
   dbStatus: boolean;
-  dbWriteStatus: boolean;
-  dbReadStatus: boolean;
-  fetchAllNotes: () => Promise<Note[]>;
-  fetchNote: (id: string) => Promise<Note>;
-  fetchNoteByPath: (file_name: string, file_path: string) => Promise<Note>;
-  storeNote: (note: PartialBy<Note, "id">) => Promise<Note>;
-  deleteNote: (id: number) => Promise<void>;
-  putNote: (note: PartialBy<Note, "id">) => Promise<Note>;
-}
+  fetchAllNotes: () => Promise<Note[] | undefined>;
+  fetchNote: (id: string) => Promise<Note | undefined>;
+  fetchNoteByPath: (
+    file_name: string,
+    file_path: string
+  ) => Promise<Note | undefined>;
+  storeNote: (note: PartialBy<Note, "id">) => Promise<Note | undefined>;
+  deleteNote: (id: number) => Promise<boolean | undefined>;
+  putNote: (note: Partial<Note>) => Promise<Note>;
+};
 
-export const DbContext = createContext<DbContextType | undefined>(undefined);
+const DbContext = createContext<DbContextType | undefined>(undefined);
 
-const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const dbService = idbService();
-  const [db, setDb] = useState<IDBDatabase>();
+import { ReactNode } from "react";
+
+const DbProvider = ({ children }: { children: ReactNode }) => {
+  const db = idbService();
   const [dbStatus, setDbStatus] = useState(false);
-  const [dbWriteStatus, setDbWriteStatus] = useState(false);
-  const [dbReadStatus, setdbReadStatus] = useState(false);
-
-  useEffect(() => {
-    if (!dbStatus) {
-      dbService.initDb().then((newDb) => {
-        setDb(newDb);
-        setDbStatus(true);
-      });
-    }
-  }, [dbStatus]);
 
   const fetchAllNotes = async () => {
+    setDbStatus(true);
     try {
-      if (dbWriteStatus) throw transactionInProgressError;
-      setdbReadStatus(true);
-
-      if (!db) {
-        throw dbInitError;
-      }
-      const notes = await dbService.fetchAllNotes(db);
-      setdbReadStatus(false);
-      return notes;
+      return await db.fetchAllNotes();
     } catch (error) {
-      console.error("Error in fetchAllNotes:", error);
-      throw error;
+      console.error("Failed to fetch all notes:", error);
+    } finally {
+      setDbStatus(false);
     }
   };
 
   const fetchNote = async (id: string) => {
+    setDbStatus(true);
     try {
-      if (dbWriteStatus) throw transactionInProgressError;
-      setdbReadStatus(true);
-
-      if (!db) {
-        throw dbInitError;
-      }
-      const note = await dbService.fetchNote(db, id);
-      setdbReadStatus(false);
-      return note;
+      return await db.fetchNote(id);
     } catch (error) {
-      console.error("Error in fetchNote with id:", id, error);
-      throw error;
+      console.error("Failed to fetch note:", error);
+    } finally {
+      setDbStatus(false);
     }
   };
-  const fetchNoteByPath = async (file_name: string, file_path: string) => {
-    try {
-      if (dbWriteStatus) throw transactionInProgressError;
-      setdbReadStatus(true);
 
-      if (!db) {
-        throw dbInitError;
-      }
-      const note = await dbService.fetchNoteByPath(db, file_name, file_path);
-      setdbReadStatus(false);
-      return note;
+  const fetchNoteByPath = async (file_name: string, file_path: string) => {
+    setDbStatus(true);
+    try {
+      return await db.fetchNoteByPath(file_name, file_path);
     } catch (error) {
-      console.error(
-        "Error in fetchNoteByPath with file_name:",
-        file_name,
-        "and file_path:",
-        file_path,
-        error
-      );
-      throw error;
+      console.error("Failed to fetch note by path:", error);
+    } finally {
+      setDbStatus(false);
     }
   };
 
   const storeNote = async (note: PartialBy<Note, "id">) => {
+    setDbStatus(true);
     try {
-      if (dbReadStatus) throw transactionInProgressError;
-      setDbWriteStatus(true);
-
-      if (!db) {
-        throw dbInitError;
-      }
-      const newNote = await dbService.storeNote(db, note);
-      setDbWriteStatus(false);
-      return newNote;
+      return await db.storeNote(note);
     } catch (error) {
-      console.error("Error in storeNote with note:", note, error);
-      throw error;
+      console.error("Failed to store note:", error);
+    } finally {
+      setDbStatus(false);
     }
   };
 
   const deleteNote = async (id: number) => {
+    setDbStatus(true);
     try {
-      if (dbReadStatus) throw transactionInProgressError;
-      setDbWriteStatus(true);
-
-      if (!db) {
-        throw dbInitError;
-      }
-      await dbService.deleteNote(db, id);
-      setDbWriteStatus(false);
+      return await db.deleteNote(id);
     } catch (error) {
-      console.error("Error in deleteNote with id:", id, error);
-      throw error;
+      console.error("Failed to delete note:", error);
+    } finally {
+      setDbStatus(false);
     }
   };
 
-  const putNote = async (note: PartialBy<Note, "id">) => {
+  const putNote = async (note: Partial<Note>) => {
+    setDbStatus(true);
     try {
-      if (dbReadStatus) throw transactionInProgressError;
-      setDbWriteStatus(true);
-
-      if (!db) {
-        throw dbInitError;
-      }
-      const updatedNote = await dbService.putNote(db, note);
-      setDbWriteStatus(false);
-      return updatedNote;
+      const newNote = await db.putNote({
+        id: note.id ?? 0,
+        file_name: note.file_name ?? "",
+        content: note.content ?? "",
+        file_path: note.file_path ?? "",
+        transcript: note.transcript ?? "",
+      });
+      return newNote;
     } catch (error) {
-      console.error("Error in putNote with note:", note, error);
+      console.error("Failed to put note:", note, error);
       throw error;
+    } finally {
+      setDbStatus(false);
     }
   };
 
@@ -152,8 +102,6 @@ const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     <DbContext.Provider
       value={{
         dbStatus,
-        dbWriteStatus,
-        dbReadStatus,
         fetchAllNotes,
         fetchNote,
         fetchNoteByPath,
@@ -172,6 +120,6 @@ export default DbProvider;
 export const useDb = () => {
   const db = useContext(DbContext);
 
-  if (!db) throw new Error("Critical error: db context missing");
+  if (!db) throw new Error("Critical error: store context missing");
   return db;
 };

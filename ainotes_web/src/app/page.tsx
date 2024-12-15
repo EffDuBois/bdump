@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { interfaceFont } from "@/ui/fonts";
 
@@ -15,16 +15,21 @@ import NoteTextArea from "./(components)/mainarea/NoteTextArea";
 
 import { ConnectionStatusMap } from "./(components)/mappings/ConnectionStatus";
 import { PartialExcept } from "@/utils/custom_types";
+import useStoreActions from "@/services/store/useStoreActions";
+import { useDb } from "@/services/database/dbProvider";
 
 export type recordingType = "note" | "query";
 
 export default function Home() {
-  const store = useStore();
+  const db = useDb();
+  const storeActions = useStoreActions();
+
   const [currentNote, setCurrentNote] = useState<
     PartialExcept<Note, "transcript">
   >({
     transcript: "",
   });
+
   const setTranscript = (
     updateMethod: string | ((oldvalue: string) => string)
   ) => {
@@ -35,6 +40,14 @@ export default function Home() {
         return { ...oldNote, transcript: updateMethod(oldNote.transcript) };
       });
   };
+
+  useEffect(() => {
+    if (!currentNote.id) {
+      storeActions.getEmptyNote().then((note) => {
+        if (note) setCurrentNote(note);
+      });
+    }
+  }, []);
 
   const transcriber = useTranscriber(setTranscript);
 
@@ -48,12 +61,14 @@ export default function Home() {
     setIsRecording((cur) => (cur ? undefined : type));
 
     if (currentNote.transcript && currentRecording === "note") {
-      const tempNote=await store.putNote(currentNote);
-      const newNote = await store.createNote(
+      const tempNote = await db.putNote(currentNote);
+      const newNote = await storeActions.createNote(
         tempNote?.content + " " + tempNote.transcript,
         tempNote
       );
-      setCurrentNote(newNote);
+      if (newNote) {
+        setCurrentNote(newNote);
+      }
       setTranscript("");
     } else if (type === "query") {
       setCurrentNote({
@@ -62,7 +77,9 @@ export default function Home() {
         transcript: "",
       });
     } else if (currentRecording === "query") {
-      const queryResponse = await store.queryNotes(currentNote.transcript);
+      const queryResponse = await storeActions.queryNotes(
+        currentNote.transcript
+      );
       setCurrentNote({
         content: (currentNote.transcript
           ? "\n\n" + queryResponse.body
@@ -77,6 +94,7 @@ export default function Home() {
   return (
     <main className="flex flex-col md:flex-row h-screen w-screen">
       <FileDrawer
+        currentNote={currentNote}
         setCurrentNote={setCurrentNote}
         drawerStateObject={{ state: drawerOpen, setState: setDrawerOpen }}
       />
