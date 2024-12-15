@@ -19,6 +19,9 @@ import useStoreActions from "@/services/store/useStoreActions";
 import { useDb } from "@/services/database/Provider";
 
 export type recordingType = "note" | "query";
+export type setTranscriptType = (
+  updateMethod: string | ((oldvalue: string) => string)
+) => void;
 
 export default function Home() {
   const db = useDb();
@@ -30,9 +33,7 @@ export default function Home() {
     transcript: "",
   });
 
-  const setTranscript = (
-    updateMethod: string | ((oldvalue: string) => string)
-  ) => {
+  const setTranscript: setTranscriptType = (updateMethod) => {
     if (typeof updateMethod === "string")
       setCurrentNote({ ...currentNote, transcript: updateMethod });
     else
@@ -41,12 +42,16 @@ export default function Home() {
       });
   };
 
-  useEffect(() => {
+  const initCurrentNote = async () => {
     if (!currentNote.id) {
       storeActions.getEmptyNote().then((note) => {
         if (note) setCurrentNote(note);
       });
     }
+  };
+
+  useEffect(() => {
+    initCurrentNote();
   }, []);
 
   const transcriber = useTranscriber(setTranscript);
@@ -61,22 +66,18 @@ export default function Home() {
     setIsRecording((cur) => (cur ? undefined : type));
 
     if (currentNote.transcript && currentRecording === "note") {
-      const tempNote = await db.putNote(currentNote);
-      const newNote = await storeActions.createNote(
-        tempNote?.content + " " + tempNote.transcript,
-        tempNote
-      );
-      if (newNote) {
-        setCurrentNote(newNote);
+      try {
+        const newNote = await storeActions.createNote(
+          currentNote?.content + " " + currentNote.transcript,
+          currentNote
+        );
+        if (newNote) {
+          setCurrentNote(newNote);
+        }
+      } catch (error) {
+        console.error(error);
       }
-      setTranscript("");
-    } else if (type === "query") {
-      setCurrentNote({
-        content: "",
-        file_name: "Ask",
-        transcript: "",
-      });
-    } else if (currentRecording === "query") {
+    } else if (currentNote.transcript && currentRecording === "query") {
       const queryResponse = await storeActions.queryNotes(
         currentNote.transcript
       );
@@ -85,9 +86,17 @@ export default function Home() {
           ? "\n\n" + queryResponse.body
           : "") as string,
         file_name: currentNote.file_name,
-        transcript: currentNote.transcript,
+        transcript: "",
       });
-      setTranscript("");
+    }
+    if (type === "query") {
+      setCurrentNote({
+        content: "",
+        file_name: "Ask",
+        transcript: "",
+      });
+    } else if (type === "note") {
+      await initCurrentNote();
     }
   };
 
@@ -112,6 +121,8 @@ export default function Home() {
         </div>
 
         <InputButtons
+          transcript={currentNote.transcript}
+          setTranscript={setTranscript}
           toggleRecording={toggleRecording}
           isRecording={isRecording}
         />
