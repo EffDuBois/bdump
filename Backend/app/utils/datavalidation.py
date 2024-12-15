@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 class createPrompt(BaseModel):
     query: str
-    iscontext: bool
+    # iscontext: bool
 
 class NoteEmbedding(BaseModel):
     id: int
