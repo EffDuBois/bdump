@@ -7,6 +7,7 @@ from app.utils.aimath import cosinesim
 from app.utils.prompts import title_prompt, generate_note_prompt, ask_note_prompt
 from app.logger import setup_logger
 from dotenv import load_dotenv
+from fastapi import HTTPException
 
 load_dotenv()
 
