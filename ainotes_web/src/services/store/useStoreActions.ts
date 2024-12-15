@@ -17,7 +17,7 @@ const useStoreActions = () => {
         id: currentNote?.id,
         file_name: currentNote?.file_name || createResponse.title,
         file_path: currentNote?.file_path || "",
-        transcript: currentNote?.transcript || "",
+        transcript: "",
         content: createResponse.body,
         embedding: createResponse.embedding,
       };
