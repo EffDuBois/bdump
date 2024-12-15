@@ -145,7 +145,6 @@ const idbService = () => {
 
         res.onsuccess = () => {
           console.log("fetchByPath txn success");
-          console.log(res.result);
 
           if (res.result) {
             resolve(res.result);
