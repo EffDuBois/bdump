@@ -25,35 +25,29 @@ const DbProvider = ({ children }: { children: ReactNode }) => {
   const [dbStatus, setDbStatus] = useState(false);
 
   const fetchAllNotes = async () => {
-    setDbStatus(true);
     try {
       return await db.fetchAllNotes();
     } catch (error) {
       console.error("Failed to fetch all notes:", error);
     } finally {
-      setDbStatus(false);
     }
   };
 
   const fetchNote = async (id: string) => {
-    setDbStatus(true);
     try {
       return await db.fetchNote(id);
     } catch (error) {
       console.error("Failed to fetch note:", error);
     } finally {
-      setDbStatus(false);
     }
   };
 
   const fetchNoteByPath = async (file_name: string, file_path: string) => {
-    setDbStatus(true);
     try {
       return await db.fetchNoteByPath(file_name, file_path);
     } catch (error) {
       console.error("Failed to fetch note by path:", error);
     } finally {
-      setDbStatus(false);
     }
   };
 
