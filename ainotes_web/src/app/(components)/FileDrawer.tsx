@@ -13,7 +13,7 @@ import { useStore } from "@/services/store/storeProvider";
 import { Note } from "@/services/database/dataModels";
 import { PartialExcept } from "@/utils/custom_types";
 import useStoreActions from "@/services/store/useStoreActions";
-import { useDb } from "@/services/database/dbProvider";
+import { useDb } from "@/services/database/Provider";
 
 interface SideBarProps {
   currentNote: PartialExcept<Note, "transcript">;
@@ -36,7 +36,9 @@ export default function FileDrawer({
   const { deleteNote } = useDb();
 
   const addEmptyNote = async () => {
-    getEmptyNote().then((note) => setCurrentNote(note));
+    getEmptyNote().then((note) => {
+      if (note) setCurrentNote(note);
+    });
   };
   return (
     <div

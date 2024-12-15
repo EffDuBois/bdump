@@ -1,7 +1,7 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Note } from "../database/dataModels";
-import { useDb } from "../database/dbProvider";
+import { useDb } from "../database/Provider";
 
 interface storeContextType {
   notes: Note[];
@@ -25,7 +25,9 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       setNoteFetchStatus(true);
       try {
         const notes = await db.fetchAllNotes();
-        setNotes(notes);
+        if (notes) {
+          setNotes(notes);
+        }
       } catch (error) {
         console.error("Failed to fetch notes:", error);
       }

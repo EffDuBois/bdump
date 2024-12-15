@@ -4,7 +4,7 @@ import { postCreateNote } from "@/apis/postCreateNote";
 import postQueryNote from "@/apis/postQueryNote";
 import idbService from "../database/idbService";
 import { useStore } from "./storeProvider";
-import { useDb } from "../database/dbProvider";
+import { useDb } from "../database/Provider";
 
 const useStoreActions = () => {
   const db = useDb();

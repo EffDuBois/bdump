@@ -1,6 +1,6 @@
 "use client";
 import { Note } from "@/services/database/dataModels";
-import { useDb } from "@/services/database/dbProvider";
+import { useDb } from "@/services/database/Provider";
 import { titleFont } from "@/ui/fonts";
 import { PartialExcept } from "@/utils/custom_types";
 import { ChangeEvent, SetStateAction } from "react";

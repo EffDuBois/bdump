@@ -16,7 +16,7 @@ import NoteTextArea from "./(components)/mainarea/NoteTextArea";
 import { ConnectionStatusMap } from "./(components)/mappings/ConnectionStatus";
 import { PartialExcept } from "@/utils/custom_types";
 import useStoreActions from "@/services/store/useStoreActions";
-import { useDb } from "@/services/database/dbProvider";
+import { useDb } from "@/services/database/Provider";
 
 export type recordingType = "note" | "query";
 
