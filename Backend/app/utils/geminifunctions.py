@@ -96,10 +96,11 @@ def ask_note(query, queryemb, notes, notesemb):
         except Exception as e:
             if "Resource has been exhausted" in str(e):  
                 raise HTTPException(
-                    status_code=429, 
-                    detail="Gemini API rate limit exceeded. Please try again later."
+                    status_code=503, 
+                    detail="Gemini API rate limit exceeded."
                 )
             attempt += 1
             if attempt == MAX_RETRY:
                 logger.error("maximum retries reached for llm")
-                return "max retries attempted, couldnt fetch response from llm"
+                raise HTTPException(status_code=503, detail="Gemini API rate limit exceeded.")
+                #return "max retries attempted, couldnt fetch response from llm"
