@@ -14,11 +14,13 @@ const nextConfig = {
     return config;
   },
   rewrites: () => {
-    console.log("current backend:" + process.env.NEXT_PUBLIC_BACKEND_BASE_URL);
+    console.log("current redirect:" + process.env.NEXT_PUBLIC_BACKEND_REDIRECT);
+    console.log("current backend" + process.env.NEXT_PUBLIC_BACKEND_BASE_URL);
+
     return [
       {
         source: "/api/:slug*",
-        destination: `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/:slug*`,
+        destination: `${process.env.NEXT_PUBLIC_BACKEND_REDIRECT}/:slug*`,
       },
     ];
   },
