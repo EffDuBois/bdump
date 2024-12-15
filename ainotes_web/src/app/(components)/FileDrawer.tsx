@@ -62,7 +62,7 @@ export default function FileDrawer({
           {notes && !notesFetchStatus ? (
             notes.map((note) => (
               <SlabButtonWDelete
-                className={note.id == currentNote.id ? "bg-neutral-500" : ""}
+                className={note.id == currentNote.id ? "bg-neutral-700" : ""}
                 key={note.id}
                 onClick={() => {
                   setCurrentNote(note);
