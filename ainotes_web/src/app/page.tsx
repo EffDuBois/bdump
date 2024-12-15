@@ -32,13 +32,19 @@ export default function Home() {
     transcript: "",
   });
 
-  const setTranscript: setTranscriptType = (updateMethod) => {
-    if (typeof updateMethod === "string")
+  const setTranscript: setTranscriptType = async (updateMethod) => {
+    if (typeof updateMethod === "string") {
       setCurrentNote({ ...currentNote, transcript: updateMethod });
-    else
+      await db.putNote({ ...currentNote, transcript: updateMethod });
+    } else {
       setCurrentNote((oldNote) => {
+        db.putNote({
+          ...currentNote,
+          transcript: updateMethod(oldNote.transcript),
+        });
         return { ...oldNote, transcript: updateMethod(oldNote.transcript) };
       });
+    }
   };
 
   const initCurrentNote = async () => {
@@ -66,6 +72,7 @@ export default function Home() {
 
     if (currentNote.transcript && currentRecording === "note") {
       try {
+        await db.putNote(currentNote).then((note) => setCurrentNote(note));
         const newNote = await storeActions.createNote(
           currentNote?.content + " " + currentNote.transcript,
           currentNote
@@ -87,8 +94,7 @@ export default function Home() {
         file_name: currentNote.file_name,
         transcript: "",
       });
-    }
-    if (type === "query") {
+    } else if (type === "query") {
       setCurrentNote({
         content: "",
         file_name: "Ask",
