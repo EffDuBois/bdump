@@ -1,3 +1,4 @@
+import { twMerge } from "tailwind-merge";
 import SlabButton, { SlabButtonProps } from "./SlabButton";
 import { IoCloseOutline } from "react-icons/io5";
 
@@ -12,9 +13,12 @@ export default function SlabButtonWDelete({
 }: SlabButtonWDeleteProps) {
   return (
     <div className="flex rounded-lg hover:bg-neutral-500">
-      <SlabButton className={`grow rounded-r-none ${className}`} {...others} />
       <SlabButton
-        className={`rounded-l-none hover:bg-neutral-50/25 ${className}`}
+        className={twMerge(`grow rounded-r-none`, className)}
+        {...others}
+      />
+      <SlabButton
+        className={twMerge("rounded-l-none hover:bg-neutral-50/25", className)}
         onClick={onClickDelete}
       >
         <IoCloseOutline />

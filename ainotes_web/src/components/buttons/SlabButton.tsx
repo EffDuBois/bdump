@@ -1,4 +1,5 @@
 import { ButtonHTMLAttributes, DetailedHTMLProps, ReactNode } from "react";
+import { twMerge } from "tailwind-merge";
 
 export type SlabButtonProps = DetailedHTMLProps<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -7,7 +8,10 @@ export type SlabButtonProps = DetailedHTMLProps<
 export default function SlabButton({ className, ...others }: SlabButtonProps) {
   return (
     <button
-      className={`hover:bg-neutral-500 py-2 px-4 rounded-lg text-left ${className}`}
+      className={twMerge(
+        `hover:bg-neutral-500 py-2 px-4 rounded-lg text-left`,
+        className
+      )}
       {...others}
     />
   );
