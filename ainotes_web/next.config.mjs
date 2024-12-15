@@ -20,7 +20,7 @@ const nextConfig = {
     return [
       {
         source: "/api/:slug*",
-        destination: `${process.env.NEXT_PUBLIC_BACKEND_REDIRECT}/:slug*`,
+        destination: `${process.env.NEXT_PUBLIC_BACKEND_REDIRECT?process.env.NEXT_PUBLIC_BACKEND_REDIRECT:"/api"}/:slug*`,
       },
     ];
   },
