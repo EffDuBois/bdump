@@ -5,6 +5,7 @@ import postQueryNote from "@/apis/postQueryNote";
 import idbService from "../database/idbService";
 import { useStore } from "./storeProvider";
 import { useDb } from "../database/Provider";
+import { AxiosError } from "axios";
 
 const useStoreActions = () => {
   const db = useDb();
@@ -25,7 +26,9 @@ const useStoreActions = () => {
       return newNote;
     } catch (error) {
       //#todo add a pop up
-      console.error(error);
+      if (error instanceof AxiosError && error.status === 429)
+        console.log("API is exhausted");
+      else console.log("API Error pop up");
     }
   };
 
@@ -40,7 +43,9 @@ const useStoreActions = () => {
       });
       return queryResponse;
     } catch (error) {
-      console.error(error);
+      if (error instanceof AxiosError && error.status === 429)
+        console.log("API is exhausted");
+      else console.log("API Error pop up");
     }
   };
 

@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 
 import { interfaceFont } from "@/ui/fonts";
 
-import { useStore } from "@/services/store/storeProvider";
 import useTranscriber from "@/services/transcriber";
 
 import { Note } from "@/services/database/dataModels";

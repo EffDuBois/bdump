@@ -1,6 +1,7 @@
 import { Note } from "@/services/database/dataModels";
 import baseAPI from "./services";
 import { Full } from "@/utils/custom_types";
+import { AxiosError } from "axios";
 
 export interface query {
   query: string;
