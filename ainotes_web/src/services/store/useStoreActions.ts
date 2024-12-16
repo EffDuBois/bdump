@@ -62,7 +62,7 @@ const useStoreActions = () => {
       if (
         error instanceof AxiosError &&
         error.status === 503 &&
-        error.response?.data.detail === "Gemini API rate limit exceeded."
+        error.response?.data.detail === "LLM API rate limit exceeded."
       )
       alert("API is exhausted");
       else console.log("API Error pop up");

@@ -44,7 +44,7 @@ export default function FileDrawer({
     <div
       className={
         drawerStateObject.state
-          ? `w-full md:w-1/3 h-screen absolute md:relative dark:bg-neutral-900 border-r-[1px] border-neutral-400 ${interfaceFont.className}`
+          ? `w-full md:w-1/4 h-screen absolute md:relative dark:bg-neutral-900 border-r-[1px] border-neutral-400 ${interfaceFont.className} transition-transform`
           : undefined
       }
     >

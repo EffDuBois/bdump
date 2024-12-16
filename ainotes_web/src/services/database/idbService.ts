@@ -87,12 +87,12 @@ const idbService = () => {
 
       request.onsuccess = () => {
         const db = request.result;
-        console.log("initDB success", VERSION);
+        // console.log("initDB success", VERSION);
         resolve(db);
       };
 
       request.onerror = (event) => {
-        console.error("Database error: ", event);
+        console.error("error initialising db: ", event);
         reject(false);
       };
     });
