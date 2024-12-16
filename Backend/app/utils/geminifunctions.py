@@ -1,106 +1,88 @@
 import os
 import numpy as np
-from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
-from app.utils.aimath import cosinesim
-from app.utils.prompts import title_prompt, generate_note_prompt, ask_note_prompt
+import time
 from app.logger import setup_logger
+from app.utils.aimath import cosinesim
+from app.utils.grokfunctions import grok_ask_note, grok_create_note
+from app.utils.prompts import ASK_NOTES_PROMPT, CREATE_NOTES_PROMPT
 from dotenv import load_dotenv
 from fastapi import HTTPException
+import google.generativeai as genai
 
 load_dotenv()
+
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 logger = setup_logger()
 
 def generate_embedding(query):
     if (query != ""):
-        embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=os.getenv("GOOGLE_API_KEY"))
-        vector = embeddings.embed_query(query)
-        return vector
+        response = genai.embed_content(model="models/text-embedding-004", content=query)
+        return response
     else:
         return ['empty query']
     
-
-def llm(system_prompt, user_input):
+def create_note(query):
     MAX_RETRY = 3
     attempt = 0
+    backoff_time = 1  # initial backoff time 
+
     while attempt < MAX_RETRY:
         try:
-            parser = StrOutputParser()
-            llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro", temperature=0.2, max_toxens=500)
-            prompt = ChatPromptTemplate.from_messages(
-                [
-                    ("system", system_prompt),
-                    ("user", "{input}"),
+            if (query != ""):
+                messages = [
+                    {'role': 'system', 'content': CREATE_NOTES_PROMPT},
+                    {'role': 'user', 'content': query}
                 ]
-            )
-            chain = prompt | llm | parser
-            return chain.invoke({"input": user_input})
-        except Exception as e:
-            if "Resource has been exhausted" in str(e):  
-                raise HTTPException(
-                    status_code=429, 
-                    detail="Gemini API rate limit exceeded. Please try again later."
+                response = genai.generate_text(
+                    model="gemini-1.5-flash",
+                    messages=messages,
+                    temperature=0.2,
+                    max_output_tokens=500
                 )
+                return response
+            else:
+                return "empty query"
+        except Exception as e:
             attempt += 1
+            logger.error(f"Attempt {attempt} failed: {e}")
             if attempt == MAX_RETRY:
-                logger.error("maximum retries reached for llm")
-                return "max retries attempted, couldnt fetch response from llm"
-
-
-def find_title(body):
-    if (body != ""):
-        system_prompt = title_prompt
-        return llm(system_prompt, body)   
-    else:
-        return "title couldnt be fetched due to empty body"
-
-
-def generate_note(query):
-    if (query != ""):
-        system_prompt = generate_note_prompt
-        body = llm(system_prompt, query)
-        if (body==""):
-            body = query
-        title = find_title(body)
-        title = title.replace("\n", "")
-        return [title, body]
-    else:
-        return "empty query"
-    
-    
+                logger.error("Maximum retries reached for Gemini, shifting to Grok.")
+                grok_create_response = grok_create_note(query) 
+                return grok_create_response 
+            time.sleep(backoff_time)
+            backoff_time = backoff_time * 2
+            
 def ask_note(query, queryemb, notes, notesemb):
     MAX_RETRY = 3
     attempt = 0
+    backoff_time = 1  # initial backoff time
+
     while attempt < MAX_RETRY:
         try:
             if (query != ""):
                 similarities = [cosinesim(queryemb, noteemb) for noteemb in notesemb]
                 most_relevant_note_index = np.argmax(similarities)
                 relevant_note = notes[most_relevant_note_index]
-                parser = StrOutputParser()
-                llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro", temperature=0.2, max_tokens=500)
-                system_prompt = ask_note_prompt
-                prompt = ChatPromptTemplate.from_messages(
-                    [
-                        ("system", system_prompt),
-                        ("user", "Note: {reference_note}\nQuery: {input}"),
-                    ]
+                messages = [
+                    {"role": "system", "content": ASK_NOTES_PROMPT},
+                    {"role": "user", "content": f"Note: {relevant_note}\nQuery: {query}"}
+                ]
+                response = genai.generate_text(
+                    model="gemini-1.5-flash",
+                    messages=messages,
+                    temperature=0.2,
+                    max_output_tokens=500
                 )
-                chain = prompt | llm | parser
-                answer = chain.invoke({"reference_note": relevant_note, "input": query})
-                return answer
+                return response
             else:
                 return "empty query"
         except Exception as e:
-            if "Resource has been exhausted" in str(e):  
-                raise HTTPException(
-                    status_code=503, 
-                    detail="Gemini API rate limit exceeded."
-                )
             attempt += 1
+            logger.error(f"Attempt {attempt} failed: {e}")
             if attempt == MAX_RETRY:
-                logger.error("maximum retries reached for llm")
-                raise HTTPException(status_code=503, detail="Gemini API rate limit exceeded.")
-                #return "max retries attempted, couldnt fetch response from llm"
+                logger.error("Maximum retries reached for Gemini, shifting to Grok.")
+                grok_ask_response = grok_ask_note(query, queryemb, notes, notesemb) 
+                return grok_ask_response 
+            time.sleep(backoff_time)
+            backoff_time = backoff_time * 2

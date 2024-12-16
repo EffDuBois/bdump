@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.utils.geminifunctions import generate_embedding, generate_note, ask_note
+from app.utils.geminifunctions import generate_embedding, create_note, ask_note
 from app.utils.datavalidation import askPrompt, createPrompt
 from app.logger import setup_logger
 from dotenv import load_dotenv
@@ -13,9 +13,9 @@ logger = setup_logger()
 @router.post("/api/notes/create")
 async def create_notes(prompt: createPrompt):       
     emb = generate_embedding(prompt.query)             # returns vector embedding for the prompt
-    ans = generate_note(prompt.query)                  # returns markdown text for the prompt
+    ans = create_note(prompt.query)                  # returns markdown text for the prompt
     logger.info(f"note created with title: {ans[0]}" )
-    return {"title": ans[0], "body" : ans[1], "embedding" : emb} 
+    return {"response": ans, "embedding" : emb} 
 
 
 @router.post("/api/notes/ask")
