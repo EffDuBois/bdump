@@ -2,16 +2,21 @@ import { Note } from "../database/dataModels";
 
 import { postCreateNote } from "@/apis/postCreateNote";
 import postQueryNote from "@/apis/postQueryNote";
-import idbService from "../database/idbService";
 import { useStore } from "./storeProvider";
 import { useDb } from "../database/Provider";
 import { AxiosError } from "axios";
+import { useState } from "react";
+import { useAlert } from "../AlertProvider";
 
 const useStoreActions = () => {
   const db = useDb();
   const { notes } = useStore();
+  const alert = useAlert();
+
+  const [storeActionStatus, setStoreActionStatus] = useState(false);
 
   const createNote = async (query: string, currentNote?: Partial<Note>) => {
+    setStoreActionStatus(true);
     try {
       const createResponse = await postCreateNote(query);
       const dbInput = {
@@ -22,17 +27,28 @@ const useStoreActions = () => {
         content: createResponse.body,
         embedding: createResponse.embedding,
       };
-      const newNote = await db.putNote(dbInput);
-      return newNote;
+      try {
+        const newNote = await db.putNote(dbInput);
+        return newNote;
+      } catch (error) {
+        alert("Please choose a unique name for the file");
+      }
     } catch (error) {
       //#todo add a pop up
-      if (error instanceof AxiosError && error.status === 429)
-        console.log("API is exhausted");
-      else console.log("API Error pop up");
+      if (
+        error instanceof AxiosError &&
+        error.status === 503 &&
+        error.response?.data.detail === "Gemini API rate limit exceeded."
+      )
+        alert("API is exhausted");
+      else console.log(error);
+    } finally {
+      setStoreActionStatus(false);
     }
   };
 
   const queryNotes = async (query: string) => {
+    setStoreActionStatus(true);
     try {
       const queryResponse = await postQueryNote({
         query,
@@ -43,9 +59,15 @@ const useStoreActions = () => {
       });
       return queryResponse;
     } catch (error) {
-      if (error instanceof AxiosError && error.status === 429)
-        console.log("API is exhausted");
+      if (
+        error instanceof AxiosError &&
+        error.status === 503 &&
+        error.response?.data.detail === "Gemini API rate limit exceeded."
+      )
+      alert("API is exhausted");
       else console.log("API Error pop up");
+    } finally {
+      setStoreActionStatus(false);
     }
   };
 
@@ -67,10 +89,6 @@ const useStoreActions = () => {
     }
   };
 
-  return {
-    createNote,
-    queryNotes,
-    getEmptyNote,
-  };
+  return { storeActionStatus, createNote, queryNotes, getEmptyNote };
 };
 export default useStoreActions;

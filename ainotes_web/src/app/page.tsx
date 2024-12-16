@@ -16,6 +16,7 @@ import { ConnectionStatusMap } from "./(components)/mappings/ConnectionStatus";
 import { PartialExcept } from "@/utils/custom_types";
 import useStoreActions from "@/services/store/useStoreActions";
 import { useDb } from "@/services/database/Provider";
+import { useAlert } from "@/services/AlertProvider";
 
 export type recordingType = "note" | "query";
 export type setTranscriptType = (
@@ -25,6 +26,7 @@ export type setTranscriptType = (
 export default function Home() {
   const db = useDb();
   const storeActions = useStoreActions();
+  const alert = useAlert();
 
   const [currentNote, setCurrentNote] = useState<
     PartialExcept<Note, "transcript">
@@ -50,6 +52,10 @@ export default function Home() {
   const initCurrentNote = async () => {
     if (!currentNote.id) {
       storeActions.getEmptyNote().then((note) => {
+        if (note) setCurrentNote(note);
+      });
+    } else {
+      db.fetchNote(currentNote.id.toString()).then((note) => {
         if (note) setCurrentNote(note);
       });
     }
@@ -87,14 +93,16 @@ export default function Home() {
       const queryResponse = await storeActions.queryNotes(
         currentNote.transcript
       );
-      setCurrentNote({
-        content: (currentNote.transcript
-          ? "\n\n" + queryResponse.body
-          : "") as string,
-        file_name: currentNote.file_name,
-        transcript: "",
-      });
-    } else if (type === "query") {
+      if (queryResponse) {
+        setCurrentNote({
+          content: (currentNote.transcript
+            ? "\n\n" + queryResponse?.body
+            : "") as string,
+          file_name: currentNote.file_name,
+          transcript: "",
+        });
+      }
+    } else if (type === "query" && currentNote.file_name !== "Ask") {
       setCurrentNote({
         content: "",
         file_name: "Ask",

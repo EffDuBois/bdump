@@ -123,7 +123,7 @@ const idbService = () => {
         const res = tx.objectStore(Stores.notes).get(id);
         res.onsuccess = () => {
           console.log("fetch txn success");
-          resolve(res.result[0]);
+          resolve(res.result);
         };
         res.onerror = (event) => {
           reject("Transaction error:" + res.error);

@@ -4,6 +4,7 @@ import PlaceHolderTextArea from "./PlaceHolderTextArea";
 
 import { recordingType } from "@/app/page";
 import CustomMarkdown from "../CustomMarkdown";
+import useStoreActions from "@/services/store/useStoreActions";
 
 interface NoteTextAreaProps {
   noteContent?: string;
@@ -16,6 +17,7 @@ export default function NoteTextArea({
   transcript,
   isRecording,
 }: NoteTextAreaProps) {
+  const store = useStoreActions();
   return (
     <div className="text-l">
       {noteContent || transcript ? (
@@ -23,7 +25,7 @@ export default function NoteTextArea({
           <CustomMarkdown>{noteContent}</CustomMarkdown>
           <CustomMarkdown
             className={`${subtextFont.className} ${
-              !isRecording && "animate-pulse"
+              (store.storeActionStatus) && " animate-pulse"
             } inline`}
           >
             {transcript}
