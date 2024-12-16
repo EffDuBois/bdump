@@ -26,7 +26,6 @@ export type setTranscriptType = (
 export default function Home() {
   const db = useDb();
   const storeActions = useStoreActions();
-  const alert = useAlert();
 
   const [currentNote, setCurrentNote] = useState<
     PartialExcept<Note, "transcript">
@@ -120,7 +119,7 @@ export default function Home() {
         setCurrentNote={setCurrentNote}
         drawerStateObject={{ state: drawerOpen, setState: setDrawerOpen }}
       />
-      <div className="flex flex-col justify-between items-center content-center w-full h-full pt-20 px-20">
+      <div className="flex flex-col flex-1 justify-between items-center content-center w-full pt-20 pb-10 px-20">
         <div className=" h-full w-full overflow-auto">
           <NoteTitleArea
             currentNote={currentNote}
@@ -140,7 +139,9 @@ export default function Home() {
           isRecording={isRecording}
         />
 
-        <div className={`self-end text-neutral-400 ${interfaceFont.className}`}>
+        <div
+          className={`absolute bottom-0 right-0 text-neutral-400 ${interfaceFont.className}`}
+        >
           {ConnectionStatusMap[transcriber.connectionStatus]}
         </div>
       </div>

@@ -19,7 +19,7 @@ export default function InputButtons({
   isRecording,
 }: InputButtonsProps) {
   return (
-    <div className="mb-24 mt-4 sm:mb-2 sm:mt-2 flex justify-center items-center gap-5 relative">
+    <div className=" flex justify-center items-center gap-5 relative">
       <CircleButton
         onClick={() => setTranscript("")}
         className={` !size-10 absolute translate-x-[-45px] left-0 top-0 ${
