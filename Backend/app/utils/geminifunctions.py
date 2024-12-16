@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import time
 from app.logger import setup_logger
 from app.utils.aimath import cosinesim
 from app.utils.grokfunctions import grok_ask_note, grok_create_note
@@ -16,7 +17,7 @@ logger = setup_logger()
 
 def generate_embedding(query):
     if (query != ""):
-        response = genai.embed_content(model="models/text-embedding-004",content=query)
+        response = genai.embed_content(model="models/text-embedding-004", content=query)
         return response
     else:
         return ['empty query']
@@ -24,6 +25,8 @@ def generate_embedding(query):
 def create_note(query):
     MAX_RETRY = 3
     attempt = 0
+    backoff_time = 1  # initial backoff time 
+
     while attempt < MAX_RETRY:
         try:
             if (query != ""):
@@ -40,16 +43,21 @@ def create_note(query):
                 return response
             else:
                 return "empty query"
-        except Exception:
+        except Exception as e:
             attempt += 1
+            logger.error(f"Attempt {attempt} failed: {e}")
             if attempt == MAX_RETRY:
-                logger.error("Maximum retries reached for LLM.")
+                logger.error("Maximum retries reached for Gemini, shifting to Grok.")
                 grok_create_response = grok_create_note(query) 
                 return grok_create_response 
-        
+            time.sleep(backoff_time)
+            backoff_time = backoff_time * 2
+            
 def ask_note(query, queryemb, notes, notesemb):
     MAX_RETRY = 3
     attempt = 0
+    backoff_time = 1  # initial backoff time
+
     while attempt < MAX_RETRY:
         try:
             if (query != ""):
@@ -69,9 +77,12 @@ def ask_note(query, queryemb, notes, notesemb):
                 return response
             else:
                 return "empty query"
-        except Exception:
+        except Exception as e:
             attempt += 1
+            logger.error(f"Attempt {attempt} failed: {e}")
             if attempt == MAX_RETRY:
                 logger.error("Maximum retries reached for Gemini, shifting to Grok.")
                 grok_ask_response = grok_ask_note(query, queryemb, notes, notesemb) 
-                return grok_ask_response
+                return grok_ask_response 
+            time.sleep(backoff_time)
+            backoff_time = backoff_time * 2
