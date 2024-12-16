@@ -3,6 +3,7 @@ import numpy as np
 import time
 from app.logger import setup_logger
 from app.utils.aimath import cosinesim
+from app.utils.datavalidation import askOutput, createOutput
 from app.utils.grokfunctions import grok_ask_note, grok_create_note
 from app.utils.prompts import ASK_NOTES_PROMPT, CREATE_NOTES_PROMPT
 from dotenv import load_dotenv
@@ -38,7 +39,10 @@ def create_note(query):
                     model="gemini-1.5-flash",
                     messages=messages,
                     temperature=0.2,
-                    max_output_tokens=500
+                    max_output_tokens=500,
+                    generation_config=genai.GenerationConfig(
+                        response_mime_type="application/json", response_schema=createOutput
+                    )
                 )
                 return response
             else:
@@ -72,7 +76,10 @@ def ask_note(query, queryemb, notes, notesemb):
                     model="gemini-1.5-flash",
                     messages=messages,
                     temperature=0.2,
-                    max_output_tokens=500
+                    max_output_tokens=500,
+                    generation_config=genai.GenerationConfig(
+                        response_mime_type="application/json", response_schema=askOutput
+                    )
                 )
                 return response
             else:
