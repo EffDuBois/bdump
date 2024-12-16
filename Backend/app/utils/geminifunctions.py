@@ -2,23 +2,22 @@ import os
 import numpy as np
 from app.logger import setup_logger
 from app.utils.aimath import cosinesim
+from app.utils.grokfunctions import grok_ask_note, grok_create_note
 from app.utils.prompts import ASK_NOTES_PROMPT, CREATE_NOTES_PROMPT
 from dotenv import load_dotenv
 from fastapi import HTTPException
-from google.generativeai import chat, embeddings    
+import google.generativeai as genai
 
 load_dotenv()
 
-chat.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 logger = setup_logger()
 
 def generate_embedding(query):
     if (query != ""):
-        client = embeddings.EmbeddingsClient(api_key=os.getenv("GOOGLE_API_KEY"))
-        response = client.embed_text(query)
-        vector = response['embeddings']
-        return vector
+        response = genai.embed_content(model="models/text-embedding-004",content=query)
+        return response
     else:
         return ['empty query']
     
@@ -32,35 +31,21 @@ def create_note(query):
                     {'role': 'system', 'content': CREATE_NOTES_PROMPT},
                     {'role': 'user', 'content': query}
                 ]
-                # Make the API call
-                response = chat.ChatModel.predict(
+                response = genai.generate_text(
                     model="gemini-1.5-flash",
                     messages=messages,
                     temperature=0.2,
                     max_output_tokens=500
                 )
-
-                # Extract the response content
-                if response and response.get("candidates"):
-                    answer = response["candidates"][0]["content"]
-                    return answer
-                else:
-                    raise HTTPException(status_code=503, detail="Empty response from Gemini API.")
+                return response
             else:
                 return "empty query"
-        except Exception as e:
-            if "Resource has been exhausted" in str(e):
-                raise HTTPException(
-                    status_code=503,
-                    detail="Gemini API rate limit exceeded."
-                )
+        except Exception:
             attempt += 1
             if attempt == MAX_RETRY:
                 logger.error("Maximum retries reached for LLM.")
-                raise HTTPException(
-                    status_code=503,
-                    detail="Gemini API rate limit exceeded."
-                ) 
+                grok_create_response = grok_create_note(query) 
+                return grok_create_response 
         
 def ask_note(query, queryemb, notes, notesemb):
     MAX_RETRY = 3
@@ -75,32 +60,18 @@ def ask_note(query, queryemb, notes, notesemb):
                     {"role": "system", "content": ASK_NOTES_PROMPT},
                     {"role": "user", "content": f"Note: {relevant_note}\nQuery: {query}"}
                 ]
-                # Make the API call
-                response = chat.ChatModel.predict(
+                response = genai.generate_text(
                     model="gemini-1.5-flash",
                     messages=messages,
                     temperature=0.2,
                     max_output_tokens=500
                 )
-
-                # Extract the response content
-                if response and response.get("candidates"):
-                    answer = response["candidates"][0]["content"]
-                    return answer
-                else:
-                    raise HTTPException(status_code=503, detail="Empty response from Gemini API.")
+                return response
             else:
                 return "empty query"
-        except Exception as e:
-            if "Resource has been exhausted" in str(e):
-                raise HTTPException(
-                    status_code=503,
-                    detail="Gemini API rate limit exceeded."
-                )
+        except Exception:
             attempt += 1
             if attempt == MAX_RETRY:
-                logger.error("Maximum retries reached for LLM.")
-                raise HTTPException(
-                    status_code=503,
-                    detail="Gemini API rate limit exceeded."
-                ) 
+                logger.error("Maximum retries reached for Gemini, shifting to Grok.")
+                grok_ask_response = grok_ask_note(query, queryemb, notes, notesemb) 
+                return grok_ask_response
