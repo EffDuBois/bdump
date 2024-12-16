@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from app.api import root
+from app.beta import betabuilder
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
@@ -52,3 +53,4 @@ app.add_middleware(
 )
 
 app.include_router(root.router)
+app.include_router(betabuilder.betasetup)
