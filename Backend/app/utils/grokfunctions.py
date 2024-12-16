@@ -30,18 +30,11 @@ def grok_create_note(user_input):
             )
             response = completion.choices[0].message.content
             return response    
-
-        except Exception as e:
-            if "Resource has been exhausted" in str(e):  
-                raise HTTPException(
-                    status_code=429, 
-                    detail="Gemini API rate limit exceeded. Please try again later."
-                )
+        except Exception:
             attempt += 1
             if attempt == MAX_RETRY:
-                logger.error("maximum retries reached for llm")
-                return "max retries attempted, couldnt fetch response from llm"
-
+                logger.error("maximum retries reached for Grok")
+                raise HTTPException(status_code=503, detail="Grok API rate limit exceeded.")
 
 def grok_ask_note(query, queryemb, notes, notesemb):
     MAX_RETRY = 3
@@ -67,13 +60,8 @@ def grok_ask_note(query, queryemb, notes, notesemb):
                 return response
             else:
                 return "empty query"
-        except Exception as e:
-            if "Resource has been exhausted" in str(e):  
-                raise HTTPException(
-                    status_code=503, 
-                    detail="Gemini API rate limit exceeded."
-                )
+        except Exception:
             attempt += 1
             if attempt == MAX_RETRY:
-                logger.error("maximum retries reached for llm")
-                raise HTTPException(status_code=503, detail="Gemini API rate limit exceeded.")
+                logger.error("maximum retries reached for Grok")
+                raise HTTPException(status_code=503, detail="Grok API rate limit exceeded.")
