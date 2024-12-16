@@ -1,8 +1,8 @@
 from pydantic import BaseModel
+import typing_extensions as typing
 
 class createPrompt(BaseModel):
     query: str
-    # iscontext: bool
 
 class NoteEmbedding(BaseModel):
     id: int
@@ -13,3 +13,10 @@ class NoteEmbedding(BaseModel):
 class askPrompt(BaseModel):
     query: str
     data: list[NoteEmbedding]
+
+class createOutput(typing.TypedDict):
+    title: str
+    body: str
+
+class askOutput(typing.TypedDict):
+    response: str
