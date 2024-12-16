@@ -77,4 +77,3 @@ def grok_ask_note(query, queryemb, notes, notesemb):
             if attempt == MAX_RETRY:
                 logger.error("maximum retries reached for llm")
                 raise HTTPException(status_code=503, detail="Gemini API rate limit exceeded.")
-                #return "max retries attempted, couldnt fetch response from llm"
