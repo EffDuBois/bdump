@@ -15,8 +15,8 @@ class askPrompt(BaseModel):
     data: list[NoteEmbedding]
 
 class createOutput(typing.TypedDict):
-    title: str
     body: str
+    title: str
 
 class askOutput(typing.TypedDict):
     response: str

@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import json
 import time
 from app.logger import setup_logger
 from app.utils.aimath import cosinesim
@@ -31,20 +32,19 @@ def create_note(query):
     while attempt < MAX_RETRY:
         try:
             if (query != ""):
-                messages = [
-                    {'role': 'system', 'content': CREATE_NOTES_PROMPT},
-                    {'role': 'user', 'content': query}
-                ]
-                response = genai.generate_text(
-                    model="gemini-1.5-flash",
-                    messages=messages,
-                    temperature=0.2,
-                    max_output_tokens=500,
+                messages = f"system: {CREATE_NOTES_PROMPT}\nuser: {query}"
+                model = genai.GenerativeModel("gemini-1.5-pro-latest")
+                result = model.generate_content(
+                    messages,
                     generation_config=genai.GenerationConfig(
-                        response_mime_type="application/json", response_schema=createOutput
-                    )
+                        temperature=0.2,      
+                        max_output_tokens=300,
+                        response_mime_type="application/json", response_schema=list[createOutput]
+                    ),
                 )
-                return response
+                raw_output = result.candidates[0].content.parts[0].text  
+                output = json.loads(raw_output) 
+                return output[0]
             else:
                 return "empty query"
         except Exception as e:
@@ -68,20 +68,20 @@ def ask_note(query, queryemb, notes, notesemb):
                 similarities = [cosinesim(queryemb, noteemb) for noteemb in notesemb]
                 most_relevant_note_index = np.argmax(similarities)
                 relevant_note = notes[most_relevant_note_index]
-                messages = [
-                    {"role": "system", "content": ASK_NOTES_PROMPT},
-                    {"role": "user", "content": f"Note: {relevant_note}\nQuery: {query}"}
-                ]
-                response = genai.generate_text(
-                    model="gemini-1.5-flash",
-                    messages=messages,
-                    temperature=0.2,
-                    max_output_tokens=500,
+                
+                messages = f"system: {ASK_NOTES_PROMPT}\nuser: (Note: {relevant_note}, Query:{query})"
+                model = genai.GenerativeModel("gemini-1.5-pro-latest")
+                result = model.generate_content(
+                    messages,
                     generation_config=genai.GenerationConfig(
-                        response_mime_type="application/json", response_schema=askOutput
-                    )
+                        temperature=0.2,      
+                        max_output_tokens=300,
+                        response_mime_type="application/json", response_schema=list[askOutput]
+                    ),
                 )
-                return response
+                raw_output = result.candidates[0].content.parts[0].text  
+                output = json.loads(raw_output) 
+                return output[0]
             else:
                 return "empty query"
         except Exception as e:
