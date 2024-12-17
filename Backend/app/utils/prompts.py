@@ -18,8 +18,8 @@ Structure:
 The final output must strictly adhere to the following JSON format:  
 
 {
-    "title": "<Generated Title>",
-    "body": "<Generated Markdown Code>"
+    "body": "<Generated Markdown Code>",
+    "title": "<Generated Title>"
 }
 
 Actions:
