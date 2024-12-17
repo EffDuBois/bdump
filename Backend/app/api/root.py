@@ -14,7 +14,7 @@ logger = setup_logger()
 async def create_notes(prompt: createPrompt):       
     emb = generate_embedding(prompt.query)             # returns vector embedding for the prompt
     ans = create_note(prompt.query)                  # returns markdown text for the prompt
-    logger.info(f"note created with title: {ans[0]}" )
+    logger.info(f"note created with title: {ans}" )
     return {"response": ans, "embedding" : emb} 
 
 
