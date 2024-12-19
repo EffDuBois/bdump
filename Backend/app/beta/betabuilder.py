@@ -45,11 +45,10 @@ async def get_beta_users_name():
 async def send_feedback(user_name: str, user_feedback: userFeedback):
     try:
         user = collection.find_one({"name": user_name})
-        
         if user:
             collection.update_one(
                 {"name": user_name},
-                {"$set": {"feedback": user_feedback.feedback}}  
+                {"$push": {"feedback": user_feedback.feedback}}  
             )
             return {"message": "Feedback successfully added for the user."}
         else:
