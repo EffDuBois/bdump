@@ -1,17 +1,12 @@
-import os
 from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from dotenv import load_dotenv
 from app.api import root
 from app.beta import betabuilder
+from app.constants import API_KEY, externalCors
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
-
-load_dotenv()
-
-API_KEY = os.getenv("API_KEY")
 
 limiter = Limiter(key_func=get_remote_address)
 
@@ -37,8 +32,6 @@ async def rate_limit_error(request, exc):
 @app.on_event("startup")
 async def startup():
     limiter._rate_limit = "10/minute"  # API rate limit = 10 requests/minute/IP
-
-externalCors =  os.getenv("FRONTEND_URL")
 
 origins = [
     f"{externalCors}"

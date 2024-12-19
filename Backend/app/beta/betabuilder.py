@@ -1,18 +1,12 @@
-import os
 import logging
 from fastapi import APIRouter
 from pydantic import BaseModel
 from pymongo import MongoClient
-from dotenv import load_dotenv
+from app.constants import MONGO_URI, ADMIN_TOKEN
 
 logging.getLogger("pymongo").propagate = False
 
-load_dotenv()   
-
 betasetup = APIRouter()
-
-MONGO_URI = os.getenv("MONGO_URI")
-ADMIN_TOKEN = os.getenv("ADMIN_TOKEN")
 
 client = MongoClient(MONGO_URI)
 db = client["beta"]
