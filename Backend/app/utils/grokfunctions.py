@@ -1,18 +1,15 @@
-import os
 import time
 import numpy as np
+from app.constants import GROK_API_KEY
 from app.utils.aimath import cosinesim
 from app.utils.prompts import CREATE_NOTES_PROMPT, ASK_NOTES_PROMPT
 from app.logger import setup_logger
-from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from openai import OpenAI
 
-load_dotenv()
-
 logger = setup_logger()
 
-client = OpenAI(api_key=os.getenv("GROK_API_KEY"), base_url="https://api.x.ai/v1")
+client = OpenAI(api_key=GROK_API_KEY, base_url="https://api.x.ai/v1")
 
 def grok_create_note(user_input):
     MAX_RETRY = 3

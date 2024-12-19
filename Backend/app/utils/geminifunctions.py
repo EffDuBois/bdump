@@ -1,19 +1,16 @@
-import os
 import numpy as np
 import json
 import time
+from app.constants import GOOGLE_API_KEY
 from app.logger import setup_logger
 from app.utils.aimath import cosinesim
 from app.utils.datavalidation import askOutput, createOutput
 from app.utils.grokfunctions import grok_ask_note, grok_create_note
 from app.utils.prompts import ASK_NOTES_PROMPT, CREATE_NOTES_PROMPT
-from dotenv import load_dotenv
 from fastapi import HTTPException
 import google.generativeai as genai
 
-load_dotenv()
-
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+genai.configure(api_key=GOOGLE_API_KEY)
 
 logger = setup_logger()
 
