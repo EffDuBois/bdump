@@ -9,11 +9,11 @@ import { interfaceFont } from "@/ui/fonts";
 import SlabButtonWDelete from "@/components/buttons/SlabButtonDelete";
 import SlabButtonOutline from "../../components/buttons/SlabButtonOutline";
 import FileDrawerButton from "./buttons/FileDrawerButton";
-import { useStore } from "@/services/store/storeProvider";
+import { useStore } from "@/services/store/provider";
 import { Note } from "@/services/database/dataModels";
 import { PartialExcept } from "@/utils/custom_types";
-import useStoreActions from "@/services/store/useStoreActions";
-import { useDb } from "@/services/database/Provider";
+import useStoreActions from "@/services/store/actions";
+import { useDb } from "@/services/database/dbProvider";
 
 interface SideBarProps {
   currentNote: PartialExcept<Note, "transcript">;
@@ -32,14 +32,15 @@ export default function FileDrawer({
   drawerStateObject,
 }: SideBarProps) {
   const { notes, notesFetchStatus } = useStore();
-  const { getEmptyNote } = useStoreActions();
-  const { deleteNote } = useDb();
+  const db = useDb();
 
   const addEmptyNote = async () => {
     getEmptyNote().then((note) => {
       if (note) setCurrentNote(note);
     });
   };
+
+  const deleteSelectedNote;
   return (
     <div
       className={
@@ -70,7 +71,7 @@ export default function FileDrawer({
                     drawerStateObject.setState(false);
                   }
                 }}
-                onClickDelete={() => deleteNote(note.id)}
+                onClickDelete={deleteNote}
               >
                 {note.file_name ? note.file_name : "New Note"}
               </SlabButtonWDelete>

@@ -1,10 +1,10 @@
 import SlabButtonOutline, {
   SlabButtonOutlineProps,
 } from "@/components/buttons/SlabButtonOutline";
-import { FaFolderClosed } from "react-icons/fa6";
 
 import { FC } from "react";
 import { twMerge } from "tailwind-merge";
+import {  Sidebar } from "lucide-react";
 
 export interface FileDrawerButtonProps extends SlabButtonOutlineProps {
   drawerOpen: () => void;
@@ -17,11 +17,11 @@ const FileDrawerButton: FC<FileDrawerButtonProps> = ({
 }) => {
   return (
     <SlabButtonOutline
-      className={twMerge("mt-2 ml-2 size-12 *:m-auto", className)}
+      className={twMerge("mt-2 ml-2 p-2 *:m-auto", className)}
       onClick={drawerOpen}
       {...others}
     >
-      <FaFolderClosed />
+      <Sidebar />
     </SlabButtonOutline>
   );
 };

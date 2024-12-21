@@ -9,7 +9,7 @@ export default function SlabButton({ className, ...others }: SlabButtonProps) {
   return (
     <button
       className={twMerge(
-        `hover:bg-neutral-500 py-2 px-4 rounded-lg text-left`,
+        `hover:bg-neutral-300 dark:hover:bg-neutral-500 py-2 px-4 rounded-lg text-left`,
         className
       )}
       {...others}

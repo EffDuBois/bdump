@@ -1,30 +1,27 @@
 "use client";
 import { createClient, ListenLiveClient } from "@deepgram/sdk";
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import { useStore, valueOrActionFunction } from "./store/provider";
 const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY;
 const DEEPGRAM_MODEL_CONFIG = {
   model: "nova-2-general",
   smart_format: true,
 };
 
-function useTranscriber(
-  setTranscript: (updateMethod: string | ((oldvalue: string) => string)) => void
-) {
-  const [mic, setMic] = useState<MediaRecorder>();
-  const [socket, setSocket] = useState<ListenLiveClient>();
-
+function useTranscriber(setTranscript: valueOrActionFunction<string>) {
   const [connectionStatus, setConnectionStatus] = useState<
     "disconnected" | "connected" | "transmitting" | "noResponse"
   >("disconnected");
   const [recording, setRecording] = useState(false);
 
+  let mic: MediaRecorder;
+  let socket;
+
   const createSocket = (): Promise<ListenLiveClient> => {
     return new Promise((resolve, reject) => {
       const deepgram = createClient(DEEPGRAM_API_KEY);
       let keepAlive;
-
       const newSocket = deepgram.listen.live(DEEPGRAM_MODEL_CONFIG);
-
       if (keepAlive) clearInterval(keepAlive);
       keepAlive = setInterval(() => {
         // console.log("KeepAlive sent.");
@@ -35,12 +32,13 @@ function useTranscriber(
         console.log("client: connected to deepgram Socket");
         setConnectionStatus("connected");
         resolve(newSocket);
-        newSocket.on("Results", (data) => {
-          console.log(data);
+        newSocket.on("Results", async (data) => {
           setConnectionStatus("transmitting");
           const transcript = data.channel.alternatives[0].transcript;
-          if (transcript !== "")
+          if (transcript !== "") {
+            console.log("server:" + transcript);
             setTranscript((old) => old + " " + transcript);
+          }
         });
         newSocket.on("error", (e) => {
           console.error(e);
@@ -50,36 +48,21 @@ function useTranscriber(
         newSocket.on("Metadata", (e) => console.log(e));
         newSocket.on("close", (e) => {
           setConnectionStatus("disconnected");
-          setSocket(undefined);
           console.log(e);
         });
       });
     });
   };
 
-  useEffect(() => {
-    if (!socket) {
-      createSocket().then((newSocket) => setSocket(newSocket));
-    }
-  }, [recording]);
-
   const toggleTranscription = async () => {
     try {
       if (!recording) {
         console.log("trying to start recording");
-        let currentMic = mic;
-        if (!currentMic) {
-          currentMic = await getMic();
-          setMic(currentMic);
-        }
-        if (currentMic) {
-          let currentSocket = socket;
-          if (!currentSocket?.isConnected()) {
-            currentSocket = await createSocket();
-            setSocket(currentSocket);
-          }
-          if (currentSocket) {
-            startMic(currentMic, currentSocket);
+        mic = await getMic();
+        if (mic) {
+          socket = await createSocket();
+          if (socket) {
+            startMic(mic, socket);
             setRecording(true);
             setConnectionStatus("noResponse");
           } else {

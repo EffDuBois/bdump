@@ -2,37 +2,37 @@ import { subtextFont } from "@/ui/fonts";
 
 import PlaceHolderTextArea from "./PlaceHolderTextArea";
 
-import { recordingType } from "@/app/page";
 import CustomMarkdown from "../CustomMarkdown";
-import useStoreActions from "@/services/store/useStoreActions";
+import useStoreActions from "@/services/store/actions";
 
 interface NoteTextAreaProps {
-  noteContent?: string;
-  transcript: string;
-  isRecording?: recordingType;
+  mainText?: string;
+  lightText?: string;
+  pulse?: boolean;
 }
 
 export default function NoteTextArea({
-  noteContent,
-  transcript,
-  isRecording,
+  mainText,
+  lightText,
+  pulse,
 }: NoteTextAreaProps) {
   const store = useStoreActions();
   return (
-    <div className="text-l">
-      {noteContent || transcript ? (
+    <div className="text-md">
+      {mainText || lightText ? (
         <>
-          <CustomMarkdown>{noteContent}</CustomMarkdown>
+          <CustomMarkdown>{mainText}</CustomMarkdown>
+          <br />
           <CustomMarkdown
             className={`${subtextFont.className} ${
-              (store.storeActionStatus) && " animate-pulse"
+              store.storeActionStatus && " animate-pulse"
             } inline`}
           >
-            {transcript}
+            {lightText}
           </CustomMarkdown>
         </>
       ) : (
-        <PlaceHolderTextArea isRecording={isRecording} />
+        <PlaceHolderTextArea className={pulse ? "animate-pulse" : ""} />
       )}
     </div>
   );

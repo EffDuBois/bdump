@@ -1,16 +1,17 @@
 import { recordingType } from "@/app/page";
 import { FaMicrophone } from "react-icons/fa6";
 import { IoSparklesSharp } from "react-icons/io5";
+import { twMerge } from "tailwind-merge";
 
 interface PlaceHolderTextAreaProps {
-  isRecording?: recordingType;
+  className?: string;
 }
 
 const PlaceHolderTextArea: React.FC<PlaceHolderTextAreaProps> = ({
-  isRecording,
+  className,
 }) => {
   return (
-    <div className={`${isRecording ? "animate-pulse" : ""}`}>
+    <div className={className}>
       Dump all your notes & thoughts just using voice
       <br />
       <br />

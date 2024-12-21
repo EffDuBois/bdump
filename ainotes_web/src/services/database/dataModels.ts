@@ -9,6 +9,11 @@ export interface Note {
   embedding?: Float32Array;
 }
 
+export interface AskData {
+  query: string;
+  response: string;
+}
+
 export enum DBs {
   notes = "NotesDB",
 }
