@@ -19,7 +19,7 @@ def generate_embedding(query):
         response = genai.embed_content(model="models/text-embedding-004", content=query)
         return response
     else:
-        return ['empty query']
+        return {'response': 'empty query'}
     
 def create_note(query):
     MAX_RETRY = 3

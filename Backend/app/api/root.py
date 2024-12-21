@@ -12,9 +12,8 @@ async def create_notes(prompt: createPrompt):
     emb = generate_embedding(prompt.query)             # returns vector embedding for the prompt
     ans = create_note(prompt.query)                  # returns markdown text for the prompt
     logger.info(f"note created with title: {ans}" )
-    ans["embedding"] = emb
-    return ans 
-
+    output = {**ans, **emb}
+    return output
 
 @router.post("/api/notes/ask")
 async def ask_notes(prompt: askPrompt):
