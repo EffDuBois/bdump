@@ -5,7 +5,7 @@ import postQueryNote from "@/apis/postQueryNote";
 import { useStore } from "./provider";
 import { AxiosError } from "axios";
 import { useState } from "react";
-import { useAlert } from "../AlertProvider";
+import { useAlert } from "../../hooks/AlertProvider";
 import { Full } from "@/utils/custom_types";
 
 const LLM_EXHAUSTED_MESSAGE = "LLM API rate limit exceeded.";

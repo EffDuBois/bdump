@@ -1,6 +1,6 @@
 import { useStore } from "@/services/store/provider";
-import NoteTextArea from "../mainComponents/NoteTextArea";
-import NoteTitleArea from "../mainComponents/NoteTitleArea";
+import NoteTextArea from "../pageComponents/NoteTextArea";
+import NoteTitleArea from "../pageComponents/NoteTitleArea";
 import useStoreActions from "@/services/store/actions";
 
 const AskPage = () => {
@@ -9,7 +9,7 @@ const AskPage = () => {
   const askData = store.askData;
   return (
     <>
-      <NoteTitleArea defaultValue={"Ask"} disabled/>
+      <NoteTitleArea defaultValue={"Ask"} disabled />
       <NoteTextArea
         lightText={askData.query}
         mainText={askData.response}

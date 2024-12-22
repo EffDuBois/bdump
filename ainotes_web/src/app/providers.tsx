@@ -1,5 +1,5 @@
 "use client";
-import AlertProvider from "@/services/AlertProvider";
+import AlertProvider from "@/hooks/AlertProvider";
 import StoreProvider, { useStore } from "@/services/store/provider";
 
 const Providers: React.FC<{ children: React.ReactNode }> = ({ children }) => {

@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { AskData, Note } from "../database/dataModels";
 import { getEmptyNote } from "../database/dbUtils";
 import { fetchAllNotes, putNote } from "../database/idbService";
-import { useAlert } from "../AlertProvider";
+import { useAlert } from "../../hooks/AlertProvider";
 
 export type valueOrActionFunction<T> = (
   updateMethod: T | ((oldvalue: T) => T)

@@ -2,7 +2,7 @@
 
 import { useStore, valueOrActionFunction } from "@/services/store/provider";
 import CreatePage from "@/components/pages/CreatePage";
-import InputButtons from "@/components/mainComponents/InputButtons";
+import InputButtons from "@/components/pageComponents/InputButtons";
 import AskPage from "@/components/pages/AskPage";
 import { useEffect, useState } from "react";
 import useTranscriber from "@/services/transcriber";
