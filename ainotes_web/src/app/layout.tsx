@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { maintextFont } from "@/ui/fonts";
+import { interfaceFont } from "@/ui/fonts";
 import Providers from "./providers";
 
 export const metadata: Metadata = {
@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${maintextFont.className}`}>
+      <body className={`${interfaceFont.className}`}>
         <Providers>{children}</Providers>
       </body>
     </html>

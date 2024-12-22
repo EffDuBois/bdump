@@ -1,9 +1,10 @@
 import { twMerge } from "tailwind-merge";
 import SlabButton, { SlabButtonProps } from "./SlabButton";
 import { IoCloseOutline } from "react-icons/io5";
+import { Button } from "../ui/button";
 
 interface SlabButtonWDeleteProps extends SlabButtonProps {
-  onClickDelete: () => {};
+  onClickDelete: () => void;
 }
 
 export default function SlabButtonWDelete({
@@ -12,17 +13,22 @@ export default function SlabButtonWDelete({
   ...others
 }: SlabButtonWDeleteProps) {
   return (
-    <div className="flex rounded-lg hover:bg-neutral-500">
-      <SlabButton
-        className={twMerge(`grow rounded-r-none`, className)}
+    <div className="flex rounded-lg">
+      <Button
+        variant={"ghost"}
+        className={twMerge(
+          `grow px-5 rounded-r-none text-left text-nowrap text-clip overflow-hidden`,
+          className
+        )}
         {...others}
       />
-      <SlabButton
-        className={twMerge("rounded-l-none hover:bg-neutral-50/25", className)}
+      <Button
+        variant={"ghost"}
+        className={twMerge("rounded-l-none", className)}
         onClick={onClickDelete}
       >
         <IoCloseOutline />
-      </SlabButton>
+      </Button>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 "use client";
-import { titleFont } from "@/ui/fonts";
+import { maintextFont } from "@/ui/fonts";
 import { forwardRef, TextareaHTMLAttributes } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -13,9 +13,9 @@ const NoteTitleArea = forwardRef<
       defaultValue={defaultValue}
       className={twMerge(
         "text-4xl mb-8 w-full h-fit block bg-inherit focus:outline-none resize-none overflow-hidden",
-        value ? "" : titleFont.className
+        value ? "" : maintextFont.className
       )}
-      placeholder="BrainDump"
+      placeholder="Untitled"
       rows={1}
       {...props}
     />

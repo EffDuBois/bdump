@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { AskData, Note } from "../database/dataModels";
 import { getEmptyNote } from "../database/dbUtils";
-import { fetchAllNotes, putNote } from "../database/idbService";
+import { deleteNote, fetchAllNotes, putNote } from "../database/idbService";
 import { useAlert } from "../../hooks/AlertProvider";
 
 export type valueOrActionFunction<T> = (
@@ -15,8 +15,10 @@ export interface storeContextType {
   currentNote?: Note;
   currentNoteStatus: boolean;
   fetchNotes: () => void;
-  updateCurrentNote: valueOrActionFunction<Note>;
   initCurrentNote: () => void;
+  setCurrentNote: React.Dispatch<React.SetStateAction<Note | undefined>>;
+  updateCurrentNote: valueOrActionFunction<Note>;
+  deleteNoteById: (id: Note["id"]) => void;
   askData: { query: string; response: string };
   setAskData: React.Dispatch<React.SetStateAction<AskData>>;
   updateTranscript: valueOrActionFunction<string>;
@@ -86,7 +88,16 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  //utility function
+  const deleteNoteById = (id: Note["id"]) => {
+    deleteNote(id).then(fetchAllNotes);
+  };
+
+  const [askData, setAskData] = useState<AskData>({
+    query: "",
+    response: "",
+  });
+
+  //utility functions
   const updateTranscript: valueOrActionFunction<string> = (updateObj) => {
     if (typeof updateObj === "function") {
       updateCurrentNote((oldNote) => {
@@ -100,12 +111,6 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       updateCurrentNote({ ...currentNote, transcript: updateObj } as Note);
     }
   };
-
-  const [askData, setAskData] = useState<AskData>({
-    query: "",
-    response: "",
-  });
-
   const updateQuery: valueOrActionFunction<string> = async (updateMethod) => {
     if (typeof updateMethod === "string") {
       setAskData((oldData) => {
@@ -127,7 +132,9 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
         currentNoteStatus,
         fetchNotes,
         initCurrentNote,
+        setCurrentNote,
         updateCurrentNote,
+        deleteNoteById,
         askData,
         setAskData,
         updateTranscript,

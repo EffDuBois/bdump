@@ -1,4 +1,5 @@
 import { ButtonHTMLAttributes, DetailedHTMLProps, ReactNode } from "react";
+import { Button } from "../ui/button";
 
 export default function CircleButton({
   className,
@@ -8,8 +9,9 @@ export default function CircleButton({
   HTMLButtonElement
 >) {
   return (
-    <button
-      className={`size-16 border-2 border-black *:m-auto dark:border-neutral-400 rounded-full disabled:dark:border-neutral-700 disabled:border-neutral-400 ${className}`}
+    <Button
+      variant={"outline"}
+      className={`size-16 border-2 rounded-full ${className}`}
       {...others}
     />
   );

@@ -9,17 +9,22 @@ import useTranscriber from "@/services/transcriber";
 import useStoreActions from "@/services/store/actions";
 import { ConnectionStatusMap } from "@/components/mappings/ConnectionStatus";
 import { interfaceFont } from "@/ui/fonts";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useTheme } from "next-themes";
 
 export type modeType = "CREATE" | "ASK";
 
 export default function Home() {
   const store = useStore();
   const actions = useStoreActions();
+  const theme = useTheme();
+
   const [mode, setMode] = useState<modeType>("CREATE");
 
   useEffect(() => {
     store.fetchNotes();
     store.initCurrentNote();
+    theme.setTheme("system");
   }, []);
 
   const createTranscriber = useTranscriber(store.updateTranscript);
@@ -46,7 +51,8 @@ export default function Home() {
   };
 
   return (
-    <main className="flex flex-col flex-1 justify-center items-center content-center w-full h-screen">
+    <main className="flex flex-col flex-1 justify-center items-center content-center w-full h-screen relative bg-background">
+      <SidebarTrigger className="absolute top-0 left-0" />
       <div className="h-[75vh] w-[75vw] overflow-auto">
         {mode === "CREATE" ? (
           <CreatePage />
