@@ -3,8 +3,6 @@ import { titleFont } from "@/ui/fonts";
 
 import SlabButtonWDelete from "@/components/buttons/SlabButtonDelete";
 import { useStore } from "@/services/store/provider";
-import Spinner from "./loaders/Spinner";
-import { useEffect } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -19,10 +17,6 @@ import {
 
 const FileDrawer = () => {
   const store = useStore();
-  useEffect(() => {
-    store.fetchNotes();
-    store.initCurrentNote();
-  }, [store.notesFetchStatus, store.currentNoteStatus]);
   return (
     <Sidebar>
       <SidebarHeader>
@@ -38,14 +32,15 @@ const FileDrawer = () => {
       </SidebarHeader>
       <SidebarSeparator />
       <SidebarContent>
-        <SidebarGroupLabel>Your Notes</SidebarGroupLabel>
+        <SidebarGroupLabel>
+          Your Notes
+        </SidebarGroupLabel>
         <SidebarGroup>
           <SidebarMenu className="flex flex-col">
             {!store.notesFetchStatus ? (
               store.notes.map((note) => (
-                <SidebarMenuItem>
+                <SidebarMenuItem key={note.id}>
                   <SlabButtonWDelete
-                    key={note.id}
                     onClick={() => {
                       if (store.currentNote?.id !== note.id) {
                         store.setCurrentNote(note);

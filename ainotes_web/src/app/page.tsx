@@ -1,16 +1,17 @@
 "use client";
 
-import { useStore, valueOrActionFunction } from "@/services/store/provider";
+import { useStore } from "@/services/store/provider";
 import CreatePage from "@/components/pages/CreatePage";
-import InputButtons from "@/components/pageComponents/InputButtons";
+import InputButtons from "@/components/pages/pageComponents/InputButtons";
 import AskPage from "@/components/pages/AskPage";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useTranscriber from "@/services/transcriber";
 import useStoreActions from "@/services/store/actions";
 import { ConnectionStatusMap } from "@/components/mappings/ConnectionStatus";
 import { interfaceFont } from "@/ui/fonts";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useTheme } from "next-themes";
+import { ModeToggle } from "@/components/ModeToggle";
 
 export type modeType = "CREATE" | "ASK";
 
@@ -20,12 +21,6 @@ export default function Home() {
   const theme = useTheme();
 
   const [mode, setMode] = useState<modeType>("CREATE");
-
-  useEffect(() => {
-    store.fetchNotes();
-    store.initCurrentNote();
-    theme.setTheme("system");
-  }, []);
 
   const createTranscriber = useTranscriber(store.updateTranscript);
   const askTranscriber = useTranscriber(store.updateQuery);
@@ -51,9 +46,12 @@ export default function Home() {
   };
 
   return (
-    <main className="flex flex-col flex-1 justify-center items-center content-center w-full h-screen relative bg-background">
-      <SidebarTrigger className="absolute top-0 left-0" />
-      <div className="h-[75vh] w-[75vw] overflow-auto">
+    <main className="flex flex-col flex-1 items-center content-center w-[75vw] h-screen ">
+      <div className="w-full flex justify-between p-2">
+        <SidebarTrigger />
+        <ModeToggle />
+      </div>
+      <div className="h-[75vh] w-4/5 overflow-y-auto">
         {mode === "CREATE" ? (
           <CreatePage />
         ) : mode === "ASK" ? (

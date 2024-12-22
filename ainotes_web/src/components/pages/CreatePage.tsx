@@ -1,9 +1,9 @@
 import { useStore } from "@/services/store/provider";
 import useStoreActions from "@/services/store/actions";
 import { createRef, useRef } from "react";
-import InputButtons from "../pageComponents/InputButtons";
-import NoteTitleArea from "../pageComponents/NoteTitleArea";
-import NoteTextArea from "../pageComponents/NoteTextArea";
+import InputButtons from "./pageComponents/InputButtons";
+import NoteTitleArea from "./pageComponents/NoteTitleArea";
+import NoteTextArea from "./pageComponents/NoteTextArea";
 
 const CreatePage = () => {
   const actions = useStoreActions();

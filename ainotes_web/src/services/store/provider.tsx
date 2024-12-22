@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { AskData, Note } from "../database/dataModels";
 import { getEmptyNote } from "../database/dbUtils";
 import { deleteNote, fetchAllNotes, putNote } from "../database/idbService";
-import { useAlert } from "../../hooks/AlertProvider";
+import { toast } from "sonner";
 
 export type valueOrActionFunction<T> = (
   updateMethod: T | ((oldvalue: T) => T)
@@ -32,7 +32,8 @@ export const StoreContext = createContext<storeContextType | undefined>(
 const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const alert = useAlert();
+
+  const [storeStatus, setStoreStatus] = useState(false);
 
   const [notes, setNotes] = useState<Note[]>([]);
   const [notesFetchStatus, setNoteFetchStatus] = useState(false);
@@ -46,6 +47,10 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       .catch((error) => console.error("Failed to fetch notes:", error))
       .finally(() => setNoteFetchStatus(false));
   };
+
+  useEffect(() => {
+    fetchNotes();
+  }, [storeStatus]);
 
   const [currentNote, setCurrentNote] = useState<Note>();
   const [currentNoteStatus, setCurrentNoteStatus] = useState<boolean>(false);
@@ -63,6 +68,10 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   };
 
+  useEffect(() => {
+    initCurrentNote();
+  }, []);
+
   const updateCurrentNote: valueOrActionFunction<Note> = (updateObj) => {
     if (typeof updateObj === "function") {
       setCurrentNote((oldNote) => {
@@ -70,6 +79,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
           putNote(updateObj(oldNote))
             .then((note) => {
               setCurrentNote(note);
+              setStoreStatus((prev) => !prev);
             })
             .catch((error) => console.error(error));
         }
@@ -79,17 +89,20 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       putNote(updateObj)
         .then((note) => {
           setCurrentNote(note);
+          setStoreStatus((prev) => !prev);
         })
         .catch((error) => {
           if (error.name === "DataError")
-            alert("File with name Already Exists");
+            toast("File with name Already Exists");
           console.error(error);
         });
     }
   };
 
   const deleteNoteById = (id: Note["id"]) => {
-    deleteNote(id).then(fetchAllNotes);
+    deleteNote(id).then(() => {
+      setStoreStatus((prev) => !prev);
+    });
   };
 
   const [askData, setAskData] = useState<AskData>({
@@ -108,9 +121,12 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
         };
       });
     } else {
-      updateCurrentNote({ ...currentNote, transcript: updateObj } as Note);
+      updateCurrentNote((oldnote) => {
+        return { ...oldnote, transcript: updateObj };
+      });
     }
   };
+
   const updateQuery: valueOrActionFunction<string> = async (updateMethod) => {
     if (typeof updateMethod === "string") {
       setAskData((oldData) => {
