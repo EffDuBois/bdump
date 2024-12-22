@@ -33,8 +33,8 @@ export default function Home() {
   const isRecording = transcriber.recording;
 
   const onCreate = () => {
-    if (mode !== "CREATE") setMode("CREATE");
     try {
+      if (mode !== "CREATE") setMode("CREATE");
       if (isRecording) actions.createNote();
     } finally {
       transcriber.toggleTranscription();
@@ -42,8 +42,8 @@ export default function Home() {
   };
 
   const onAsk = () => {
-    if (mode !== "ASK") setMode("ASK");
     try {
+      if (mode !== "ASK") setMode("ASK");
       if (isRecording) actions.queryNotes();
     } finally {
       transcriber.toggleTranscription();

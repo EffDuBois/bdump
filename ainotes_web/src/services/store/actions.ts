@@ -17,69 +17,73 @@ const useStoreActions = () => {
   const [storeActionStatus, setStoreActionStatus] = useState(false);
 
   const createNote = () => {
-    setStoreActionStatus(true);
-    if (store.currentNote?.transcript)
-      postCreateNote(store.currentNote?.transcript)
-        .then((res) => {
-          store.updateCurrentNote((currentNote) => {
-            return {
-              ...currentNote,
-              file_name: currentNote.file_name || res.title,
-              file_path: currentNote?.file_path || "",
-              transcript: "",
-              content: res.body,
-              embedding: res.embedding,
-            };
+    try {
+      setStoreActionStatus(true);
+      if (store.currentNote?.transcript)
+        postCreateNote(store.currentNote?.transcript)
+          .then((res) => {
+            store.updateCurrentNote((currentNote) => {
+              return {
+                ...currentNote,
+                file_name: currentNote.file_name || res.title,
+                file_path: currentNote?.file_path || "",
+                transcript: "",
+                content: res.body,
+                embedding: res.embedding,
+              };
+            });
+          })
+          .catch((error) => {
+            if (
+              error instanceof AxiosError &&
+              error.status === 503 &&
+              error.response?.data.detail === LLM_EXHAUSTED_MESSAGE
+            )
+              alert("Sorry! LLM API is exhausted");
+            else console.error(error);
           });
-        })
-        .catch((error) => {
-          if (
-            error instanceof AxiosError &&
-            error.status === 503 &&
-            error.response?.data.detail === LLM_EXHAUSTED_MESSAGE
-          )
-            alert("Sorry! LLM API is exhausted");
-          else console.error(error);
-        })
-        .finally(() => setStoreActionStatus(false));
+    } finally {
+      setStoreActionStatus(false);
+    }
   };
 
   const queryNotes = () => {
-    setStoreActionStatus(true);
-    // store.notes
-    //   .filter((note): note is Full<Note> => note.embedding !== undefined)
-    //   .map((note) => {
-    //     console.log([...note.embedding.embedding]);
-    //   });
-
-    postQueryNote({
-      query: store.askData.query,
-      data: store.notes
-        .filter((note): note is Full<Note> => note.embedding !== undefined)
-        .map((note) => {
-          return {
-            id: note.id,
-            path: note.file_path + note.file_name,
-            note: note.content,
-            embedding: note.embedding,
-          };
-        }),
-    })
-      .then((res) => {
-        store.setAskData((prev) => {
-          return { query: "", response: prev.query + " \\n " + res.response };
-        });
-      })
-      .catch((error) => {
-        if (
-          error instanceof AxiosError &&
-          error.status === 503 &&
-          error.response?.data.detail === LLM_EXHAUSTED_MESSAGE
-        )
-          alert("Sorry! LLM API is exhausted");
-        else console.error(error);
-      })
-      .finally(() => setStoreActionStatus(false));
+    try {
+      setStoreActionStatus(true);
+      if (store.askData.query !== "") {
+        postQueryNote({
+          query: store.askData.query,
+          data: store.notes
+            .filter((note): note is Full<Note> => note.embedding !== undefined)
+            .map((note) => {
+              return {
+                id: note.id,
+                path: note.file_path + note.file_name,
+                note: note.content,
+                embedding: note.embedding,
+              };
+            }),
+        })
+          .then((res) => {
+            store.setAskData((prev) => {
+              return { query: "", response: prev.query + " \\n " + res };
+            });
+          })
+          .catch((error) => {
+            if (
+              error instanceof AxiosError &&
+              error.status === 503 &&
+              error.response?.data.detail === LLM_EXHAUSTED_MESSAGE
+            )
+              alert("Sorry! LLM API is exhausted");
+            else console.error(error);
+          });
+      } else {
+        console.log("ASK:No query");
+      }
+    } finally {
+      setStoreActionStatus(false);
+    }
   };
 
   return { storeActionStatus, createNote, queryNotes };
