@@ -5,14 +5,13 @@ import postQueryNote from "@/apis/postQueryNote";
 import { useStore } from "./provider";
 import { AxiosError } from "axios";
 import { useState } from "react";
-import { useAlert } from "../../hooks/AlertProvider";
 import { Full } from "@/utils/custom_types";
+import { toast } from "sonner";
 
 const LLM_EXHAUSTED_MESSAGE = "LLM API rate limit exceeded.";
 
 const useStoreActions = () => {
   const store = useStore();
-  const alert = useAlert();
 
   const [storeActionStatus, setStoreActionStatus] = useState(false);
 
@@ -39,7 +38,7 @@ const useStoreActions = () => {
               error.status === 503 &&
               error.response?.data.detail === LLM_EXHAUSTED_MESSAGE
             )
-              alert("Sorry! LLM API is exhausted");
+              toast("Sorry! LLM API is exhausted");
             else console.error(error);
           });
     } finally {
@@ -66,7 +65,10 @@ const useStoreActions = () => {
         })
           .then((res) => {
             store.setAskData((prev) => {
-              return { query: "", response: prev.query + " \\n " + res };
+              return {
+                query: "",
+                response: prev.query + "\n " + res.response,
+              };
             });
           })
           .catch((error) => {
@@ -75,7 +77,7 @@ const useStoreActions = () => {
               error.status === 503 &&
               error.response?.data.detail === LLM_EXHAUSTED_MESSAGE
             )
-              alert("Sorry! LLM API is exhausted");
+              toast("Sorry! LLM API is exhausted");
             else console.error(error);
           });
       } else {

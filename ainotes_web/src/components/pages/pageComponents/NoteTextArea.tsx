@@ -2,7 +2,7 @@ import { subtextFont } from "@/ui/fonts";
 
 import PlaceHolderTextArea from "./PlaceHolderTextArea";
 
-import CustomMarkdown from "../CustomMarkdown";
+import CustomMarkdown from "../../CustomMarkdown";
 import useStoreActions from "@/services/store/actions";
 
 interface NoteTextAreaProps {

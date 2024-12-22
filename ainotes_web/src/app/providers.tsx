@@ -1,25 +1,24 @@
 "use client";
 import FileDrawer from "@/components/FileDrawer";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import AlertProvider from "@/hooks/AlertProvider";
 import StoreProvider from "@/services/store/provider";
 import { ThemeProvider } from "@/ui/ThemeProvider";
+import { Toaster } from "sonner";
 
 const Providers: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <StoreProvider>
       <ThemeProvider
         attribute="class"
-        defaultTheme="light"
+        defaultTheme="system"
         enableSystem
         disableTransitionOnChange
       >
-        <AlertProvider>
-          <SidebarProvider>
-            <FileDrawer />
-            {children}
-          </SidebarProvider>
-        </AlertProvider>
+        <SidebarProvider>
+          <Toaster />
+          <FileDrawer />
+          {children}
+        </SidebarProvider>
       </ThemeProvider>
     </StoreProvider>
   );
