@@ -9,7 +9,7 @@ const AskPage = () => {
   const askData = store.askData;
   return (
     <>
-      <NoteTitleArea title="Ask" />
+      <NoteTitleArea defaultValue={"Ask"} disabled/>
       <NoteTextArea
         lightText={askData.query}
         mainText={askData.response}

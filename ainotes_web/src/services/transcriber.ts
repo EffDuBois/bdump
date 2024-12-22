@@ -1,7 +1,15 @@
 "use client";
 import { createClient, ListenLiveClient, LiveSchema } from "@deepgram/sdk";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
-import { useStore, valueOrActionFunction } from "./store/provider";
+import { useEffect, useState } from "react";
+import { modeType } from "@/app/page";
+import { valueOrActionFunction } from "./store/provider";
+
+type connectionStatusType =
+  | "disconnected"
+  | "connected"
+  | "transmitting"
+  | "noResponse";
+
 const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY;
 const DEEPGRAM_MODEL_CONFIG: LiveSchema = {
   model: "nova-2",
@@ -9,10 +17,9 @@ const DEEPGRAM_MODEL_CONFIG: LiveSchema = {
   language: "hi",
 };
 
-function useTranscriber(setTranscript: valueOrActionFunction<string>) {
-  const [connectionStatus, setConnectionStatus] = useState<
-    "disconnected" | "connected" | "transmitting" | "noResponse"
-  >("disconnected");
+const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
+  const [connectionStatus, setConnectionStatus] =
+    useState<connectionStatusType>("disconnected");
   const [recording, setRecording] = useState(false);
 
   const [mic, setMic] = useState<MediaRecorder>();
@@ -41,7 +48,7 @@ function useTranscriber(setTranscript: valueOrActionFunction<string>) {
           const transcript = data.channel.alternatives[0].transcript;
           if (transcript !== "") {
             console.log("server:" + transcript);
-            setTranscript((old) => old + " " + transcript);
+            updateFunction((old) => old + " " + transcript);
           }
         });
 
@@ -54,7 +61,7 @@ function useTranscriber(setTranscript: valueOrActionFunction<string>) {
         newSocket.on("Metadata", (e) => console.log(e));
         newSocket.on("close", (e) => {
           setConnectionStatus("disconnected");
-          console.log(e);
+          console.log("Socket Closed");
         });
       });
     });
@@ -105,7 +112,7 @@ function useTranscriber(setTranscript: valueOrActionFunction<string>) {
   };
 
   return { recording, toggleTranscription, connectionStatus };
-}
+};
 
 const getMic = async () => {
   const userMedia = await navigator.mediaDevices.getUserMedia({
@@ -115,7 +122,7 @@ const getMic = async () => {
   return new MediaRecorder(userMedia);
 };
 
-const startMic = async (mic: MediaRecorder, newSocket: ListenLiveClient) => {
+const startMic = async (mic: MediaRecorder, socket: ListenLiveClient) => {
   mic.start(250);
   mic.onstart = () => {
     console.log("client: microphone opened");
@@ -128,7 +135,7 @@ const startMic = async (mic: MediaRecorder, newSocket: ListenLiveClient) => {
   mic.ondataavailable = (e) => {
     const data = e.data;
     console.log("client: sent data to webSocket");
-    newSocket.send(data);
+    socket.send(data);
   };
 };
 

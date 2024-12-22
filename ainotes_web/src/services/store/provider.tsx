@@ -89,15 +89,13 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   //utility function
   const updateTranscript: valueOrActionFunction<string> = (updateObj) => {
     if (typeof updateObj === "function") {
-      if (currentNote) {
-        updateCurrentNote((oldNote) => {
-          // console.log(updateObj(oldNote.transcript));
-          return {
-            ...oldNote,
-            transcript: updateObj(oldNote.transcript),
-          };
-        });
-      }
+      updateCurrentNote((oldNote) => {
+        console.log(updateObj(oldNote.transcript));
+        return {
+          ...oldNote,
+          transcript: updateObj(oldNote.transcript),
+        };
+      });
     } else {
       updateCurrentNote({ ...currentNote, transcript: updateObj } as Note);
     }

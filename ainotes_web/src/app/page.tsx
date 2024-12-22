@@ -1,6 +1,6 @@
 "use client";
 
-import { useStore } from "@/services/store/provider";
+import { useStore, valueOrActionFunction } from "@/services/store/provider";
 import CreatePage from "@/components/pages/CreatePage";
 import InputButtons from "@/components/mainComponents/InputButtons";
 import AskPage from "@/components/pages/AskPage";
@@ -22,22 +22,17 @@ export default function Home() {
     store.initCurrentNote();
   }, []);
 
-  const transcriber = useTranscriber((update) => {
-    if (mode === "CREATE") {
-      store.updateTranscript(update);
-    } else if (mode === "ASK") {
-      store.updateQuery(update);
-    }
-  });
+  const createTranscriber = useTranscriber(store.updateTranscript);
+  const askTranscriber = useTranscriber(store.updateQuery);
 
-  const isRecording = transcriber.recording;
+  const isRecording = createTranscriber.recording || askTranscriber.recording;
 
   const onCreate = () => {
     try {
       if (mode !== "CREATE") setMode("CREATE");
       if (isRecording) actions.createNote();
     } finally {
-      transcriber.toggleTranscription();
+      createTranscriber.toggleTranscription();
     }
   };
 
@@ -46,7 +41,7 @@ export default function Home() {
       if (mode !== "ASK") setMode("ASK");
       if (isRecording) actions.queryNotes();
     } finally {
-      transcriber.toggleTranscription();
+      askTranscriber.toggleTranscription();
     }
   };
 
@@ -60,7 +55,12 @@ export default function Home() {
         ) : null}
       </div>
       <InputButtons
-        disabled={actions.storeActionStatus && store.currentNoteStatus}
+        disabled={
+          actions.storeActionStatus ||
+          !store.currentNoteStatus ||
+          createTranscriber.connectionStatus === "disconnected" ||
+          askTranscriber.connectionStatus === "disconnected"
+        }
         showUndo={!!store.currentNote?.transcript}
         isRecording={isRecording}
         mode={mode}
@@ -71,7 +71,7 @@ export default function Home() {
       <div
         className={`absolute bottom-0 right-0 text-neutral-400 ${interfaceFont.className}`}
       >
-        {ConnectionStatusMap[transcriber.connectionStatus]}
+        {ConnectionStatusMap[createTranscriber.connectionStatus]}
       </div>
     </main>
   );
