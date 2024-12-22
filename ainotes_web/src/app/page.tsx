@@ -30,32 +30,23 @@ export default function Home() {
     }
   });
 
-  const [isRecording, setIsRecording] = useState(false);
+  const isRecording = transcriber.recording;
 
   const onCreate = () => {
     if (mode !== "CREATE") setMode("CREATE");
-
     try {
-      if (isRecording) {
-        actions.createNote();
-      } else {
-        transcriber.toggleTranscription();
-      }
+      if (isRecording) actions.createNote();
     } finally {
-      setIsRecording((prev) => !prev);
+      transcriber.toggleTranscription();
     }
   };
 
   const onAsk = () => {
     if (mode !== "ASK") setMode("ASK");
     try {
-      if (isRecording) {
-        actions.queryNotes();
-      } else {
-        transcriber.toggleTranscription();
-      }
+      if (isRecording) actions.queryNotes();
     } finally {
-      setIsRecording((prev) => !prev);
+      transcriber.toggleTranscription();
     }
   };
 

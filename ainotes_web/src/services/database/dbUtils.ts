@@ -4,7 +4,6 @@ import { fetchNoteByPath, storeNote } from "./idbService";
 export const getEmptyNote = async (): Promise<Note | undefined> => {
   try {
     const emptyNote = await fetchNoteByPath("", "");
-
     if (emptyNote) return emptyNote;
     const newNote = await storeNote({
       content: "",

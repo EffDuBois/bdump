@@ -1,4 +1,3 @@
-import { recordingType } from "@/app/page";
 import { FaMicrophone } from "react-icons/fa6";
 import { IoSparklesSharp } from "react-icons/io5";
 import { twMerge } from "tailwind-merge";

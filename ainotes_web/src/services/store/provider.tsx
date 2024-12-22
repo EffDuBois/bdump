@@ -55,6 +55,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [currentNote]);
 
   const initCurrentNote = () => {
+    console.log("Init note");
     getEmptyNote().then((note) => {
       setCurrentNote(note);
     });
@@ -90,7 +91,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     if (typeof updateObj === "function") {
       if (currentNote) {
         updateCurrentNote((oldNote) => {
-          console.log(updateObj(oldNote.transcript));
+          // console.log(updateObj(oldNote.transcript));
           return {
             ...oldNote,
             transcript: updateObj(oldNote.transcript),

@@ -8,7 +8,7 @@ const nextConfig = {
   env: {
     DEEPGRAM_API_KEY: process.env.DEEPGRAM_API_KEY,
     NEXT_PUBLIC_BACKEND_BASE_URL: process.env.NEXT_PUBLIC_BACKEND_BASE_URL,
-    NEXT_PUBLIC_X_API_KEY: process.env.NEXT_PUBLIC_X_API_KEY
+    NEXT_PUBLIC_X_API_KEY: process.env.NEXT_PUBLIC_X_API_KEY,
   },
   webpack: (config) => {
     config.resolve.alias["@"] = join(__dirname, "src");
@@ -21,7 +21,11 @@ const nextConfig = {
     return [
       {
         source: "/api/:slug*",
-        destination: `${process.env.NEXT_PUBLIC_BACKEND_REDIRECT?process.env.NEXT_PUBLIC_BACKEND_REDIRECT:"/api"}/:slug*`,
+        destination: `${
+          process.env.NEXT_PUBLIC_BACKEND_REDIRECT
+            ? process.env.NEXT_PUBLIC_BACKEND_REDIRECT
+            : "/api"
+        }/:slug*`,
       },
     ];
   },
