@@ -10,13 +10,13 @@ const CreatePage = () => {
   const store = useStore();
   const currentNote = store.currentNote;
 
-  useEffect(()=>{
-    
-  })
-
   const [title, setTitle] = useState<string>();
 
-  const newTitle = (e: FocusEvent<HTMLTextAreaElement, Element>) => {
+  useEffect(() => {
+    setTitle(currentNote?.file_name);
+  }, [currentNote]);
+
+  const setTempTitle = (e: FocusEvent<HTMLTextAreaElement, Element>) => {
     setTitle(e.target.value);
   };
 
@@ -32,8 +32,8 @@ const CreatePage = () => {
   return (
     <>
       <NoteTitleArea
-        value={currentNote?.file_name}
-        onChange={newTitle}
+        value={title}
+        onChange={setTempTitle}
         onBlur={updateTitle}
       />
       <NoteTextArea
