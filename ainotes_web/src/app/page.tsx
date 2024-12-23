@@ -4,13 +4,12 @@ import { useStore } from "@/services/store/provider";
 import CreatePage from "@/components/pages/CreatePage";
 import InputButtons from "@/components/pages/pageComponents/InputButtons";
 import AskPage from "@/components/pages/AskPage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useTranscriber from "@/services/transcriber";
 import useStoreActions from "@/services/store/actions";
 import { ConnectionStatusMap } from "@/components/mappings/ConnectionStatus";
 import { interfaceFont } from "@/ui/fonts";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { useTheme } from "next-themes";
 import { ModeToggle } from "@/components/ModeToggle";
 
 export type modeType = "CREATE" | "ASK";
@@ -18,7 +17,10 @@ export type modeType = "CREATE" | "ASK";
 export default function Home() {
   const store = useStore();
   const actions = useStoreActions();
-  const theme = useTheme();
+
+  useEffect(() => {
+    setMode("CREATE");
+  }, [store.currentNote]);
 
   const [mode, setMode] = useState<modeType>("CREATE");
 
