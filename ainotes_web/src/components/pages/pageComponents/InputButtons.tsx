@@ -1,7 +1,8 @@
 import { modeType } from "@/app/page";
-import CircleButton from "@/components/buttons/CircleButton";
-import { useStore } from "@/services/store/provider";
-import { Mic, Search, Square, SquareIcon, Undo2 } from "lucide-react";
+import MainActionButton from "@/components/buttons/MainActionButton";
+import { Card } from "@/components/ui/card";
+import { Plus, Search, Square, SquareIcon, Undo2 } from "lucide-react";
+import { twMerge } from "tailwind-merge";
 
 interface InputButtonsProps {
   showUndo: boolean;
@@ -23,37 +24,56 @@ export default function InputButtons({
   onAsk,
 }: InputButtonsProps) {
   return (
-    <div className=" flex justify-center items-center gap-3 relative">
-      <CircleButton
+    <Card className="rounded-2xl p-2 bg-sidebar flex justify-center items-center gap-3 relative">
+      <MainActionButton
         onClick={clearLightText}
-        className={` !size-10 absolute translate-x-[-45px] left-0 top-0 ${
+        variant={"secondary"}
+        className={twMerge(
+          `w-20 absolute -translate-x-[5.5rem] left-0 top-0`,
           !showUndo ? "hidden" : ""
-        }`}
+        )}
       >
-        <Undo2 />
-      </CircleButton>
-      <CircleButton
+        <>
+          <Undo2 />
+          Reset
+        </>
+      </MainActionButton>
+      <MainActionButton
         onClick={onCreate}
+        variant={isRecording ? "destructive" : "default"}
         className={isRecording && mode !== "CREATE" ? "hidden" : ""}
         disabled={disabled}
       >
         {!isRecording ? (
-          <Mic />
+          <>
+            <Plus /> Create
+          </>
         ) : (
-          <Square className="text-red-500" size={"38px"} />
+          <>
+            {" "}
+            <Square size={"38px"} />
+            Stop
+          </>
         )}
-      </CircleButton>
-      <CircleButton
+      </MainActionButton>
+      <MainActionButton
         onClick={onAsk}
         className={isRecording && mode !== "ASK" ? "hidden" : ""}
         disabled={disabled}
       >
         {!isRecording ? (
-          <Search />
+          <>
+            <Search />
+            Ask
+          </>
         ) : (
-          <Square className="text-red-500" size={"38px"} />
+          <>
+            {" "}
+            <Square className="text-red-500" size={"38px"} />
+            Stop
+          </>
         )}
-      </CircleButton>
-    </div>
+      </MainActionButton>
+    </Card>
   );
 }

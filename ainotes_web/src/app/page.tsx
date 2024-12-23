@@ -51,7 +51,7 @@ export default function Home() {
         <SidebarTrigger />
         <ModeToggle />
       </div>
-      <div className="h-[75vh] w-4/5 overflow-y-auto">
+      <div className="h-[84vh] w-4/5 overflow-y-auto">
         {mode === "CREATE" ? (
           <CreatePage />
         ) : mode === "ASK" ? (
