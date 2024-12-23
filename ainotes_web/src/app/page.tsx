@@ -64,10 +64,18 @@ export default function Home() {
           createTranscriber.connectionStatus === "disconnected" ||
           askTranscriber.connectionStatus === "disconnected"
         }
-        showUndo={!!store.currentNote?.transcript}
+        showUndo={
+          mode === "CREATE"
+            ? !!store.currentNote?.transcript
+            : !!store.askData.query
+        }
         isRecording={isRecording}
         mode={mode}
-        clearLightText={() => store.updateTranscript("")}
+        clearLightText={
+          mode === "CREATE"
+            ? () => store.updateTranscript("")
+            : () => store.updateQuery("")
+        }
         onAsk={onAsk}
         onCreate={onCreate}
       />
