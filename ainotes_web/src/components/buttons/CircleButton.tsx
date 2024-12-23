@@ -11,7 +11,7 @@ export default function CircleButton({
   return (
     <Button
       variant={"outline"}
-      className={`size-16 border-2 rounded-full ${className}`}
+      className={`*:h-32 *:w-32 size-16 border-2 rounded-full  ${className}`}
       {...others}
     />
   );

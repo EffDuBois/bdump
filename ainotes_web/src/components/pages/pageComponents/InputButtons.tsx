@@ -23,7 +23,7 @@ export default function InputButtons({
   onAsk,
 }: InputButtonsProps) {
   return (
-    <div className=" flex justify-center items-center gap-5 relative">
+    <div className=" flex justify-center items-center gap-3 relative">
       <CircleButton
         onClick={clearLightText}
         className={` !size-10 absolute translate-x-[-45px] left-0 top-0 ${

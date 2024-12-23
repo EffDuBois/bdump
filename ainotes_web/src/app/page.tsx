@@ -61,7 +61,6 @@ export default function Home() {
       <InputButtons
         disabled={
           actions.storeActionStatus ||
-          !store.currentNoteStatus ||
           createTranscriber.connectionStatus === "disconnected" ||
           askTranscriber.connectionStatus === "disconnected"
         }

@@ -13,7 +13,6 @@ export interface storeContextType {
   notes: Note[];
   notesFetchStatus: boolean;
   currentNote?: Note;
-  currentNoteStatus: boolean;
   fetchNotes: () => void;
   initCurrentNote: () => void;
   setCurrentNote: React.Dispatch<React.SetStateAction<Note | undefined>>;
@@ -32,7 +31,6 @@ export const StoreContext = createContext<storeContextType | undefined>(
 const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-
   const [storeStatus, setStoreStatus] = useState(false);
 
   const [notes, setNotes] = useState<Note[]>([]);
@@ -53,13 +51,6 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [storeStatus]);
 
   const [currentNote, setCurrentNote] = useState<Note>();
-  const [currentNoteStatus, setCurrentNoteStatus] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (!!currentNote) {
-      setCurrentNoteStatus(true);
-    }
-  }, [currentNote]);
 
   const initCurrentNote = () => {
     console.log("Init note");
@@ -68,11 +59,8 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   };
 
-  useEffect(() => {
-    initCurrentNote();
-  }, []);
-
   const updateCurrentNote: valueOrActionFunction<Note> = (updateObj) => {
+    if (!currentNote) initCurrentNote();
     if (typeof updateObj === "function") {
       setCurrentNote((oldNote) => {
         if (oldNote) {
@@ -145,7 +133,6 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
         notes,
         notesFetchStatus,
         currentNote,
-        currentNoteStatus,
         fetchNotes,
         initCurrentNote,
         setCurrentNote,
