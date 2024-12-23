@@ -14,27 +14,24 @@ import {
   SidebarMenuSkeleton,
   SidebarSeparator,
 } from "./ui/sidebar";
+import { Button } from "./ui/button";
 
 const FileDrawer = () => {
   const store = useStore();
   return (
     <Sidebar>
       <SidebarHeader>
-        <h1 className={`text-4xl m-6 text-center ${titleFont.className}`}>
+        <h1 className={`text-4xl m-4 text-center ${titleFont.className}`}>
           BrainDump
         </h1>
-        {/* <SlabButtonOutline
-            className="text-center mb-4"
-            onClick={addEmptyNote}
-          >
-            Add Note
-          </SlabButtonOutline> */}
       </SidebarHeader>
       <SidebarSeparator />
+      <SidebarHeader>
+        <Button onClick={store.initCurrentNote}>
+          Add Note
+        </Button>
+      </SidebarHeader>
       <SidebarContent>
-        <SidebarGroupLabel>
-          Your Notes
-        </SidebarGroupLabel>
         <SidebarGroup>
           <SidebarMenu className="flex flex-col">
             {!store.notesFetchStatus ? (
