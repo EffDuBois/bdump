@@ -31,10 +31,10 @@ export const StoreContext = createContext<storeContextType | undefined>(
 const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [storeStatus, setStoreStatus] = useState(false);
-
   const [notes, setNotes] = useState<Note[]>([]);
   const [notesFetchStatus, setNoteFetchStatus] = useState(false);
+  const [fetchDependency, setFetchDependency] = useState(false);
+  const toggleFetchDependency = () => setFetchDependency((prev) => !prev);
 
   const fetchNotes = () => {
     setNoteFetchStatus(true);
@@ -48,15 +48,19 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     fetchNotes();
-  }, [storeStatus]);
+  }, [fetchDependency]);
 
   const [currentNote, setCurrentNote] = useState<Note>();
+
+  useEffect(() => {
+    toggleFetchDependency();
+  }, [currentNote?.file_name]);
 
   const initCurrentNote = () => {
     console.log("Init note");
     getEmptyNote().then((note) => {
       setCurrentNote(note);
-      fetchNotes();
+      toggleFetchDependency();
     });
   };
 
@@ -68,7 +72,6 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
           putNote(updateObj(oldNote))
             .then((note) => {
               setCurrentNote(note);
-              setStoreStatus((prev) => !prev);
             })
             .catch((error) => console.error(error));
         }
@@ -78,7 +81,6 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       putNote(updateObj)
         .then((note) => {
           setCurrentNote(note);
-          setStoreStatus((prev) => !prev);
         })
         .catch((error) => {
           if (error.name === "DataError")
@@ -90,7 +92,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const deleteNoteById = (id: Note["id"]) => {
     deleteNote(id).then(() => {
-      setStoreStatus((prev) => !prev);
+      toggleFetchDependency();
     });
   };
 
