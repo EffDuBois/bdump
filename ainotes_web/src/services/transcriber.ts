@@ -5,10 +5,10 @@ import { modeType } from "@/app/page";
 import { valueOrActionFunction } from "./store/provider";
 
 type connectionStatusType =
-  | "disconnected"
+  | "connecting"
   | "connected"
   | "transmitting"
-  | "noResponse";
+  | "disconnected";
 
 const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY;
 const DEEPGRAM_MODEL_CONFIG: LiveSchema = {
@@ -19,7 +19,7 @@ const DEEPGRAM_MODEL_CONFIG: LiveSchema = {
 
 const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
   const [connectionStatus, setConnectionStatus] =
-    useState<connectionStatusType>("disconnected");
+    useState<connectionStatusType>("connecting");
   const [recording, setRecording] = useState(false);
 
   const [mic, setMic] = useState<MediaRecorder>();
@@ -45,6 +45,9 @@ const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
 
         newSocket.on("Results", async (data) => {
           setConnectionStatus("transmitting");
+          setInterval(() => {
+            setConnectionStatus("connected");
+          }, 1000);
           const transcript = data.channel.alternatives[0].transcript;
           if (transcript !== "") {
             console.log("server:" + transcript);
@@ -89,7 +92,6 @@ const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
           if (socket) {
             startMic(newMic, socket);
             setRecording(true);
-            setConnectionStatus("noResponse");
           } else {
             console.error("Socket not initialised");
           }

@@ -1,9 +1,10 @@
 import { FaCircle } from "react-icons/fa6";
 
 export const ConnectionStatusMap = {
-  disconnected: (
+  connecting: (
     <>
-      <FaCircle className="inline text-red-400" size={"10px"} /> No Connection
+      <FaCircle className="inline text-yellow-300" size={"10px"} />{" "}
+      Connecting...
     </>
   ),
   connected: (
@@ -13,12 +14,12 @@ export const ConnectionStatusMap = {
   ),
   transmitting: (
     <>
-      <FaCircle className="inline text-green-300" size={"10px"} /> Connected
+      <FaCircle className="inline text-green-200" size={"10px"} /> Connected
     </>
   ),
-  noResponse: (
+  disconnected: (
     <>
-      <FaCircle className="inline text-yellow-300" size={"10px"} /> Connecting
+      <FaCircle className="inline text-red-400" size={"10px"} /> No Connection
     </>
   ),
 };
