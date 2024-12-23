@@ -14,7 +14,7 @@ const NoteTitleArea = forwardRef<
         "text-4xl mb-8 w-full h-fit block bg-inherit focus:outline-none resize-none overflow-hidden",
         value ? "" : maintextFont.className
       )}
-      placeholder="Untitled"
+      placeholder=""
       rows={1}
       {...props}
     />
