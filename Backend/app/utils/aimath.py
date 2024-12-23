@@ -1,3 +1,5 @@
+# handle division by zero and cases where x or y is none
+
 def cosinesim(x, y):
     if(len(x) == len(y)):
         sum = 0
