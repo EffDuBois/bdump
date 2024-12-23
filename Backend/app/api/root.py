@@ -20,6 +20,6 @@ async def ask_notes(prompt: askPrompt):
     emb = generate_embedding(prompt.query)
     notes_text = [i.note for i in prompt.data]
     notesemb = [i.embedding for i in prompt.data]
-    ans = ask_note(prompt.query, emb, notes_text, notesemb)
+    ans = ask_note(prompt.query, emb["embedding"], notes_text, notesemb)
     logger.info(f"answer for query: {ans}")
     return ans
