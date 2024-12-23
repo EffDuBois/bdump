@@ -19,7 +19,7 @@ export default function Home() {
   const actions = useStoreActions();
 
   useEffect(() => {
-    setMode("CREATE");
+    if (mode !== "CREATE") setMode("CREATE");
   }, [store.currentNote]);
 
   const [mode, setMode] = useState<modeType>("CREATE");
