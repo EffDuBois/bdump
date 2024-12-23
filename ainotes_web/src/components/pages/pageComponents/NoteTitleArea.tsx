@@ -6,15 +6,12 @@ import { twMerge } from "tailwind-merge";
 const NoteTitleArea = forwardRef<
   HTMLTextAreaElement,
   TextareaHTMLAttributes<HTMLTextAreaElement>
->(({ value, ...props }, ref) => {
+>(({ ...props }, ref) => {
   return (
     <textarea
-      ref={ref}
       className={twMerge(
-        "text-4xl mb-8 w-full h-fit block bg-inherit focus:outline-none resize-none overflow-hidden",
-        value ? "" : maintextFont.className
+        "text-4xl mb-8 w-full h-fit block bg-inherit focus:outline-none resize-none overflow-hidden"
       )}
-      placeholder=""
       rows={1}
       {...props}
     />
