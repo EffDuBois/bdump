@@ -1,5 +1,4 @@
 "use client";
-import { titleFont } from "@/ui/fonts";
 
 import SlabButtonWDelete from "@/components/buttons/SlabButtonDelete";
 import { useStore } from "@/services/store/provider";
@@ -7,7 +6,6 @@ import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
@@ -15,21 +13,18 @@ import {
   SidebarSeparator,
 } from "./ui/sidebar";
 import { Button } from "./ui/button";
+import AppTitle from "./AppTitle";
 
 const FileDrawer = () => {
   const store = useStore();
   return (
     <Sidebar>
       <SidebarHeader>
-        <h1 className={`text-4xl m-4 text-center ${titleFont.className}`}>
-          BrainDump
-        </h1>
+        <AppTitle />
       </SidebarHeader>
       <SidebarSeparator />
       <SidebarHeader>
-        <Button onClick={store.initCurrentNote}>
-          Add Note
-        </Button>
+        <Button onClick={store.initCurrentNote}>Add Note</Button>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
