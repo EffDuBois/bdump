@@ -56,6 +56,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     console.log("Init note");
     getEmptyNote().then((note) => {
       setCurrentNote(note);
+      fetchNotes();
     });
   };
 

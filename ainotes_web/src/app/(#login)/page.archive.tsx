@@ -2,7 +2,7 @@
 
 import { signInWithGoogle, signOutWithGoogle } from "@/services/firebase/auth";
 import { createSession, removeSession } from "@/actions/authActions";
-import CircleButton from "@/components/buttons/CircleButton";
+import CircleButton from "@/components/buttons/MainActionButton";
 import { BsGoogle } from "react-icons/bs";
 import { titleFont } from "@/ui/fonts";
 
