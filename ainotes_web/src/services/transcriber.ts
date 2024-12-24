@@ -31,9 +31,7 @@ const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
 
       let keepAlive;
       if (keepAlive) clearInterval(keepAlive);
-
       keepAlive = setInterval(() => {
-        // console.log("KeepAlive sent.");
         newSocket.keepAlive();
       }, 5000);
 
@@ -58,6 +56,7 @@ const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
         newSocket.on("error", (e) => {
           console.error(e);
           setConnectionStatus("disconnected");
+          setSocket(undefined);
         });
 
         newSocket.on("warning", (e) => console.warn(e));
@@ -65,6 +64,7 @@ const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
         newSocket.on("close", (e) => {
           setConnectionStatus("disconnected");
           console.log("Socket Closed");
+          setSocket(undefined);
         });
       });
     });
@@ -95,6 +95,7 @@ const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
             setRecordTime(Date.now());
           } else {
             console.error("Socket not initialised");
+            createSocket().then(() => toggleTranscription());
           }
         } else {
           console.error("Can't initialise mic");
@@ -113,17 +114,19 @@ const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
       console.error(error);
     }
   };
-  const [recordTime, setRecordTime] = useState<number>(Date.now());
+  const [recordTime, setRecordTime] = useState<number>();
   const [time, setTime] = useState<string>();
 
   const updateTime = () => {
-    const minutes = Math.floor((Date.now() - recordTime) / 60000);
-    const seconds = Math.floor(((Date.now() - recordTime) / 1000) % 60);
-    setTime(
-      `${minutes < 10 ? "0" : ""}${minutes}:${
-        seconds < 10 ? "0" : ""
-      }${seconds}`
-    );
+    if (recordTime !== undefined) {
+      const minutes = Math.floor((Date.now() - recordTime) / 60000);
+      const seconds = Math.floor(((Date.now() - recordTime) / 1000) % 60);
+      setTime(
+        `${minutes < 10 ? "0" : ""}${minutes}:${
+          seconds < 10 ? "0" : ""
+        }${seconds}`
+      );
+    }
   };
 
   useEffect(() => {
@@ -134,7 +137,7 @@ const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [recordTime]);
 
   return { recording, toggleTranscription, connectionStatus, time };
 };
