@@ -1,11 +1,11 @@
 "use client";
 import { maintextFont } from "@/ui/fonts";
-import { forwardRef, TextareaHTMLAttributes } from "react";
+import { forwardRef, InputHTMLAttributes, TextareaHTMLAttributes } from "react";
 import { twMerge } from "tailwind-merge";
 
 const NoteTitleArea = forwardRef<
-  HTMLTextAreaElement,
-  TextareaHTMLAttributes<HTMLInputElement>
+HTMLInputElement,
+  InputHTMLAttributes<HTMLInputElement>
 >(({ className, ...props }, ref) => {
   return (
     <input
@@ -13,7 +13,6 @@ const NoteTitleArea = forwardRef<
         `text-4xl mb-8 w-full h-fit block bg-inherit focus:outline-none resize-none overflow-hidden ${maintextFont.className}`,
         className
       )}
-      rows={1}
       {...props}
     />
   );

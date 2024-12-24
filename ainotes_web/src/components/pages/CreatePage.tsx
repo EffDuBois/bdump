@@ -13,7 +13,7 @@ const CreatePage = () => {
     setTitle(currentNote?.file_name || "");
   }, [currentNote?.file_name]);
 
-  const setTempTitle = (e: FocusEvent<HTMLTextAreaElement, Element>) => {
+  const setTempTitle = (e: FocusEvent<HTMLInputElement, Element>) => {
     setTitle(e.target.value);
   };
 
