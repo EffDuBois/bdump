@@ -1,7 +1,6 @@
 "use client";
 import { createClient, ListenLiveClient, LiveSchema } from "@deepgram/sdk";
 import { useEffect, useState } from "react";
-import { modeType } from "@/app/page";
 import { valueOrActionFunction } from "./store/provider";
 
 type connectionStatusType =
@@ -14,7 +13,7 @@ const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY;
 const DEEPGRAM_MODEL_CONFIG: LiveSchema = {
   model: "nova-2",
   smart_format: true,
-  language: "hi",
+  // language: "hi",
 };
 
 const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {

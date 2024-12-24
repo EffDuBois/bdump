@@ -1,6 +1,5 @@
 "use client";
 
-import SlabButtonWDelete from "@/components/buttons/SlabButtonDelete";
 import { useStore } from "@/services/store/provider";
 import {
   Sidebar,
@@ -8,6 +7,7 @@ import {
   SidebarGroup,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSkeleton,
   SidebarSeparator,
@@ -32,16 +32,16 @@ const FileDrawer = () => {
             {!store.notesFetchStatus ? (
               store.notes.map((note) => (
                 <SidebarMenuItem key={note.id}>
-                  <SlabButtonWDelete
+                  <SidebarMenuButton
+                    isActive={store?.currentNote?.id === note.id}
                     onClick={() => {
                       if (store.currentNote?.id !== note.id) {
                         store.setCurrentNote(note);
                       }
                     }}
-                    onClickDelete={() => store.deleteNoteById(note.id)}
                   >
-                    {note.file_name ? note.file_name : "New Note"}
-                  </SlabButtonWDelete>
+                    <span>{note.file_name ? note.file_name : "New Note"}</span>
+                  </SidebarMenuButton>
                 </SidebarMenuItem>
               ))
             ) : (
