@@ -65,11 +65,7 @@ export default function Home() {
         ) : null}
       </div>
       <InputButtons
-        disabled={
-          apiStatus ||
-          createTranscriber.connectionStatus === "disconnected" ||
-          askTranscriber.connectionStatus === "disconnected"
-        }
+        disabled={apiStatus}
         showUndo={
           mode === "CREATE" ? !!currentNote?.transcript : !!askData.query
         }
