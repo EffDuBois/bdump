@@ -46,7 +46,8 @@ const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
           setConnectionStatus("transmitting");
           setInterval(() => {
             setConnectionStatus("connected");
-          }, 1000);
+          }, 500);
+
           const transcript = data.channel.alternatives[0].transcript;
           if (transcript !== "") {
             console.log("server:" + transcript);
@@ -91,6 +92,7 @@ const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
           if (socket) {
             startMic(newMic, socket);
             setRecording(true);
+            setRecordTime(Date.now());
           } else {
             console.error("Socket not initialised");
           }
@@ -111,8 +113,30 @@ const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
       console.error(error);
     }
   };
+  const [recordTime, setRecordTime] = useState<number>(Date.now());
+  const [time, setTime] = useState<string>();
 
-  return { recording, toggleTranscription, connectionStatus };
+  const updateTime = () => {
+    const minutes = Math.floor((Date.now() - recordTime) / 60000);
+    const seconds = Math.floor(((Date.now() - recordTime) / 1000) % 60);
+    setTime(
+      `${minutes < 10 ? "0" : ""}${minutes}:${
+        seconds < 10 ? "0" : ""
+      }${seconds}`
+    );
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      updateTime();
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
+  return { recording, toggleTranscription, connectionStatus, time };
 };
 
 const getMic = async () => {

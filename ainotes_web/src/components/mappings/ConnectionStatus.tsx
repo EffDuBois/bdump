@@ -14,7 +14,7 @@ export const ConnectionStatusMap = {
   ),
   transmitting: (
     <>
-      <FaCircle className="inline text-green-200" size={"10px"} /> Connected
+      <FaCircle className="inline text-green-50" size={"10px"} /> Connected
     </>
   ),
   disconnected: (
