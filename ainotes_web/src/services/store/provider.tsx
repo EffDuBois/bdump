@@ -158,33 +158,31 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   const createNote = () => {
     setApiStatus(true);
     if (currentNote?.transcript) {
-      setTimeout(() => {
-        postCreateNote(currentNote?.content + " \n " + currentNote?.transcript)
-          .then((res) => {
-            updateCurrentNote((currentNote) => {
-              return {
-                ...currentNote,
-                file_name: currentNote.file_name || res.title,
-                file_path: currentNote.file_path || "",
-                transcript: "",
-                content: res.body,
-                embedding: res.embedding,
-              };
-            });
-          })
-          .catch((error) => {
-            if (
-              error instanceof AxiosError &&
-              error.status === 503 &&
-              error.response?.data.detail === LLM_EXHAUSTED_MESSAGE
-            )
-              toast("Sorry! LLM API is exhausted");
-            else console.error(error);
-          })
-          .finally(() => {
-            setApiStatus(false);
+      postCreateNote(currentNote?.content + " \n " + currentNote?.transcript)
+        .then((res) => {
+          updateCurrentNote((currentNote) => {
+            return {
+              ...currentNote,
+              file_name: currentNote.file_name || res.title,
+              file_path: currentNote.file_path || "",
+              transcript: "",
+              content: res.body,
+              embedding: res.embedding,
+            };
           });
-      }, 30000);
+        })
+        .catch((error) => {
+          if (
+            error instanceof AxiosError &&
+            error.status === 503 &&
+            error.response?.data.detail === LLM_EXHAUSTED_MESSAGE
+          )
+            toast("Sorry! LLM API is exhausted");
+          else console.error(error);
+        })
+        .finally(() => {
+          setApiStatus(false);
+        });
     } else {
       setApiStatus(false);
     }
