@@ -2,6 +2,7 @@ import { modeType } from "@/app/page";
 import MainActionButton from "@/components/buttons/MainActionButton";
 import { Card } from "@/components/ui/card";
 import { Plus, Search, Square, SquareIcon, Undo2 } from "lucide-react";
+import { FaCircleStop } from "react-icons/fa6";
 import { twMerge } from "tailwind-merge";
 
 interface InputButtonsProps {
@@ -9,6 +10,7 @@ interface InputButtonsProps {
   disabled: boolean;
   isRecording: boolean;
   mode: modeType;
+  time: string;
   clearLightText: () => void;
   onCreate: () => void;
   onAsk: () => void;
@@ -19,6 +21,7 @@ export default function InputButtons({
   disabled,
   isRecording,
   mode,
+  time,
   clearLightText,
   onCreate,
   onAsk,
@@ -51,8 +54,8 @@ export default function InputButtons({
         ) : (
           <>
             {" "}
-            <Square size={"38px"} />
-            Stop
+            <FaCircleStop />
+            {time}
           </>
         )}
       </MainActionButton>
@@ -69,8 +72,8 @@ export default function InputButtons({
         ) : (
           <>
             {" "}
-            <Square className="text-red-500" size={"38px"} />
-            Stop
+            <FaCircleStop />
+            {time}
           </>
         )}
       </MainActionButton>

@@ -23,7 +23,7 @@ export default function NoteTextArea({
           <CustomMarkdown>{mainText}</CustomMarkdown>
           <br />
           <CustomMarkdown
-            className={`${subtextFont.className} ${
+            className={`${subtextFont.className} text-xl ${
               apiStatus ? " animate-pulse" : ""
             } inline`}
           >

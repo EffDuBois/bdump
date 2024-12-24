@@ -75,6 +75,10 @@ export default function Home() {
         }
         isRecording={isRecording}
         mode={mode}
+        time={
+          (mode === "CREATE" ? createTranscriber.time : askTranscriber.time) ||
+          "00:00"
+        }
         clearLightText={
           mode === "CREATE" ? () => updateTranscript("") : () => updateQuery("")
         }
