@@ -15,6 +15,7 @@ export default function NoteTextArea({
   mainText,
   lightText,
 }: NoteTextAreaProps) {
+  const { apiStatus } = useStore();
   return (
     <div className="text-md">
       {mainText || lightText ? (
@@ -23,14 +24,14 @@ export default function NoteTextArea({
           <br />
           <CustomMarkdown
             className={`${subtextFont.className} ${
-              false ? " animate-pulse" : ""
+              apiStatus ? " animate-pulse" : ""
             } inline`}
           >
             {lightText}
           </CustomMarkdown>
         </>
       ) : (
-        <PlaceHolderTextArea className={false ? "animate-pulse" : ""} />
+        <PlaceHolderTextArea className={apiStatus ? "animate-pulse" : ""} />
       )}
     </div>
   );
