@@ -14,23 +14,31 @@ import { ModeToggle } from "@/components/ModeToggle";
 export type modeType = "CREATE" | "ASK";
 
 export default function Home() {
-  const store = useStore();
+  const {
+    currentNote,
+    updateTranscript,
+    updateQuery,
+    createNote,
+    queryNotes,
+    apiStatus,
+    askData,
+  } = useStore();
 
   const [mode, setMode] = useState<modeType>("CREATE");
 
   useEffect(() => {
     if (mode !== "CREATE") setMode("CREATE");
-  }, [store.currentNote]);
+  }, [currentNote]);
 
-  const createTranscriber = useTranscriber(store.updateTranscript);
-  const askTranscriber = useTranscriber(store.updateQuery);
+  const createTranscriber = useTranscriber(updateTranscript);
+  const askTranscriber = useTranscriber(updateQuery);
 
   const isRecording = createTranscriber.recording || askTranscriber.recording;
 
   const onCreate = () => {
     try {
       if (mode !== "CREATE") setMode("CREATE");
-      if (isRecording) store.createNote();
+      if (isRecording) createNote();
     } finally {
       createTranscriber.toggleTranscription();
     }
@@ -39,7 +47,7 @@ export default function Home() {
   const onAsk = () => {
     try {
       if (mode !== "ASK") setMode("ASK");
-      if (isRecording) store.queryNotes();
+      if (isRecording) queryNotes();
     } finally {
       askTranscriber.toggleTranscription();
     }
@@ -60,21 +68,17 @@ export default function Home() {
       </div>
       <InputButtons
         disabled={
-          store.apiStatus ||
+          apiStatus ||
           createTranscriber.connectionStatus === "disconnected" ||
           askTranscriber.connectionStatus === "disconnected"
         }
         showUndo={
-          mode === "CREATE"
-            ? !!store.currentNote?.transcript
-            : !!store.askData.query
+          mode === "CREATE" ? !!currentNote?.transcript : !!askData.query
         }
         isRecording={isRecording}
         mode={mode}
         clearLightText={
-          mode === "CREATE"
-            ? () => store.updateTranscript("")
-            : () => store.updateQuery("")
+          mode === "CREATE" ? () => updateTranscript("") : () => updateQuery("")
         }
         onAsk={onAsk}
         onCreate={onCreate}

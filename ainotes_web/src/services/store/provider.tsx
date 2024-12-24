@@ -156,16 +156,16 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   const [apiStatus, setApiStatus] = useState(false);
 
   const createNote = () => {
-    try {
-      setApiStatus(true);
-      if (currentNote?.transcript)
-        postCreateNote(currentNote.content + " \n " + currentNote?.transcript)
+    setApiStatus(true);
+    if (currentNote?.transcript) {
+      setTimeout(() => {
+        postCreateNote(currentNote?.content + " \n " + currentNote?.transcript)
           .then((res) => {
             updateCurrentNote((currentNote) => {
               return {
                 ...currentNote,
                 file_name: currentNote.file_name || res.title,
-                file_path: currentNote?.file_path || "",
+                file_path: currentNote.file_path || "",
                 transcript: "",
                 content: res.body,
                 embedding: res.embedding,
@@ -180,50 +180,54 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
             )
               toast("Sorry! LLM API is exhausted");
             else console.error(error);
+          })
+          .finally(() => {
+            setApiStatus(false);
           });
-    } finally {
+      }, 30000);
+    } else {
       setApiStatus(false);
     }
   };
 
   const queryNotes = () => {
-    try {
-      setApiStatus(true);
-      if (askData.query !== "") {
-        postQueryNote({
-          query: askData.query,
-          data: notes
-            .filter((note): note is Full<Note> => note.embedding !== undefined)
-            .map((note) => {
-              return {
-                id: note.id,
-                path: note.file_path + note.file_name,
-                note: note.content,
-                embedding: note.embedding,
-              };
-            }),
-        })
-          .then((res) => {
-            setAskData((prev) => {
-              return {
-                query: "",
-                response: prev.query + "\n " + res.response,
-              };
-            });
-          })
-          .catch((error) => {
-            if (
-              error instanceof AxiosError &&
-              error.status === 503 &&
-              error.response?.data.detail === LLM_EXHAUSTED_MESSAGE
-            )
-              toast("Sorry! LLM API is exhausted");
-            else console.error(error);
+    setApiStatus(true);
+    if (askData.query !== "") {
+      postQueryNote({
+        query: askData.query,
+        data: notes
+          .filter((note): note is Full<Note> => note.embedding !== undefined)
+          .map((note) => {
+            return {
+              id: note.id,
+              path: note.file_path + note.file_name,
+              note: note.content,
+              embedding: note.embedding,
+            };
+          }),
+      })
+        .then((res) => {
+          setAskData((prev) => {
+            return {
+              query: "",
+              response: prev.query + "\n " + res.response,
+            };
           });
-      } else {
-        console.log("ASK:No query");
-      }
-    } finally {
+        })
+        .catch((error) => {
+          if (
+            error instanceof AxiosError &&
+            error.status === 503 &&
+            error.response?.data.detail === LLM_EXHAUSTED_MESSAGE
+          )
+            toast("Sorry! LLM API is exhausted");
+          else console.error(error);
+        })
+        .finally(() => {
+          setApiStatus(false);
+        });
+    } else {
+      console.log("ASK:No query");
       setApiStatus(false);
     }
   };
