@@ -1,18 +1,18 @@
 "use client";
 import { maintextFont } from "@/ui/fonts";
-import { forwardRef, TextareaHTMLAttributes } from "react";
+import { forwardRef, InputHTMLAttributes, TextareaHTMLAttributes } from "react";
 import { twMerge } from "tailwind-merge";
 
 const NoteTitleArea = forwardRef<
-  HTMLTextAreaElement,
-  TextareaHTMLAttributes<HTMLTextAreaElement>
->(({ ...props }, ref) => {
+HTMLInputElement,
+  InputHTMLAttributes<HTMLInputElement>
+>(({ className, ...props }, ref) => {
   return (
-    <textarea
+    <input
       className={twMerge(
-        "text-4xl mb-8 w-full h-fit block bg-inherit focus:outline-none resize-none overflow-hidden"
+        `text-4xl mb-8 w-full h-fit block bg-inherit focus:outline-none resize-none overflow-hidden ${maintextFont.className}`,
+        className
       )}
-      rows={1}
       {...props}
     />
   );

@@ -1,4 +1,10 @@
-import { DM_Serif_Display, Indie_Flower, Inter, Lora } from "next/font/google";
+import {
+  DM_Serif_Display,
+  Handlee,
+  Indie_Flower,
+  Inter,
+  Lora,
+} from "next/font/google";
 
 export const maintextFont = Lora({
   subsets: ["latin"],
@@ -10,7 +16,7 @@ export const interfaceFont = Inter({
   weight: ["400"],
   preload: false,
 });
-export const subtextFont = Indie_Flower({
+export const subtextFont = Handlee({
   subsets: ["latin"],
   weight: ["400"],
   preload: false,
