@@ -21,7 +21,7 @@ class userFeedback(BaseModel):
     feedback: str
 
 # to be accessed only by admin panel
-@betasetup.post("/beta/create/user/{admin_token}", tags=["beta"])
+@betasetup.post("/api/beta/create/user/{admin_token}", tags=["beta"])
 async def build_beta_users_db(admin_token: str, user: buildUser):
     if admin_token != ADMIN_TOKEN:
         return "admin token invalid!"
@@ -32,7 +32,7 @@ async def build_beta_users_db(admin_token: str, user: buildUser):
     except Exception as e:
         return f"An error occurred: {str(e)}"
     
-@betasetup.get("/beta/users", tags=["beta"])
+@betasetup.get("/api/beta/users", tags=["beta"])
 async def get_beta_users_name():
     try:
         users = collection.find({}, {"_id": 0, "name": 1})  # include name, exclude _id        
@@ -41,7 +41,7 @@ async def get_beta_users_name():
     except Exception as e:
         return {"error": str(e)}
     
-@betasetup.post("/beta/feedback/{user_name}", tags=["beta"])
+@betasetup.post("/api/beta/feedback/{user_name}", tags=["beta"])
 async def send_feedback(user_name: str, user_feedback: userFeedback):
     try:
         user = collection.find_one({"name": user_name})
