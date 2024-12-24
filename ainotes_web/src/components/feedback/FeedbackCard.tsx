@@ -1,7 +1,9 @@
+import { postBetaFeedback } from "@/apis/BetaFeedback";
 import { Button } from "@/components/ui/button";
 import useTranscriber from "@/services/transcriber";
-import { Mic, Square } from "lucide-react";
+import { Mic } from "lucide-react";
 import { useState } from "react";
+import { FaCircleStop } from "react-icons/fa6";
 import { toast } from "sonner";
 
 interface FeedbackCardProps {
@@ -19,8 +21,10 @@ export default function FeedbackCard({ user, clearUser }: FeedbackCardProps) {
     } else {
       transcriber.toggleTranscription();
       if (feedback !== "") {
-        //send data to backend. then clear feedback
-        toast("Thanks for the feedback!");
+        postBetaFeedback(user, feedback).then(() => {
+          setFeedback("");
+          toast("Thanks for the feedback!");
+        });
       }
     }
   };
@@ -49,8 +53,8 @@ export default function FeedbackCard({ user, clearUser }: FeedbackCardProps) {
           </>
         ) : (
           <>
-            <Square />
-            Recording
+            <FaCircleStop />
+            {transcriber.time}
           </>
         )}
       </Button>

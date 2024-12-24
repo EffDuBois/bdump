@@ -1,6 +1,6 @@
 import { ModeToggle } from "@/components/ModeToggle";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import FeedbackBar from "./Feedback/FeedbackButton";
+import FeedbackBar from "./feedback/FeedbackButton";
 
 export default function TopBar() {
   return (

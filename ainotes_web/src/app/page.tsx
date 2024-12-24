@@ -10,7 +10,7 @@ import { ConnectionStatusMap } from "@/components/mappings/ConnectionStatus";
 import { interfaceFont } from "@/ui/fonts";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ModeToggle } from "@/components/ModeToggle";
-import TopBar from "@/components/topBar/TopBar";
+import TopBar from "@/components/TopBar";
 
 export type modeType = "CREATE" | "ASK";
 

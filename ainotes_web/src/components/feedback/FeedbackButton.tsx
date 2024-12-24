@@ -1,6 +1,6 @@
 import { MessageCircleHeartIcon, Mic } from "lucide-react";
-import { Button } from "../../ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
+import { Button } from "../ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import {
   Command,
   CommandEmpty,
@@ -8,14 +8,25 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "../../ui/command";
-import { useState } from "react";
+} from "../ui/command";
+import { useEffect, useState } from "react";
 import FeedbackCard from "./FeedbackCard";
-
-const users = ["Ayush Jain", "Arnab Kar", "Sidharth Premdas"];
+import { getBetaUsers } from "@/apis/BetaFeedback";
 
 export default function FeedbackButton() {
+  const [users, setUsers] = useState([
+    "Ayush Jain",
+    "Arnab Kar",
+    "Sidharth Premdas",
+  ]);
   const [currentUser, setCurrentUser] = useState("");
+
+  useEffect(() => {
+    getBetaUsers().then((users) => {
+      setUsers(users);
+    });
+  }, []);
+
   return (
     <Popover>
       <PopoverTrigger asChild>
