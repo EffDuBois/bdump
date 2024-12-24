@@ -5,7 +5,7 @@ export default function AppTitle() {
     <h1 className={`text-4xl m-4 text-center ${titleFont.className} relative`}>
       BrainDump
       <p
-        className={`absolute top-0 right-0 text-lg -translate-x-3 -translate-y-2 rotate-6 ${interfaceFont.className}`}
+        className={`absolute top-0 right-0 text-lg -translate-x-2 -translate-y-2  ${interfaceFont.className}`}
       >
         Beta
       </p>
