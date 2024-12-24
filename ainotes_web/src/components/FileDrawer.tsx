@@ -7,6 +7,7 @@ import {
   SidebarGroup,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSkeleton,
@@ -14,6 +15,7 @@ import {
 } from "./ui/sidebar";
 import { Button } from "./ui/button";
 import AppTitle from "./AppTitle";
+import { X } from "lucide-react";
 
 const FileDrawer = () => {
   const store = useStore();
@@ -42,6 +44,13 @@ const FileDrawer = () => {
                   >
                     <span>{note.file_name ? note.file_name : "New Note"}</span>
                   </SidebarMenuButton>
+
+                  <SidebarMenuAction
+                    onClick={() => store.deleteNoteById(note.id)}
+                  >
+                    <X />
+                    <span className="sr-only">Delete Note</span>
+                  </SidebarMenuAction>
                 </SidebarMenuItem>
               ))
             ) : (
