@@ -3,7 +3,7 @@ import { subtextFont } from "@/ui/fonts";
 import PlaceHolderTextArea from "./PlaceHolderTextArea";
 
 import CustomMarkdown from "../../CustomMarkdown";
-import useStoreActions from "@/services/store/actions";
+import { useStore } from "@/services/store/provider";
 
 interface NoteTextAreaProps {
   mainText?: string;
@@ -14,9 +14,7 @@ interface NoteTextAreaProps {
 export default function NoteTextArea({
   mainText,
   lightText,
-  pulse,
 }: NoteTextAreaProps) {
-  const store = useStoreActions();
   return (
     <div className="text-md">
       {mainText || lightText ? (
@@ -25,14 +23,14 @@ export default function NoteTextArea({
           <br />
           <CustomMarkdown
             className={`${subtextFont.className} ${
-              store.storeActionStatus && " animate-pulse"
+              false ? " animate-pulse" : ""
             } inline`}
           >
             {lightText}
           </CustomMarkdown>
         </>
       ) : (
-        <PlaceHolderTextArea className={pulse ? "animate-pulse" : ""} />
+        <PlaceHolderTextArea className={false ? "animate-pulse" : ""} />
       )}
     </div>
   );

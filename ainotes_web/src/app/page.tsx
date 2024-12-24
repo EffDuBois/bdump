@@ -6,7 +6,6 @@ import InputButtons from "@/components/pages/pageComponents/InputButtons";
 import AskPage from "@/components/pages/AskPage";
 import { useEffect, useState } from "react";
 import useTranscriber from "@/services/transcriber";
-import useStoreActions from "@/services/store/actions";
 import { ConnectionStatusMap } from "@/components/mappings/ConnectionStatus";
 import { interfaceFont } from "@/ui/fonts";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -16,13 +15,12 @@ export type modeType = "CREATE" | "ASK";
 
 export default function Home() {
   const store = useStore();
-  const actions = useStoreActions();
+
+  const [mode, setMode] = useState<modeType>("CREATE");
 
   useEffect(() => {
     if (mode !== "CREATE") setMode("CREATE");
   }, [store.currentNote]);
-
-  const [mode, setMode] = useState<modeType>("CREATE");
 
   const createTranscriber = useTranscriber(store.updateTranscript);
   const askTranscriber = useTranscriber(store.updateQuery);
@@ -32,7 +30,7 @@ export default function Home() {
   const onCreate = () => {
     try {
       if (mode !== "CREATE") setMode("CREATE");
-      if (isRecording) actions.createNote();
+      if (isRecording) store.createNote();
     } finally {
       createTranscriber.toggleTranscription();
     }
@@ -41,7 +39,7 @@ export default function Home() {
   const onAsk = () => {
     try {
       if (mode !== "ASK") setMode("ASK");
-      if (isRecording) actions.queryNotes();
+      if (isRecording) store.queryNotes();
     } finally {
       askTranscriber.toggleTranscription();
     }
@@ -62,7 +60,7 @@ export default function Home() {
       </div>
       <InputButtons
         disabled={
-          actions.storeActionStatus ||
+          store.apiStatus ||
           createTranscriber.connectionStatus === "disconnected" ||
           askTranscriber.connectionStatus === "disconnected"
         }

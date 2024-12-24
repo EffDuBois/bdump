@@ -22,6 +22,7 @@ export default function SlabButtonWDelete({
         variant={"ghost"}
         className={twMerge("rounded-l-none", className)}
         onClick={onClickDelete}
+        {...others}
       >
         <IoCloseOutline />
       </Button>
