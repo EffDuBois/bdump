@@ -35,7 +35,7 @@ const FileDrawer = () => {
               store.notes.map((note) => (
                 <SidebarMenuItem key={note.id}>
                   <SidebarMenuButton
-                    isActive={store?.currentNote?.id === note.id}
+                    isActive={store.currentNote?.id === note.id}
                     onClick={() => {
                       if (store.currentNote?.id !== note.id) {
                         store.setCurrentNote(note);

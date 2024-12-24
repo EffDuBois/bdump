@@ -4,6 +4,10 @@ import { AskData, Note } from "../database/dataModels";
 import { getEmptyNote } from "../database/dbUtils";
 import { deleteNote, fetchAllNotes, putNote } from "../database/idbService";
 import { toast } from "sonner";
+import { postCreateNote } from "@/apis/postCreateNote";
+import { AxiosError } from "axios";
+import postQueryNote from "@/apis/postQueryNote";
+import { Full } from "@/utils/custom_types";
 
 export type valueOrActionFunction<T> = (
   updateMethod: T | ((oldvalue: T) => T)
@@ -22,11 +26,17 @@ export interface storeContextType {
   setAskData: React.Dispatch<React.SetStateAction<AskData>>;
   updateTranscript: valueOrActionFunction<string>;
   updateQuery: valueOrActionFunction<string>;
+  updateTitle: valueOrActionFunction<string>;
+  apiStatus: boolean;
+  createNote: () => void;
+  queryNotes: () => void;
 }
 
 export const StoreContext = createContext<storeContextType | undefined>(
   undefined
 );
+
+const LLM_EXHAUSTED_MESSAGE = "LLM API rate limit exceeded.";
 
 const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -51,10 +61,6 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [fetchDependency]);
 
   const [currentNote, setCurrentNote] = useState<Note>();
-
-  useEffect(() => {
-    toggleFetchDependency();
-  }, [currentNote?.file_name]);
 
   const initCurrentNote = () => {
     console.log("Init note");
@@ -90,22 +96,11 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const deleteNoteById = (id: Note["id"]) => {
-    deleteNote(id).then(() => {
-      toggleFetchDependency();
-    });
-  };
-
-  const [askData, setAskData] = useState<AskData>({
-    query: "",
-    response: "",
-  });
-
-  //utility functions
+  //utility
   const updateTranscript: valueOrActionFunction<string> = (updateObj) => {
     if (typeof updateObj === "function") {
       updateCurrentNote((oldNote) => {
-        console.log(updateObj(oldNote.transcript));
+        // console.log(updateObj(oldNote.transcript));
         return {
           ...oldNote,
           transcript: updateObj(oldNote.transcript),
@@ -118,6 +113,34 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const updateTitle: valueOrActionFunction<string> = (updateObj) => {
+    if (typeof updateObj === "function") {
+      updateCurrentNote((oldNote) => {
+        return {
+          ...oldNote,
+          file_name: updateObj(oldNote.transcript),
+        };
+      });
+    } else {
+      updateCurrentNote((oldnote) => {
+        return { ...oldnote, file_name: updateObj };
+      });
+    }
+    toggleFetchDependency();
+  };
+
+  const deleteNoteById = (id: Note["id"]) => {
+    deleteNote(id).then(() => {
+      toggleFetchDependency();
+    });
+  };
+
+  const [askData, setAskData] = useState<AskData>({
+    query: "",
+    response: "",
+  });
+
+  //utility
   const updateQuery: valueOrActionFunction<string> = async (updateMethod) => {
     if (typeof updateMethod === "string") {
       setAskData((oldData) => {
@@ -130,21 +153,100 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const [apiStatus, setApiStatus] = useState(false);
+
+  const createNote = () => {
+    try {
+      setApiStatus(true);
+      if (currentNote?.transcript)
+        postCreateNote(currentNote.content + " \n " + currentNote?.transcript)
+          .then((res) => {
+            updateCurrentNote((currentNote) => {
+              return {
+                ...currentNote,
+                file_name: currentNote.file_name || res.title,
+                file_path: currentNote?.file_path || "",
+                transcript: "",
+                content: res.body,
+                embedding: res.embedding,
+              };
+            });
+          })
+          .catch((error) => {
+            if (
+              error instanceof AxiosError &&
+              error.status === 503 &&
+              error.response?.data.detail === LLM_EXHAUSTED_MESSAGE
+            )
+              toast("Sorry! LLM API is exhausted");
+            else console.error(error);
+          });
+    } finally {
+      setApiStatus(false);
+    }
+  };
+
+  const queryNotes = () => {
+    try {
+      setApiStatus(true);
+      if (askData.query !== "") {
+        postQueryNote({
+          query: askData.query,
+          data: notes
+            .filter((note): note is Full<Note> => note.embedding !== undefined)
+            .map((note) => {
+              return {
+                id: note.id,
+                path: note.file_path + note.file_name,
+                note: note.content,
+                embedding: note.embedding,
+              };
+            }),
+        })
+          .then((res) => {
+            setAskData((prev) => {
+              return {
+                query: "",
+                response: prev.query + "\n " + res.response,
+              };
+            });
+          })
+          .catch((error) => {
+            if (
+              error instanceof AxiosError &&
+              error.status === 503 &&
+              error.response?.data.detail === LLM_EXHAUSTED_MESSAGE
+            )
+              toast("Sorry! LLM API is exhausted");
+            else console.error(error);
+          });
+      } else {
+        console.log("ASK:No query");
+      }
+    } finally {
+      setApiStatus(false);
+    }
+  };
+
   return (
     <StoreContext.Provider
       value={{
         notes,
         notesFetchStatus,
-        currentNote,
         fetchNotes,
+        currentNote,
         initCurrentNote,
         setCurrentNote,
         updateCurrentNote,
+        updateTranscript,
+        updateTitle,
         deleteNoteById,
         askData,
         setAskData,
-        updateTranscript,
         updateQuery,
+        apiStatus,
+        createNote,
+        queryNotes,
       }}
     >
       {children}
