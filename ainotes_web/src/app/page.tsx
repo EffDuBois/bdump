@@ -10,6 +10,7 @@ import { ConnectionStatusMap } from "@/components/mappings/ConnectionStatus";
 import { interfaceFont } from "@/ui/fonts";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ModeToggle } from "@/components/ModeToggle";
+import TopBar from "@/components/topBar/TopBar";
 
 export type modeType = "CREATE" | "ASK";
 
@@ -55,10 +56,7 @@ export default function Home() {
 
   return (
     <main className="flex flex-col flex-1 items-center content-center w-[75vw] h-screen ">
-      <div className="w-full flex justify-between p-2">
-        <SidebarTrigger />
-        <ModeToggle />
-      </div>
+      <TopBar />
       <div className="h-[84vh] w-4/5 overflow-y-auto">
         {mode === "CREATE" ? (
           <CreatePage />
