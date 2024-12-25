@@ -5,6 +5,17 @@ import { Mic } from "lucide-react";
 import { useState } from "react";
 import { FaCircleStop } from "react-icons/fa6";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogOverlay,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import { SidebarSeparator } from "../ui/sidebar";
 
 interface FeedbackCardProps {
   user: string;
@@ -13,6 +24,7 @@ interface FeedbackCardProps {
 
 export default function FeedbackCard({ user, clearUser }: FeedbackCardProps) {
   const [feedback, setFeedback] = useState("");
+  const [open, setOpen] = useState(false);
   const transcriber = useTranscriber(setFeedback);
 
   const toggleFeedbackRecording = () => {
@@ -23,7 +35,7 @@ export default function FeedbackCard({ user, clearUser }: FeedbackCardProps) {
       if (feedback !== "") {
         postBetaFeedback(user, feedback).then(() => {
           setFeedback("");
-          toast("Thanks for the feedback!");
+          toast("Thanks for your input!");
         });
       }
     }
@@ -31,33 +43,44 @@ export default function FeedbackCard({ user, clearUser }: FeedbackCardProps) {
 
   return (
     <div className="p-3 flex flex-col gap-2">
-      <p>
-        Hey {user},{" "}
+      <div>
+        Hey {user}!{" "}
         <Button
           className="p-0 text-neutral-600"
           variant={"link"}
           onClick={clearUser}
         >
-          not me
+          not you?
         </Button>
-      </p>
-      <Button
-        onClick={toggleFeedbackRecording}
-        className="w-full"
-        variant={!transcriber.recording ? "default" : "destructive"}
-      >
-        {!transcriber.recording ? (
-          <>
-            <Mic />
-            Feedback
-          </>
-        ) : (
-          <>
-            <FaCircleStop />
-            {transcriber.time}
-          </>
-        )}
-      </Button>
+      </div>
+      <Dialog onOpenChange={toggleFeedbackRecording}>
+        <DialogTrigger>
+          <Button className="w-full">
+            <>
+              <Mic />
+              Feedback
+            </>
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Feedback</DialogTitle>
+            <DialogDescription>Record your feedback</DialogDescription>
+          </DialogHeader>
+          <SidebarSeparator />
+          <div className="flex flex-col space-x-2">
+            <p className="h-[30vh] overflow-y-auto">{feedback}</p>
+            <DialogClose asChild>
+              <Button variant={"destructive"} type="submit" size="sm">
+                <>
+                  <FaCircleStop />
+                  {transcriber.time}
+                </>
+              </Button>
+            </DialogClose>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
