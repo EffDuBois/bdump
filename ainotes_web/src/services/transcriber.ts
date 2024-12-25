@@ -93,6 +93,7 @@ const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
             startMic(newMic, socket);
             setRecording(true);
             setRecordTime(Date.now());
+            setConnectionStatus("connecting");
           } else {
             console.error("Socket not initialised");
           }
