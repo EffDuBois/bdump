@@ -24,7 +24,6 @@ interface FeedbackCardProps {
 
 export default function FeedbackCard({ user, clearUser }: FeedbackCardProps) {
   const [feedback, setFeedback] = useState("");
-  const [open, setOpen] = useState(false);
   const transcriber = useTranscriber(setFeedback);
 
   const toggleFeedbackRecording = () => {
@@ -54,8 +53,14 @@ export default function FeedbackCard({ user, clearUser }: FeedbackCardProps) {
         </Button>
       </div>
       <Dialog onOpenChange={toggleFeedbackRecording}>
-        <DialogTrigger>
-          <Button className="w-full">
+        <DialogTrigger asChild>
+          <Button
+            disabled={
+              transcriber.connectionStatus === "connecting" ||
+              transcriber.connectionStatus === "disconnected"
+            }
+            className="w-full"
+          >
             <>
               <Mic />
               Feedback
