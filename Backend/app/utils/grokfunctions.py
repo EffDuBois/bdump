@@ -32,7 +32,7 @@ def grok_create_note(user_input):
             return response    
         except Exception as e:
             attempt += 1
-            logger.error(f"Attempt {attempt} failed: {e}")
+            logger.error(f"Grok attempt {attempt} failed: {e}")
             if attempt == MAX_RETRY:
                 logger.error("Maximum retries reached for Grok")
                 raise HTTPException(status_code=503, detail="LLM API rate limit exceeded.")
@@ -67,7 +67,7 @@ def grok_ask_note(query, queryemb, notes, notesemb):
                 return "empty query"
         except Exception as e:
             attempt += 1
-            logger.error(f"Attempt {attempt} failed: {e}")
+            logger.error(f"Grok attempt {attempt} failed: {e}")
             if attempt == MAX_RETRY:
                 logger.error("Maximum retries reached for Grok")
                 raise HTTPException(status_code=503, detail="LLM API rate limit exceeded.")
