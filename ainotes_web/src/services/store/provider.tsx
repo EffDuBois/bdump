@@ -8,6 +8,7 @@ import { postCreateNote } from "@/apis/postCreateNote";
 import { AxiosError } from "axios";
 import postQueryNote from "@/apis/postQueryNote";
 import { Full } from "@/utils/custom_types";
+import { postEditNote } from "@/apis/postEditnote";
 
 export type valueOrActionFunction<T> = (
   updateMethod: T | ((oldvalue: T) => T)
@@ -29,6 +30,7 @@ export interface storeContextType {
   updateTitle: valueOrActionFunction<string>;
   apiStatus: boolean;
   createNote: () => void;
+  editNote: () => void;
   queryNotes: () => void;
 }
 
@@ -158,7 +160,43 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   const createNote = () => {
     setApiStatus(true);
     if (currentNote?.transcript) {
-      postCreateNote(currentNote?.content + " \n " + currentNote?.transcript)
+      postCreateNote(currentNote?.transcript)
+        .then((res) => {
+          updateCurrentNote((currentNote) => {
+            return {
+              ...currentNote,
+              file_name: currentNote.file_name || res.title,
+              file_path: currentNote.file_path || "",
+              transcript: "",
+              content: res.body,
+              embedding: res.embedding,
+            };
+          });
+        })
+        .catch((error) => {
+          if (
+            error instanceof AxiosError &&
+            error.status === 503 &&
+            error.response?.data.detail === LLM_EXHAUSTED_MESSAGE
+          )
+            toast("Sorry! LLM API is exhausted");
+          else console.error(error);
+        })
+        .finally(() => {
+          setApiStatus(false);
+        });
+    } else {
+      setApiStatus(false);
+    }
+  };
+
+  const editNote = () => {
+    setApiStatus(true);
+    if (currentNote?.transcript) {
+      postEditNote({
+        note: currentNote?.content,
+        query: currentNote?.transcript,
+      })
         .then((res) => {
           updateCurrentNote((currentNote) => {
             return {
@@ -248,6 +286,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
         updateQuery,
         apiStatus,
         createNote,
+        editNote,
         queryNotes,
       }}
     >

@@ -20,6 +20,7 @@ export default function Home() {
     updateTranscript,
     updateQuery,
     createNote,
+    editNote,
     queryNotes,
     apiStatus,
     askData,
@@ -40,6 +41,14 @@ export default function Home() {
     try {
       if (mode !== "CREATE") setMode("CREATE");
       if (isRecording) createNote();
+    } finally {
+      createTranscriber.toggleTranscription();
+    }
+  };
+  const onEdit = () => {
+    try {
+      if (mode !== "CREATE") setMode("CREATE");
+      if (isRecording) editNote();
     } finally {
       createTranscriber.toggleTranscription();
     }
@@ -84,6 +93,7 @@ export default function Home() {
         }
         onAsk={onAsk}
         onCreate={onCreate}
+        onEdit={onEdit}
       />
       <p
         className={`absolute bottom-0 left-0 text-neutral-400 ${interfaceFont.className}`}
