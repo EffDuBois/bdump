@@ -77,9 +77,7 @@ export default function Home() {
         }
         isRecording={isRecording}
         mode={mode}
-        time={
-          mode === "CREATE" ? createTranscriber.time : askTranscriber.time
-        }
+        time={mode === "CREATE" ? createTranscriber.time : askTranscriber.time}
         edit={!!currentNote?.content}
         clearLightText={
           mode === "CREATE" ? () => updateTranscript("") : () => updateQuery("")
@@ -87,6 +85,11 @@ export default function Home() {
         onAsk={onAsk}
         onCreate={onCreate}
       />
+      <p
+        className={`absolute bottom-0 left-0 text-neutral-400 ${interfaceFont.className}`}
+      >
+        v1.0.1-beta
+      </p>
       <div
         className={`absolute bottom-0 right-0 text-neutral-400 ${interfaceFont.className}`}
       >

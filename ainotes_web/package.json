@@ -1,6 +1,6 @@
 {
   "name": "ainotes_web",
-  "version": "0.1.0",
+  "version": "v1.0.1-beta",
   "private": true,
   "scripts": {
     "dev": "next dev",
