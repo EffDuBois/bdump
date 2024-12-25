@@ -104,6 +104,7 @@ const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
         if (mic) {
           console.log("Stop Recording");
           setRecording(false);
+          setRecordTime(undefined);
           mic.stop();
           setMic(undefined);
         } else {

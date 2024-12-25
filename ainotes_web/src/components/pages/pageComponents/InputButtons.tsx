@@ -1,7 +1,7 @@
 import { modeType } from "@/app/page";
 import MainActionButton from "@/components/buttons/MainActionButton";
 import { Card } from "@/components/ui/card";
-import { Plus, Search, Square, SquareIcon, Undo2 } from "lucide-react";
+import { Pencil, Plus, Search, Square, SquareIcon, Undo2 } from "lucide-react";
 import { FaCircleStop } from "react-icons/fa6";
 import { twMerge } from "tailwind-merge";
 
@@ -11,6 +11,7 @@ interface InputButtonsProps {
   isRecording: boolean;
   mode: modeType;
   time: string;
+  edit: boolean;
   clearLightText: () => void;
   onCreate: () => void;
   onAsk: () => void;
@@ -22,6 +23,7 @@ export default function InputButtons({
   isRecording,
   mode,
   time,
+  edit,
   clearLightText,
   onCreate,
   onAsk,
@@ -49,7 +51,7 @@ export default function InputButtons({
       >
         {!isRecording ? (
           <>
-            <Plus /> Create
+            <Pencil /> {edit ? "Edit" : "Create"}
           </>
         ) : (
           <>
@@ -61,6 +63,7 @@ export default function InputButtons({
       </MainActionButton>
       <MainActionButton
         onClick={onAsk}
+        variant={isRecording ? "destructive" : "default"}
         className={isRecording && mode !== "ASK" ? "hidden" : ""}
         disabled={disabled}
       >

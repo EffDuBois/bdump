@@ -75,6 +75,7 @@ export default function Home() {
           (mode === "CREATE" ? createTranscriber.time : askTranscriber.time) ||
           "00:00"
         }
+        edit={!!currentNote?.content}
         clearLightText={
           mode === "CREATE" ? () => updateTranscript("") : () => updateQuery("")
         }
