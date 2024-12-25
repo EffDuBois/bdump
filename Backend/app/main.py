@@ -45,5 +45,9 @@ app.add_middleware(
     allow_headers=["*"],       # for all headers
 )
 
+@app.get("/")
+async def greet_function():
+    return "your mom"
+
 app.include_router(root.router)
 app.include_router(betabuilder.betasetup)
