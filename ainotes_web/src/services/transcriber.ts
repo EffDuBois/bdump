@@ -115,7 +115,7 @@ const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
     }
   };
   const [recordTime, setRecordTime] = useState<number>();
-  const [time, setTime] = useState<string>();
+  const [time, setTime] = useState<string>("00:00");
 
   const updateTime = () => {
     if (recordTime !== undefined) {
@@ -130,13 +130,17 @@ const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
   };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      updateTime();
-    }, 1000);
+    if (recordTime) {
+      const interval = setInterval(() => {
+        updateTime();
+      }, 1000);
 
-    return () => {
-      clearInterval(interval);
-    };
+      return () => {
+        clearInterval(interval);
+      };
+    } else {
+      setTime("00:00");
+    }
   }, [recordTime]);
 
   return { recording, toggleTranscription, connectionStatus, time };
