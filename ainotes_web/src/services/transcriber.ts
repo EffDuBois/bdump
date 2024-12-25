@@ -38,6 +38,7 @@ const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
       newSocket.on("open", async () => {
         console.log("client: connected to deepgram Socket");
         setConnectionStatus("connected");
+        setSocket(newSocket);
         resolve(newSocket);
 
         newSocket.on("Results", async (data) => {
@@ -74,7 +75,6 @@ const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
     let currentSocket: ListenLiveClient;
     createSocket().then((socket) => {
       currentSocket = socket;
-      setSocket(socket);
     });
     return () => {
       currentSocket?.requestClose();
@@ -95,7 +95,6 @@ const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
             setRecordTime(Date.now());
           } else {
             console.error("Socket not initialised");
-            createSocket().then(() => toggleTranscription());
           }
         } else {
           console.error("Can't initialise mic");
