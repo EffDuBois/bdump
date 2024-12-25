@@ -65,15 +65,20 @@ export default function Home() {
         ) : null}
       </div>
       <InputButtons
-        disabled={apiStatus}
+        disabled={
+          apiStatus ||
+          createTranscriber.connectionStatus === "disconnected" ||
+          createTranscriber.connectionStatus === "connecting" ||
+          askTranscriber.connectionStatus === "disconnected" ||
+          askTranscriber.connectionStatus === "connecting"
+        }
         showUndo={
           mode === "CREATE" ? !!currentNote?.transcript : !!askData.query
         }
         isRecording={isRecording}
         mode={mode}
         time={
-          (mode === "CREATE" ? createTranscriber.time : askTranscriber.time) ||
-          "00:00"
+          mode === "CREATE" ? createTranscriber.time : askTranscriber.time
         }
         edit={!!currentNote?.content}
         clearLightText={

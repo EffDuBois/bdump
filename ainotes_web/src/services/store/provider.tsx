@@ -208,7 +208,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
           setAskData((prev) => {
             return {
               query: "",
-              response: prev.query + "\n " + res.response,
+              response: prev.query + "\n\n\n\n " + res.response,
             };
           });
         })
