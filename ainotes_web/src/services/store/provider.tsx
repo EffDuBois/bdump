@@ -58,44 +58,45 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       .finally(() => setNoteFetchStatus(false));
   };
 
-  useEffect(() => {
-    fetchNotes();
-  }, [fetchDependency]);
-
   const [currentNote, setCurrentNote] = useState<Note>();
 
   const initCurrentNote = () => {
     console.log("Init note");
     getEmptyNote().then((note) => {
       setCurrentNote(note);
-      toggleFetchDependency();
     });
   };
 
+  useEffect(() => {
+    fetchNotes();
+  }, [fetchDependency, currentNote]);
+
   const updateCurrentNote: valueOrActionFunction<Note> = (updateObj) => {
-    if (!currentNote) initCurrentNote();
-    if (typeof updateObj === "function") {
-      setCurrentNote((oldNote) => {
-        if (oldNote) {
+    setCurrentNote((oldNote) => {
+      if (!oldNote) {
+        initCurrentNote();
+      }
+      if (oldNote) {
+        if (typeof updateObj === "function") {
           putNote(updateObj(oldNote))
             .then((note) => {
               setCurrentNote(note);
             })
             .catch((error) => console.error(error));
+        } else {
+          putNote(updateObj)
+            .then((note) => {
+              setCurrentNote(note);
+            })
+            .catch((error) => {
+              if (error.name === "DataError")
+                toast("File with name Already Exists");
+              console.error(error);
+            });
         }
-        return oldNote;
-      });
-    } else {
-      putNote(updateObj)
-        .then((note) => {
-          setCurrentNote(note);
-        })
-        .catch((error) => {
-          if (error.name === "DataError")
-            toast("File with name Already Exists");
-          console.error(error);
-        });
-    }
+      }
+      return oldNote;
+    });
   };
 
   //utility
@@ -128,7 +129,6 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
         return { ...oldnote, file_name: updateObj };
       });
     }
-    toggleFetchDependency();
   };
 
   const deleteNoteById = (id: Note["id"]) => {
