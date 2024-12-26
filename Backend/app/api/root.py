@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from app.utils.geminifunctions import generate_embedding, create_note, ask_note
-from app.utils.datavalidation import askPrompt, createPrompt
+from app.utils.geminifunctions import generate_embedding, create_note, ask_note, edit_note
+from app.utils.datavalidation import askPrompt, createPrompt, editPrompt
 from app.logger import setup_logger
  
 router = APIRouter()
@@ -23,3 +23,13 @@ async def ask_notes(prompt: askPrompt):
     ans = ask_note(prompt.query, emb["embedding"], notes_text, notesemb)
     logger.info(f"answer for query: {ans}")
     return ans
+
+@router.post("/api/notes/edit")
+async def edit_notes(prompt: editPrompt):       
+    note = prompt.note
+    query = prompt.query
+    ans = edit_note(note, query)                   
+    emb = generate_embedding(ans["note"])                   
+    logger.info(f"note edited with title: {ans}" )
+    output = {**ans, **emb}
+    return output

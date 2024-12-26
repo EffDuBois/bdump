@@ -15,6 +15,7 @@ interface InputButtonsProps {
   clearLightText: () => void;
   onCreate: () => void;
   onAsk: () => void;
+  onEdit: () => void;
 }
 
 export default function InputButtons({
@@ -27,6 +28,7 @@ export default function InputButtons({
   clearLightText,
   onCreate,
   onAsk,
+  onEdit,
 }: InputButtonsProps) {
   return (
     <Card className="rounded-2xl p-2 bg-sidebar flex justify-center items-center gap-3 relative">
@@ -43,6 +45,45 @@ export default function InputButtons({
           Reset
         </>
       </MainActionButton>
+      {edit ? (
+        <MainActionButton
+          onClick={onEdit}
+          variant={isRecording ? "destructive" : "default"}
+          className={isRecording && mode !== "CREATE" ? "hidden" : ""}
+          disabled={disabled}
+        >
+          {!isRecording ? (
+            <>
+              <Pencil /> Edit
+            </>
+          ) : (
+            <>
+              {" "}
+              <FaCircleStop />
+              {time}
+            </>
+          )}
+        </MainActionButton>
+      ) : (
+        <MainActionButton
+          onClick={onCreate}
+          variant={isRecording ? "destructive" : "default"}
+          className={isRecording && mode !== "CREATE" ? "hidden" : ""}
+          disabled={disabled}
+        >
+          {!isRecording ? (
+            <>
+              <Pencil /> Create
+            </>
+          ) : (
+            <>
+              {" "}
+              <FaCircleStop />
+              {time}
+            </>
+          )}
+        </MainActionButton>
+      )}
       <MainActionButton
         onClick={onCreate}
         variant={isRecording ? "destructive" : "default"}
@@ -51,7 +92,7 @@ export default function InputButtons({
       >
         {!isRecording ? (
           <>
-            <Pencil /> {edit ? "Edit" : "Create"}
+            <Pencil /> Create
           </>
         ) : (
           <>

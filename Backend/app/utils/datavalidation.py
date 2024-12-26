@@ -4,6 +4,10 @@ import typing_extensions as typing
 class createPrompt(BaseModel):
     query: str
 
+class editPrompt(BaseModel):
+    note: str
+    query: str
+
 class NoteEmbedding(BaseModel):
     id: int
     path: str
