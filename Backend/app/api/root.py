@@ -26,8 +26,10 @@ async def ask_notes(prompt: askPrompt):
 
 @router.post("/api/notes/edit")
 async def edit_notes(prompt: editPrompt):       
-    ans = edit_note(prompt)                    # returns markdown text for the prompt
-    emb = generate_embedding(ans["note"])      # returns vector embedding for the prompt              
+    note = prompt.note
+    query = prompt.query
+    ans = edit_note(note, query)                   
+    emb = generate_embedding(ans["note"])                   
     logger.info(f"note edited with title: {ans}" )
     output = {**ans, **emb}
     return output

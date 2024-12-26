@@ -5,7 +5,7 @@ from app.constants import GOOGLE_API_KEY
 from app.logger import setup_logger
 from app.utils.aimath import cosinesim
 from app.utils.datavalidation import askOutput, createOutput
-from app.utils.grokfunctions import grok_ask_note, grok_create_note
+from app.utils.grokfunctions import grok_ask_note, grok_create_note, grok_edit_note
 from app.utils.prompts import ASK_NOTES_PROMPT, CREATE_NOTES_PROMPT, EDIT_NOTE_PROMPT
 from fastapi import HTTPException
 import google.generativeai as genai
@@ -91,14 +91,11 @@ def ask_note(query, queryemb, notes, notesemb):
             time.sleep(backoff_time)
             backoff_time = backoff_time * 2
 
-def edit_note(editinput):
+def edit_note(note, query):
     MAX_RETRY = 3
     attempt = 0
     backoff_time = 1  # initial backoff time
-    query= editinput.title
-    note=editinput.note
-
-
+    
     while attempt < MAX_RETRY:
         try:
             if (note != ""):
@@ -120,8 +117,9 @@ def edit_note(editinput):
         except Exception as e:
             attempt += 1
             logger.error(f"Attempt {attempt} failed: {e}")
-            
             if attempt == MAX_RETRY:
-                raise HTTPException(status_code=503,detail="llm api is exhausted")
+                logger.error("Maximum retries reached for Gemini, shifting to Grok.")
+                grok_edit_response = grok_edit_note(note, query) 
+                return grok_edit_response 
             time.sleep(backoff_time)
             backoff_time = backoff_time * 2
