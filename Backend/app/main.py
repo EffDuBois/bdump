@@ -45,7 +45,7 @@ app.add_middleware(
     allow_headers=["*"],       # for all headers
 )
 
-@app.get("/")
+@app.get("/api/")
 async def greet_function():
     return "your mom"
 
