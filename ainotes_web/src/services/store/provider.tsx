@@ -49,6 +49,8 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   const toggleFetchDependency = () => setFetchDependency((prev) => !prev);
 
   const fetchNotes = () => {
+    console.log("fetching notes");
+    
     setNoteFetchStatus(true);
     fetchAllNotes()
       .then((notes) => {
