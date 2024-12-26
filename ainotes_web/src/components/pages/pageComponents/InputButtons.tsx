@@ -85,24 +85,6 @@ export default function InputButtons({
         </MainActionButton>
       )}
       <MainActionButton
-        onClick={onCreate}
-        variant={isRecording ? "destructive" : "default"}
-        className={isRecording && mode !== "CREATE" ? "hidden" : ""}
-        disabled={disabled}
-      >
-        {!isRecording ? (
-          <>
-            <Pencil /> Create
-          </>
-        ) : (
-          <>
-            {" "}
-            <FaCircleStop />
-            {time}
-          </>
-        )}
-      </MainActionButton>
-      <MainActionButton
         onClick={onAsk}
         variant={isRecording ? "destructive" : "default"}
         className={isRecording && mode !== "ASK" ? "hidden" : ""}

@@ -96,7 +96,7 @@ export default function Home() {
         onEdit={onEdit}
       />
       <p
-        className={`absolute bottom-0 left-0 text-neutral-400 ${interfaceFont.className}`}
+        className={`z-10 absolute bottom-0 left-0 text-neutral-400 ${interfaceFont.className}`}
       >
         v1.0.1-beta
       </p>
