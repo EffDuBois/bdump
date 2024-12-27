@@ -1,3 +1,4 @@
+import json
 import time
 import numpy as np
 from app.constants import GROK_API_KEY
@@ -30,7 +31,8 @@ def grok_create_note(user_input):
             )
             response = completion.choices[0].message.content
             cleaned_response = response.strip("```").replace("json", "").strip()
-            return cleaned_response    
+            output = json.loads(cleaned_response)
+            return output    
         except Exception as e:
             attempt += 1
             logger.error(f"Grok attempt {attempt} failed: {e}")
@@ -63,7 +65,9 @@ def grok_ask_note(query, queryemb, notes, notesemb):
                     max_tokens=500
                 )
                 response = completion.choices[0].message.content
-                return response
+                cleaned_response = response.strip("```").replace("json", "").strip()
+                output = json.loads(cleaned_response)
+                return output
             else:
                 return "empty query"
         except Exception as e:
@@ -94,7 +98,8 @@ def grok_edit_note(note, query):
             )
             response = completion.choices[0].message.content
             cleaned_response = response.strip("```").replace("json", "").strip()
-            return cleaned_response    
+            output = json.loads(cleaned_response)
+            return output    
         except Exception as e:
             attempt += 1
             logger.error(f"Grok attempt {attempt} failed: {e}")
