@@ -29,7 +29,7 @@ async def edit_notes(prompt: editPrompt):
     note = prompt.note
     query = prompt.query
     ans = edit_note(note, query)  
-    emb = generate_embedding(ans['body'])                   
+    emb = generate_embedding(ans['note'])                   
     logger.info(f"note edited with title: {ans}" )
     output = {**ans, **emb}
     return output
