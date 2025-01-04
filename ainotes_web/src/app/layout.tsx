@@ -4,7 +4,7 @@ import { interfaceFont } from "@/ui/fonts";
 import Providers from "./providers";
 
 export const metadata: Metadata = {
-  title: "AI notes webapp",
+  title: "Braindump",
   description: "Webapp for you to store your notes",
 };
 

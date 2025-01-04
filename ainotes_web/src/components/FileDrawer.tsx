@@ -14,7 +14,7 @@ import {
   SidebarSeparator,
 } from "./ui/sidebar";
 import { Button } from "./ui/button";
-import AppTitle from "./AppTitle";
+import AppTitle from "./branding/AppLogo";
 import { X } from "lucide-react";
 
 const FileDrawer = () => {
