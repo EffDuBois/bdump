@@ -1,4 +1,4 @@
-import { modeType } from "@/app/page";
+import { modeType } from "@/app/note/[id]/page";
 import MainActionButton from "@/components/buttons/MainActionButton";
 import { Card } from "@/components/ui/card";
 import { Pencil, Plus, Search, Square, SquareIcon, Undo2 } from "lucide-react";

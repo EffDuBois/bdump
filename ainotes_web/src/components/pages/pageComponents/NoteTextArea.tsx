@@ -17,7 +17,7 @@ export default function NoteTextArea({
 }: NoteTextAreaProps) {
   const { apiStatus } = useStore();
   return (
-    <div className="text-md">
+    <div className="text-md flex-1 w-full">
       {mainText || lightText ? (
         <>
           <CustomMarkdown>{mainText}</CustomMarkdown>
