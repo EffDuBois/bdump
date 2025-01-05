@@ -40,11 +40,7 @@ export default function Home() {
       >
         v1.0.1-beta
       </p>
-      <div
-        className={`absolute bottom-0 right-0 text-neutral-400 ${interfaceFont.className}`}
-      >
-        {ConnectionStatusMap[createTranscriber.connectionStatus]}
-      </div>
+
 
   );
 }

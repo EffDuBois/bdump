@@ -5,6 +5,7 @@ import MainActionButton from "../components/buttons/MainActionButton";
 import useTranscriber from "@/services/transcriber";
 import { useState } from "react";
 import { queryNotes } from "@/lib/apiHandlers";
+import ConnectionIndicator from "@/components/ConnectionIndicator";
 
 const AskPage = () => {
   const [query, setQuery] = useState("");
@@ -35,6 +36,7 @@ const AskPage = () => {
         <NoteTextArea lightText={query} mainText={response} />
       </div>
       <MainActionButton onClick={onAsk}>Ask</MainActionButton>
+      <ConnectionIndicator connectionStatus={transcriber.connectionStatus} />
     </main>
   );
 };

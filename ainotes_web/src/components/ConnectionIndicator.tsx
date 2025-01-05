@@ -1,6 +1,8 @@
+import { connectionStatusType } from "@/services/transcriber";
+
 import { FaCircle } from "react-icons/fa6";
 
-export const ConnectionStatusMap = {
+const ConnectionStatusMap = {
   connecting: (
     <>
       <FaCircle className="inline text-yellow-300" size={"10px"} />{" "}
@@ -23,3 +25,17 @@ export const ConnectionStatusMap = {
     </>
   ),
 };
+
+const ConnectionIndicator = ({
+  connectionStatus,
+}: {
+  connectionStatus: connectionStatusType;
+}) => {
+  return (
+    <div className="absolute bottom-0 right-0 text-neutral-400">
+      {ConnectionStatusMap[connectionStatus] || "Unknown Status"}
+    </div>
+  );
+};
+
+export default ConnectionIndicator;

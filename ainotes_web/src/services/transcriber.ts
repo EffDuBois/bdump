@@ -3,7 +3,7 @@ import { createClient, ListenLiveClient, LiveSchema } from "@deepgram/sdk";
 import { useEffect, useState } from "react";
 import { valueOrActionFunction } from "./store/provider";
 
-type connectionStatusType =
+export type connectionStatusType =
   | "connecting"
   | "connected"
   | "transmitting"
