@@ -4,6 +4,21 @@ import NoteTitleArea from "./pageComponents/NoteTitleArea";
 import NoteTextArea from "./pageComponents/NoteTextArea";
 
 const CreatePage = () => {
+  const onCreate = () => {
+    try {
+      if (transcriber.recording) createNote();
+    } finally {
+      transcriber.toggleTranscription();
+    }
+  };
+
+  const onEdit = () => {
+    try {
+      if (isRecording) editNote();
+    } finally {
+      createTranscriber.toggleTranscription();
+    }
+  };
   const store = useStore();
   const currentNote = store.currentNote;
 

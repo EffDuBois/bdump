@@ -7,7 +7,7 @@ import { useState } from "react";
 import { queryNotes } from "@/lib/apiHandlers";
 import ConnectionIndicator from "@/components/ConnectionIndicator";
 
-const AskPage = () => {
+const Home = () => {
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState("");
 
@@ -41,4 +41,4 @@ const AskPage = () => {
   );
 };
 
-export default AskPage;
+export default Home;
