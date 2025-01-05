@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from app.api import root
+from Backend.app.routers.v0 import root
 from app.beta import betabuilder
 from app.constants import API_KEY, externalCors
 from slowapi import Limiter
@@ -49,5 +49,6 @@ app.add_middleware(
 async def greet_function():
     return "your mom"
 
+app.include_router(prefix="/api")
 app.include_router(root.router)
 app.include_router(betabuilder.betasetup)
