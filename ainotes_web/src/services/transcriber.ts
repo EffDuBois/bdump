@@ -1,7 +1,7 @@
 "use client";
+import { valueOrActionFunction } from "@/utils/custom_types";
 import { createClient, ListenLiveClient, LiveSchema } from "@deepgram/sdk";
 import { useEffect, useState } from "react";
-import { valueOrActionFunction } from "./store/provider";
 
 export type connectionStatusType =
   | "connecting"

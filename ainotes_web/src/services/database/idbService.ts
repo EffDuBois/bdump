@@ -114,21 +114,22 @@ export const fetchAllNotes = (): Promise<Note[]> => {
   });
 };
 
-export const fetchNote = (id: string): Promise<Note> => {
+export const fetchNote = (id: number): Promise<Note> => {
   return new Promise((resolve, reject) => {
     initDb().then((db) => {
       const tx = db.transaction(Stores.notes);
 
-      const res = tx.objectStore(Stores.notes).get(id);
-      res.onsuccess = () => {
+      const req = tx.objectStore(Stores.notes).get(id);
+      req.onsuccess = () => {
         console.log("fetch txn success");
-        resolve(res.result);
+        console.log(req);
+        resolve(req.result);
       };
-      res.onerror = (event) => {
-        if (res.error?.name === "DataError") {
+      req.onerror = () => {
+        if (req.error?.name === "DataError") {
           console.log(`No note with id:${id} found`);
         }
-        reject("Transaction error:" + res.error);
+        reject("Transaction error:" + req.error);
       };
     });
   });

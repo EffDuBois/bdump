@@ -1,6 +1,5 @@
 "use client";
 
-import { useStore } from "@/services/store/provider";
 import {
   Sidebar,
   SidebarContent,
@@ -10,15 +9,43 @@ import {
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSkeleton,
   SidebarSeparator,
 } from "./ui/sidebar";
 import { Button } from "./ui/button";
 import AppTitle from "./branding/AppLogo";
 import { X } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { getEmptyNote } from "@/services/database/dbUtils";
+import { useEffect, useState } from "react";
+import { Note } from "@/services/database/dataModels";
+import { deleteNote, fetchAllNotes } from "@/services/database/idbService";
 
 const FileDrawer = () => {
-  const store = useStore();
+  const router = useRouter();
+  const currentNoteId = Number(useParams().id);
+
+  const [notes, setNotes] = useState<Note[]>([]);
+
+  const fetchNotes = () => {
+    console.log("fetching notes");
+    fetchAllNotes()
+      .then((notes) => {
+        setNotes(notes);
+      })
+      .catch((error) => console.error("Failed to fetch notes:", error));
+  };
+
+  useEffect(() => {
+    fetchNotes();
+  }, []);
+
+  const createNote = async () => {
+    const note = await getEmptyNote();
+    if (note) {
+      router.push(`/notes/${note.id}`);
+    }
+  };
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -26,27 +53,25 @@ const FileDrawer = () => {
       </SidebarHeader>
       <SidebarSeparator />
       <SidebarHeader>
-        <Button onClick={store.initCurrentNote}>Add Note</Button>
+        <Button onClick={createNote}>Add Note</Button>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu className="flex flex-col">
-            {store.notes.map((note) => (
+            {notes.map((note) => (
               <SidebarMenuItem key={note.id}>
                 <SidebarMenuButton
-                  isActive={store.currentNote?.id === note.id}
+                  isActive={currentNoteId === note.id}
                   onClick={() => {
-                    if (store.currentNote?.id !== note.id) {
-                      store.setCurrentNote(note);
+                    if (currentNoteId !== note.id) {
+                      router.push(`/note/${note.id}`);
                     }
                   }}
                 >
                   <span>{note.file_name ? note.file_name : "New Note"}</span>
                 </SidebarMenuButton>
 
-                <SidebarMenuAction
-                  onClick={() => store.deleteNoteById(note.id)}
-                >
+                <SidebarMenuAction onClick={() => deleteNote(note.id)}>
                   <X />
                   <span className="sr-only">Delete Note</span>
                 </SidebarMenuAction>

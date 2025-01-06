@@ -13,7 +13,7 @@ const Home = () => {
 
   const transcriber = useTranscriber(setQuery);
 
-  const onAsk = async () => {
+  const onAskButtonPress = async () => {
     try {
       if (transcriber.recording) {
         if (query !== "") {
@@ -35,7 +35,7 @@ const Home = () => {
         <NoteTitleArea defaultValue={"Ask"} disabled />
         <NoteTextArea lightText={query} mainText={response} />
       </div>
-      <MainActionButton onClick={onAsk}>Ask</MainActionButton>
+      <MainActionButton onClick={onAskButtonPress}>Ask</MainActionButton>
       <ConnectionIndicator connectionStatus={transcriber.connectionStatus} />
     </main>
   );
