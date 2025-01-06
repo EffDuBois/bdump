@@ -18,7 +18,7 @@ const Home = () => {
       if (transcriber.recording) {
         if (query !== "") {
           const response = await queryNotes(query);
-          setResponse(query + "\n\n" + response);
+          setResponse(`## ${query}` + "\n\n" + response);
           setQuery("");
         } else {
           console.log("ASK:No query");
@@ -32,8 +32,8 @@ const Home = () => {
   return (
     <main className="flex flex-col flex-1 items-center content-center w-[75vw] h-screen ">
       <div className="h-full w-4/5 overflow-y-auto">
-        <NoteTitleArea defaultValue={"Ask"} disabled />
-        <NoteTextArea lightText={query} mainText={response} />
+        <NoteTitleArea value={""} disabled />
+        <NoteTextArea mainText={response} />
       </div>
       <MainActionButton onClick={onAskButtonPress}>Ask</MainActionButton>
       <ConnectionIndicator connectionStatus={transcriber.connectionStatus} />

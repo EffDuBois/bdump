@@ -74,7 +74,7 @@ export const queryNotes = async (query: string) => {
           };
         }),
     });
-    return response;
+    return response.response;
   } catch (error) {
     if (
       isAxiosError(error) &&

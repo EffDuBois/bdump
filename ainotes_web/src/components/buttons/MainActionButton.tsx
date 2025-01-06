@@ -7,8 +7,9 @@ export default function MainActionButton({
 }: ButtonProps) {
   return (
     <Button
-      className={twMerge(`w-28 p-2 border-2 rounded-2xl`, className)}
+      className={twMerge(`w-28 rounded-2xl`, className)}
       {...others}
     />
   );
 }
+  
