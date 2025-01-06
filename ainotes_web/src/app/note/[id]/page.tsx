@@ -5,7 +5,8 @@ import NoteTextArea from "@/components/pages/pageComponents/NoteTextArea";
 import NoteTitleArea from "@/components/pages/pageComponents/NoteTitleArea";
 import { createNote, editNote } from "@/lib/apiHandlers";
 import type { Note } from "@/services/database/dataModels";
-import { fetchNote, putNote } from "@/services/database/idbService";
+import { useDb } from "@/services/database/dbProvider";
+
 import useTranscriber from "@/services/transcriber";
 import { valueOrActionFunction } from "@/utils/custom_types";
 import { useRouter } from "next/navigation";
@@ -13,6 +14,7 @@ import { FocusEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function Note({ params }: { params: { id: string } }) {
+  const { fetchNote, putNote, dbChange } = useDb();
   const router = useRouter();
   const id = Number(params.id);
 
@@ -29,7 +31,7 @@ export default function Note({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     getCurrentNote();
-  }, []);
+  }, [dbChange]);
 
   const updateCurrentNote: valueOrActionFunction<Note> = (updateObj) => {
     if (currentNote) {

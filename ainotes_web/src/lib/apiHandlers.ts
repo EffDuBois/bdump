@@ -2,7 +2,7 @@ import { postCreateNote } from "@/apis/postCreateNote";
 import { postEditNote } from "@/apis/postEditnote";
 import postQueryNote from "@/apis/postQueryNote";
 import { Note } from "@/services/database/dataModels";
-import { fetchAllNotes } from "@/services/database/idbService";
+import { fetchAllNotesDirectDb } from "@/services/database/idbService";
 import { Full } from "@/utils/custom_types";
 import { AxiosError, isAxiosError } from "axios";
 import { toast } from "sonner";
@@ -60,7 +60,7 @@ export const editNote = async (currentNote: Note): Promise<Note> => {
 
 export const queryNotes = async (query: string) => {
   try {
-    const notes = await fetchAllNotes();
+    const notes = await fetchAllNotesDirectDb();
     const response = await postQueryNote({
       query: query,
       data: notes

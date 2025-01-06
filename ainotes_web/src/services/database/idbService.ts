@@ -97,7 +97,7 @@ const initDb = (): Promise<IDBDatabase> => {
   });
 };
 
-export const fetchAllNotes = (): Promise<Note[]> => {
+export const fetchAllNotesDirectDb = (): Promise<Note[]> => {
   return new Promise((resolve, reject) => {
     initDb().then((db) => {
       const tx = db.transaction(Stores.notes);
@@ -108,13 +108,13 @@ export const fetchAllNotes = (): Promise<Note[]> => {
         resolve(res.result);
       };
       res.onerror = () => {
-        reject("Transaction error:" + res.error);
+        reject(res.error);
       };
     });
   });
 };
 
-export const fetchNote = (id: number): Promise<Note> => {
+export const fetchNoteDirectDb = (id: number): Promise<Note> => {
   return new Promise((resolve, reject) => {
     initDb().then((db) => {
       const tx = db.transaction(Stores.notes);
@@ -122,20 +122,19 @@ export const fetchNote = (id: number): Promise<Note> => {
       const req = tx.objectStore(Stores.notes).get(id);
       req.onsuccess = () => {
         console.log("fetch txn success");
-        console.log(req);
         resolve(req.result);
       };
       req.onerror = () => {
         if (req.error?.name === "DataError") {
           console.log(`No note with id:${id} found`);
         }
-        reject("Transaction error:" + req.error);
+        reject(req.error);
       };
     });
   });
 };
 
-export const fetchNoteByPath = (
+export const fetchNoteByPathDirectDb = (
   file_name: string,
   file_path: string
 ): Promise<Note> => {
@@ -154,13 +153,13 @@ export const fetchNoteByPath = (
         if (res.error?.name === "DataError") {
           console.log(`No note with path:${file_path}\\${file_name} found`);
         }
-        reject("Transaction error:" + res.error);
+        reject(res.error);
       };
     });
   });
 };
 
-export const storeNote = (data: Omit<Note, "id">): Promise<Note> => {
+export const storeNoteDirectDb = (data: Omit<Note, "id">): Promise<Note> => {
   return new Promise((resolve, reject) => {
     initDb().then((db) => {
       const tx = db.transaction(Stores.notes, "readwrite");
@@ -174,13 +173,13 @@ export const storeNote = (data: Omit<Note, "id">): Promise<Note> => {
             `The given path:${data.file_path}\\${data.file_name} constraint not satisfied`
           );
         }
-        reject("Transaction error:" + res.error);
+        reject(res.error);
       };
     });
   });
 };
 
-export const deleteNote = (id: number): Promise<boolean> => {
+export const deleteNoteDirectDb = (id: number): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     initDb().then((db) => {
       const tx = db.transaction(Stores.notes, "readwrite");
@@ -192,13 +191,13 @@ export const deleteNote = (id: number): Promise<boolean> => {
         if (res.error?.name === "DataError") {
           console.log(`Note with id:${id} not found`);
         }
-        reject("Transaction error:" + res.error);
+        reject(res.error);
       };
     });
   });
 };
 
-export const putNote = (data: PartialBy<Note, "id">): Promise<Note> => {
+export const putNoteDirectDb = (data: PartialBy<Note, "id">): Promise<Note> => {
   return new Promise((resolve, reject) => {
     initDb().then((db) => {
       const tx = db.transaction(Stores.notes, "readwrite");

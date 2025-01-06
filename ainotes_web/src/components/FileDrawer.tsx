@@ -15,14 +15,14 @@ import { Button } from "./ui/button";
 import AppTitle from "./branding/AppLogo";
 import { X } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { getEmptyNote } from "@/services/database/dbUtils";
+import { useDb } from "@/services/database/dbProvider";
 import { useEffect, useState } from "react";
 import { Note } from "@/services/database/dataModels";
-import { deleteNote, fetchAllNotes } from "@/services/database/idbService";
 
 const FileDrawer = () => {
   const router = useRouter();
   const currentNoteId = Number(useParams().id);
+  const { fetchAllNotes, deleteNote, storeNote, dbChange } = useDb();
 
   const [notes, setNotes] = useState<Note[]>([]);
 
@@ -37,12 +37,35 @@ const FileDrawer = () => {
 
   useEffect(() => {
     fetchNotes();
-  }, []);
+  }, [dbChange]);
+
+  const getNewNote = async (): Promise<Note | undefined> => {
+    let count = 0;
+    while (true) {
+      try {
+        const newNote = await storeNote({
+          content: "",
+          file_name: `Untitled ${count !== 0 ? count : ""}`,
+          file_path: "/",
+          transcript: "",
+        });
+        if (newNote) {
+          return newNote;
+        }
+      } catch (error: any) {
+        if (error?.name === "ConstraintError") {
+          console.log(`Untitled ${count !== 0 ? count : ""}, trying next`);
+          count++;
+        }
+        console.error("Error getting empty note:", error);
+      }
+    }
+  };
 
   const createNote = async () => {
-    const note = await getEmptyNote();
+    const note = await getNewNote();
     if (note) {
-      router.push(`/notes/${note.id}`);
+      router.push(`/note/${note.id}`);
     }
   };
 
