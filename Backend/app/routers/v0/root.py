@@ -7,7 +7,7 @@ router = APIRouter()
 
 logger = setup_logger()
 
-@router.post("/notes/create")
+@router.post("/v0/notes/create")
 async def create_notes(prompt: createPrompt):       
     emb = generate_embedding(prompt.query)             # returns vector embedding for the prompt
     ans = create_note(prompt.query)                  # returns markdown text for the prompt
@@ -15,7 +15,7 @@ async def create_notes(prompt: createPrompt):
     output = {**ans, **emb}
     return output
 
-@router.post("/notes/ask")
+@router.post("/v0/notes/ask")
 async def ask_notes(prompt: askPrompt):
     emb = generate_embedding(prompt.query)
     notes_text = [i.note for i in prompt.data]
@@ -24,7 +24,7 @@ async def ask_notes(prompt: askPrompt):
     logger.info(f"answer for query: {ans}")
     return ans
 
-@router.post("/notes/edit")
+@router.post("/v0/notes/edit")
 async def edit_notes(prompt: editPrompt):       
     note = prompt.note
     query = prompt.query
