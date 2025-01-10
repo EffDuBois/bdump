@@ -17,11 +17,7 @@ const RecordPanel = ({
   ...props
 }: RecordPanelType) => {
   return (
-    <Button
-      className={twMerge("rounded-full size-16 bottom-5 sticky", className)}
-      {...props}
-    >
-      <Mic />
+    <div>
       <MainActionButton
         onClick={onClear}
         variant={"secondary"}
@@ -35,7 +31,13 @@ const RecordPanel = ({
           Reset
         </>
       </MainActionButton>
-    </Button>
+      <Button
+        className={twMerge("rounded-full size-16 bottom-5 sticky", className)}
+        {...props}
+      >
+        <Mic />
+      </Button>
+    </div>
   );
 };
 
