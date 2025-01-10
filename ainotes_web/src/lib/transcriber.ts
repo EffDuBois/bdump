@@ -1,9 +1,8 @@
 "use client";
-import { valueOrActionFunction } from "@/utils/custom_types";
 import { createClient, ListenLiveClient, LiveSchema } from "@deepgram/sdk";
 import { useEffect, useState } from "react";
 
-export type connectionStatusType =
+export type recordingStatusType =
   | "connecting"
   | "connected"
   | "transmitting"
@@ -16,13 +15,29 @@ const DEEPGRAM_MODEL_CONFIG: LiveSchema = {
   // language: "hi",
 };
 
-const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
-  const [connectionStatus, setConnectionStatus] =
-    useState<connectionStatusType>("connecting");
-  const [recording, setRecording] = useState(false);
+const useTranscriber = (updateFunction: (arg: string) => void) => {
+  const [recordingStatus, setRecordingStatus] =
+    useState<recordingStatusType>("disconnected");
 
   const [mic, setMic] = useState<MediaRecorder>();
   const [socket, setSocket] = useState<ListenLiveClient>();
+
+  const setConnecting = () => {
+    if (recordingStatus !== "connecting") setRecordingStatus("connecting");
+  };
+
+  const setConnected = () => {
+    setRecordTime((recordTime) => {
+      if (recordTime === undefined) return Date.now();
+      else return recordTime;
+    });
+    if (recordingStatus !== "transmitting") setRecordingStatus("transmitting");
+  };
+
+  const setDisconnected = () => {
+    setRecordingStatus("connected");
+    setRecordTime(undefined);
+  };
 
   const createSocket = (): Promise<ListenLiveClient> => {
     return new Promise((resolve) => {
@@ -37,33 +52,29 @@ const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
 
       newSocket.on("open", async () => {
         console.log("client: connected to deepgram Socket");
-        setConnectionStatus("connected");
+        setRecordingStatus("connected");
         setSocket(newSocket);
         resolve(newSocket);
 
         newSocket.on("Results", async (data) => {
-          setConnectionStatus("transmitting");
-          setInterval(() => {
-            setConnectionStatus("connected");
-          }, 500);
-
+          setConnected();
           const transcript = data.channel.alternatives[0].transcript;
           if (transcript !== "") {
             console.log("server:" + transcript);
-            updateFunction((old) => old + " " + transcript);
+            updateFunction(" " + transcript);
           }
         });
 
         newSocket.on("error", (e) => {
           console.error(e);
-          setConnectionStatus("disconnected");
+          setRecordingStatus("disconnected");
           setSocket(undefined);
         });
 
         newSocket.on("warning", (e) => console.warn(e));
         newSocket.on("Metadata", (e) => console.log(e));
         newSocket.on("close", (e) => {
-          setConnectionStatus("disconnected");
+          setRecordingStatus("disconnected");
           console.log("Socket Closed");
           setSocket(undefined);
         });
@@ -84,27 +95,24 @@ const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
 
   const toggleTranscription = async () => {
     try {
-      if (!recording) {
+      if (recordingStatus === "connected") {
         console.log("trying to start recording");
         const newMic = await getMic();
         setMic(newMic);
         if (newMic) {
           if (socket) {
             startMic(newMic, socket);
-            setRecording(true);
-            setRecordTime(Date.now());
-            setConnectionStatus("connecting");
+            setConnecting();
           } else {
             console.error("Socket not initialised");
           }
         } else {
           console.error("Can't initialise mic");
         }
-      } else {
+      } else if (recordingStatus === "transmitting") {
         if (mic) {
           console.log("Stop Recording");
-          setRecording(false);
-          setRecordTime(undefined);
+          setDisconnected();
           mic.stop();
           setMic(undefined);
         } else {
@@ -144,7 +152,7 @@ const useTranscriber = (updateFunction: valueOrActionFunction<string>) => {
     }
   }, [recordTime]);
 
-  return { recording, toggleTranscription, connectionStatus, time };
+  return { toggleTranscription, recordingStatus, time };
 };
 
 const getMic = async () => {

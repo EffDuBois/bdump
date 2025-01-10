@@ -1,5 +1,5 @@
-import { connectionStatusType } from "@/services/transcriber";
 
+import { recordingStatusType } from "@/lib/transcriber";
 import { FaCircle } from "react-icons/fa6";
 
 const ConnectionStatusMap = {
@@ -11,17 +11,18 @@ const ConnectionStatusMap = {
   ),
   connected: (
     <>
-      <FaCircle className="inline text-green-300" size={"10px"} /> Connected
+      <FaCircle className="inline text-white" size={"10px"} /> Online
     </>
   ),
   transmitting: (
     <>
-      <FaCircle className="inline text-green-50" size={"10px"} /> Connected
+      <FaCircle className="inline text-green-300" size={"10px"} /> Connected
     </>
   ),
   disconnected: (
     <>
-      <FaCircle className="inline text-red-400" size={"10px"} /> No Connection
+      <FaCircle className="inline text-white" size={"10px"} /> Trying to
+      connect...
     </>
   ),
 };
@@ -29,7 +30,7 @@ const ConnectionStatusMap = {
 const ConnectionIndicator = ({
   connectionStatus,
 }: {
-  connectionStatus: connectionStatusType;
+  connectionStatus: recordingStatusType;
 }) => {
   return (
     <div className="sticky bottom-0 right-0 self-end text-neutral-400">

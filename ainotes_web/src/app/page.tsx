@@ -1,22 +1,24 @@
 "use client";
 import NoteTextArea from "../components/pages/pageComponents/NoteTextArea";
-import useTranscriber from "@/services/transcriber";
+import useTranscriber from "@/lib/transcriber";
 import { useState } from "react";
 import { queryNotes } from "@/lib/apiHandlers";
 import ConnectionIndicator from "@/components/auxilary/ConnectionIndicator";
 import VersionTag from "@/components/auxilary/VersionTag";
-import BottomBar from "@/components/BottomBar";
 import RecordPanel from "@/components/buttons/RecordPanel";
 
 const Home = () => {
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState("");
 
-  const transcriber = useTranscriber(setQuery);
+  const appendToQuery = (newText: string) => {
+    setQuery((query) => query + newText);
+  };
+  const transcriber = useTranscriber(appendToQuery);
 
   const onAskButtonPress = async () => {
     try {
-      if (transcriber.recording) {
+      if (transcriber.recordingStatus === "transmitting") {
         if (query !== "") {
           const response = await queryNotes(query);
           setResponse(`## ${query}` + "\n\n" + response);
@@ -47,12 +49,11 @@ const Home = () => {
           onClick={onAskButtonPress}
           onClear={() => setQuery("")}
           showClearButton={!!query}
+          recordingStatus={transcriber.recordingStatus}
         />
         <div className=" w-full flex justify-between ">
           <VersionTag version="1.1.0-beta" />
-          <ConnectionIndicator
-            connectionStatus={transcriber.connectionStatus}
-          />
+          <ConnectionIndicator connectionStatus={transcriber.recordingStatus} />
         </div>
       </div>
     </main>

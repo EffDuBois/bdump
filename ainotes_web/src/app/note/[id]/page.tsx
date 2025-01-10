@@ -8,7 +8,7 @@ import { createNote, editNote } from "@/lib/apiHandlers";
 import type { Note } from "@/services/database/dataModels";
 import { useDb } from "@/services/database/dbProvider";
 
-import useTranscriber from "@/services/transcriber";
+import useTranscriber from "@/lib/transcriber";
 import { valueOrActionFunction } from "@/utils/custom_types";
 import { useRouter } from "next/navigation";
 import { FocusEvent, useEffect, useState } from "react";
@@ -37,6 +37,7 @@ export default function Note({ params }: { params: { id: string } }) {
   const updateCurrentNote: valueOrActionFunction<Note> = (updateObj) => {
     if (currentNote) {
       if (typeof updateObj === "function") {
+        console.log(updateObj(currentNote));
         putNote(updateObj(currentNote))
           .then((note) => {
             setCurrentNote(note);
@@ -53,23 +54,27 @@ export default function Note({ params }: { params: { id: string } }) {
             console.error(error);
           });
       }
+    } else {
+      console.error("current note missing");
+      console.log(currentNote);
     }
   };
 
-  const updateTranscript: valueOrActionFunction<string> = (updateObj) => {
-    if (typeof updateObj === "function") {
-      updateCurrentNote((oldNote) => {
-        // console.log(updateObj(oldNote.transcript));
-        return {
-          ...oldNote,
-          transcript: updateObj(oldNote.transcript),
-        };
-      });
-    } else {
-      updateCurrentNote((oldnote) => {
-        return { ...oldnote, transcript: updateObj };
-      });
-    }
+  const appendAndUpdateTranscript = (newText: string) => {
+    console.log(newText);
+
+    updateCurrentNote((oldNote) => {
+      return {
+        ...oldNote,
+        transcript: oldNote.transcript + newText,
+      };
+    });
+  };
+
+  const updateTranscript = (newText: string) => {
+    updateCurrentNote((oldnote) => {
+      return { ...oldnote, transcript: newText };
+    });
   };
 
   const updateTitle: valueOrActionFunction<string> = (updateObj) => {
@@ -87,11 +92,11 @@ export default function Note({ params }: { params: { id: string } }) {
     }
   };
 
-  const transcriber = useTranscriber(updateTranscript);
+  const transcriber = useTranscriber(appendAndUpdateTranscript);
 
   const onCreate = () => {
     try {
-      if (transcriber.recording)
+      if (transcriber.recordingStatus === "transmitting")
         if (currentNote)
           createNote(currentNote).then((note) => {
             updateCurrentNote(note);
@@ -103,7 +108,7 @@ export default function Note({ params }: { params: { id: string } }) {
 
   const onEdit = () => {
     try {
-      if (transcriber.recording)
+      if (transcriber.recordingStatus === "transmitting")
         if (currentNote)
           editNote(currentNote).then((note) => {
             updateCurrentNote(note);
@@ -146,13 +151,15 @@ export default function Note({ params }: { params: { id: string } }) {
         <div className="w-full flex flex-col items-center pt-3 bg-background sticky bottom-0 left-0">
           <RecordPanel
             onClick={onCreate}
+            recordingStatus={transcriber.recordingStatus}
+            recordingTime={transcriber.time}
             onClear={() => updateTranscript("")}
             showClearButton={!!currentNote?.transcript}
           />
           <div className=" w-full flex justify-between ">
             <VersionTag version="1.1.0-beta" />
             <ConnectionIndicator
-              connectionStatus={transcriber.connectionStatus}
+              connectionStatus={transcriber.recordingStatus}
             />
           </div>
         </div>

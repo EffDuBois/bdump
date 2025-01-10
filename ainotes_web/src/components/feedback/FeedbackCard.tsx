@@ -1,6 +1,6 @@
 import { postBetaFeedback } from "@/apis/BetaFeedback";
 import { Button } from "@/components/ui/button";
-import useTranscriber from "@/services/transcriber";
+import useTranscriber from "@/lib/transcriber";
 import { Mic } from "lucide-react";
 import { useState } from "react";
 import { FaCircleStop } from "react-icons/fa6";
