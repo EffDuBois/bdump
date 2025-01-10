@@ -3,6 +3,7 @@
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarMenu,
@@ -18,6 +19,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useDb } from "@/services/database/dbProvider";
 import { useEffect, useState } from "react";
 import { Note } from "@/services/database/dataModels";
+import FeedbackButton from "./feedback/FeedbackButton";
 
 const FileDrawer = () => {
   const router = useRouter();
@@ -70,7 +72,7 @@ const FileDrawer = () => {
   };
 
   return (
-    <Sidebar>
+    <Sidebar className="max-md:bg-background">
       <SidebarHeader>
         <AppTitle />
       </SidebarHeader>
@@ -103,6 +105,9 @@ const FileDrawer = () => {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <FeedbackButton />
+      </SidebarFooter>
     </Sidebar>
   );
 };

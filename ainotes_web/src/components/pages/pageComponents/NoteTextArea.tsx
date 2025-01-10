@@ -1,7 +1,5 @@
 import { subtextFont } from "@/ui/fonts";
 
-import PlaceHolderTextArea from "./PlaceHolderTextArea";
-
 import CustomMarkdown from "../../CustomMarkdown";
 
 interface NoteTextAreaProps {
@@ -13,24 +11,21 @@ interface NoteTextAreaProps {
 export default function NoteTextArea({
   mainText,
   lightText,
+  pulse,
 }: NoteTextAreaProps) {
   return (
     <div className="text-md flex-1 w-full">
-      {mainText || lightText ? (
-        <>
-          <CustomMarkdown>{mainText}</CustomMarkdown>
-          <br />
-          <CustomMarkdown
-            className={`${subtextFont.className} text-xl ${
-              false ? " animate-pulse" : ""
-            } inline`}
-          >
-            {lightText}
-          </CustomMarkdown>
-        </>
-      ) : (
-        <PlaceHolderTextArea className={false ? "animate-pulse" : ""} />
-      )}
+      <>
+        <CustomMarkdown>{mainText}</CustomMarkdown>
+        <br />
+        <CustomMarkdown
+          className={`${subtextFont.className} text-xl ${
+            pulse ? " animate-pulse" : ""
+          } inline`}
+        >
+          {lightText}
+        </CustomMarkdown>
+      </>
     </div>
   );
 }

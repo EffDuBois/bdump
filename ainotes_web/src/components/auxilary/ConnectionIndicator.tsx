@@ -32,7 +32,7 @@ const ConnectionIndicator = ({
   connectionStatus: connectionStatusType;
 }) => {
   return (
-    <div className="absolute bottom-0 right-0 text-neutral-400">
+    <div className="sticky bottom-0 right-0 self-end text-neutral-400">
       {ConnectionStatusMap[connectionStatus] || "Unknown Status"}
     </div>
   );

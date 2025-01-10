@@ -1,6 +1,7 @@
 "use client";
-import MainActionButton from "@/components/buttons/MainActionButton";
-import ConnectionIndicator from "@/components/ConnectionIndicator";
+import ConnectionIndicator from "@/components/auxilary/ConnectionIndicator";
+import VersionTag from "@/components/auxilary/VersionTag";
+import RecordPanel from "@/components/buttons/RecordPanel";
 import NoteTextArea from "@/components/pages/pageComponents/NoteTextArea";
 import NoteTitleArea from "@/components/pages/pageComponents/NoteTitleArea";
 import { createNote, editNote } from "@/lib/apiHandlers";
@@ -124,7 +125,7 @@ export default function Note({ params }: { params: { id: string } }) {
 
   return (
     <>
-      <main className="flex flex-col flex-1 items-center content-center w-[75vw] h-screen ">
+      <main className="flex flex-col flex-1 items-center content-center w-full h-screen ">
         <div className="h-full w-4/5 overflow-y-auto">
           {currentNote && (
             <>
@@ -142,8 +143,19 @@ export default function Note({ params }: { params: { id: string } }) {
             </>
           )}
         </div>
-        <MainActionButton onClick={onCreate}>Create</MainActionButton>
-        <ConnectionIndicator connectionStatus={transcriber.connectionStatus} />
+        <div className="w-full flex flex-col items-center pt-3 bg-background sticky bottom-0 left-0">
+          <RecordPanel
+            onClick={onCreate}
+            onClear={() => updateTranscript("")}
+            showClearButton={!!currentNote?.transcript}
+          />
+          <div className=" w-full flex justify-between ">
+            <VersionTag version="1.1.0-beta" />
+            <ConnectionIndicator
+              connectionStatus={transcriber.connectionStatus}
+            />
+          </div>
+        </div>
       </main>
     </>
   );

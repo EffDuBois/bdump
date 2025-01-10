@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import FeedbackCard from "./FeedbackCard";
 import { getBetaUsers } from "@/apis/BetaFeedback";
 
-export default function FeedbackButton() {
+const FeedbackButton = () => {
   const [users, setUsers] = useState([
     "Ayush Jain",
     "Arnab Kar",
@@ -66,3 +66,5 @@ export default function FeedbackButton() {
     </Popover>
   );
 }
+
+export default FeedbackButton;
