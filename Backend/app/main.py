@@ -49,6 +49,5 @@ app.add_middleware(
 async def greet_function():
     return "your mom"
 
-app.include_router(prefix="/api")
-app.include_router(root.router)
+app.include_router(root.router, prefix="/api")
 app.include_router(betabuilder.betasetup)
