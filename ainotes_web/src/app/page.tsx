@@ -98,7 +98,7 @@ export default function Home() {
       <p
         className={`z-10 absolute bottom-0 left-0 text-neutral-400 ${interfaceFont.className}`}
       >
-        v1.0.1-beta
+        v1.0.2-beta
       </p>
       <div
         className={`absolute bottom-0 right-0 text-neutral-400 ${interfaceFont.className}`}
