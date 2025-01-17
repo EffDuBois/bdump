@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from Backend.app.routers.v0 import root
+from app.routers.v0 import root
 from app.beta import betabuilder
 from app.constants import API_KEY, externalCors
 from slowapi import Limiter
