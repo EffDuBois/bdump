@@ -48,10 +48,10 @@ async def ask_notes(prompt: askPrompt):
 
 @router.post("/notes/edit")
 async def edit_notes(prompt: editPrompt):       
-    note = prompt.note
+    user_note = prompt.note
     query = prompt.query
-    ans = edit_note(note, query)  
-    emb = generate_embedding(ans['note'])                   
+    ans = edit_note(user_note, query)  
+    emb = generate_embedding(ans.get('note')                   
     logger.info(f"note edited with title: {ans}" )
     data = {
         'input-text': prompt.query,
