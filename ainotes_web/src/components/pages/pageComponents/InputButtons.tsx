@@ -31,7 +31,7 @@ export default function InputButtons({
   onEdit,
 }: InputButtonsProps) {
   return (
-    <Card className="rounded-2xl p-2 bg-sidebar flex justify-center items-center gap-3 relative">
+    <Card className="rounded-2xl p-2 bg-sidebar flex justify-center items-center gap-3 sticky bottom-5">
       <MainActionButton
         onClick={clearLightText}
         variant={"secondary"}
