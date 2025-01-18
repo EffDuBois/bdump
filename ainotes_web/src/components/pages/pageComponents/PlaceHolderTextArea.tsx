@@ -1,3 +1,4 @@
+import { maintextFont, titleFont } from "@/ui/fonts";
 import { Mic, Search, Sparkle, Sparkles } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 
@@ -9,15 +10,31 @@ const PlaceHolderTextArea: React.FC<PlaceHolderTextAreaProps> = ({
   className,
 }) => {
   return (
-    <p className={twMerge("leading-8", className)}>
-      Dump all your notes & thoughts just using voice
+    <ul
+      className={twMerge(
+        "space-y-3 text-xl font-light list-disc",
+        maintextFont.className,
+        className
+      )}
+    >
+      <li>
+        <b className="font-bold text-2xl">Create</b> notes using your voice
+      </li>
+      <li>
+        Press the ask button to <b className="font-bold text-2xl">Ask</b>{" "}
+        anything from your notes
+      </li>
+      <li>
+        You can record notes, create lists, record a meeting or just speak your
+        thoughts out
+      </li>
+      <li>
+        Notes are stored <b className="font-bold text-2xl">Locally </b> on your
+        phone, so you can access them anytime
+      </li>
+      <li>Download the Web-App for a seamless experience</li>
       <br />
-      <Mic className="inline" size={15} /> Use your voice to take notes, make
-      to-do lists <br />
-      <Sparkles className="inline" size={15} /> You can even summarize your
-      meetings and convos<br />
-      <Search className="inline" size={15} /> Then you can ask about anything from your notes
-    </p>
+    </ul>
   );
 };
 
