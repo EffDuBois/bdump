@@ -51,7 +51,7 @@ async def edit_notes(prompt: editPrompt):
     user_note = prompt.note
     query = prompt.query
     ans = edit_note(user_note, query)  
-    emb = generate_embedding(ans.get('note')                   
+    emb = generate_embedding(ans.get('note'))                   
     logger.info(f"note edited with title: {ans}" )
     data = {
         'input-text': prompt.query,
